@@ -22,8 +22,8 @@ Este repositorio es el **frontend**. Se comunica con el backend por REST (`/api/
 
 | Componente | Repositorio | URL en producción |
 |---|---|---|
-| Frontend | `decora-ia-frontend` | _pendiente_ |
-| Backend | `decora-ia-backend` | _pendiente_ |
+| Frontend | [decora-ia-frontend](https://github.com/Santiago425/decora-ia-frontend) | https://decora-ia-frontend.vercel.app |
+| Backend | [decora-ia-backend](https://github.com/Santiago425/decora-ia-backend) | https://decora-ia-backend.onrender.com/api/v1/hello |
 
 ## ✨ Qué muestra hoy
 
@@ -54,5 +54,5 @@ Desplegado en [Vercel](https://vercel.com) (framework Vite). Variable de entorno
 
 | Integrante | GitHub |
 |---|---|
-| Santiago Campoverde | _@usuario_ |
+| Santiago Campoverde | [@Santiago425](https://github.com/Santiago425) |
 | Never Melo | _@usuario_ |
