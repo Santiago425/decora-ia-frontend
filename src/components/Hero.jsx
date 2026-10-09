@@ -4,26 +4,25 @@ import { SafeImage } from './SafeImage.jsx';
 export function Hero() {
   return (
     <header className="hero" id="inicio">
-      <div className="hero-text">
-        <span className="eyebrow">Proyecto final · Patrones de Diseño</span>
+      <SafeImage src={SAMPLE_PHOTO} alt="" className="hero-bg" />
+      <div className="hero-overlay" />
+      <div className="hero-content">
+        <span className="kicker">Diseño de interiores con inteligencia artificial</span>
         <h1>
-          Tu cuarto, <em>reimaginado</em> por inteligencia artificial
+          Tu espacio,<br /><em>reimaginado.</em>
         </h1>
         <p>
-          Sube una foto de tu espacio, elige un estilo y recibe en segundos una propuesta de remodelación con
-          ideas concretas de muebles, colores e iluminación.
+          Sube una foto de tu cuarto, elige un estilo y recibe una propuesta de remodelación con ideas
+          concretas de mobiliario, color e iluminación.
         </p>
         <div className="hero-actions">
-          <a href="#estudio" className="btn btn-primary">Remodelar mi espacio</a>
-          <a href="#como-funciona" className="btn btn-ghost">Ver cómo funciona</a>
+          <a href="#estudio" className="btn btn-primary">Comenzar</a>
+          <a href="#como-funciona" className="btn btn-ghost">Cómo funciona</a>
         </div>
       </div>
-      <div className="hero-visual" aria-hidden="true">
-        <SafeImage src={SAMPLE_PHOTO} alt="Dormitorio decorado" className="hero-image" />
-        <div className="floating-card">
-          <span>✨ Estilo nórdico</span>
-          <small>Madera clara · Textiles blancos · Plantas</small>
-        </div>
+      <div className="hero-foot">
+        <span>Proyecto final · Patrones de Diseño</span>
+        <span>Cinco estilos · Seis tipos de espacio</span>
       </div>
     </header>
   );

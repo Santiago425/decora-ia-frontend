@@ -3,8 +3,7 @@ export function Navbar({ apiState }) {
   return (
     <nav className="navbar">
       <a href="#inicio" className="brand">
-        <img src="/favicon.svg" alt="" width="28" height="28" />
-        DecoraIA
+        Decora<em>IA</em>
       </a>
       <div className="nav-links">
         <a href="#como-funciona">Cómo funciona</a>

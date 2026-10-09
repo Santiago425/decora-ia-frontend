@@ -62,13 +62,14 @@ export function RemodelStudio() {
 
   return (
     <section className="section" id="estudio">
-      <h2 className="section-title">Estudio de remodelación</h2>
-      <p className="section-subtitle">Configura tu espacio y deja que la IA haga el resto.</p>
+      <span className="kicker">Estudio</span>
+      <h2 className="section-title">Diseña tu nuevo <em>espacio</em></h2>
+      <p className="section-subtitle">Configura tu espacio y deja que la inteligencia artificial haga el resto.</p>
 
       <div className="studio">
         <form className="card studio-form" onSubmit={handleSubmit} noValidate>
           <fieldset>
-            <legend>1 · Foto de tu espacio</legend>
+            <legend><i>01</i> Foto de tu espacio</legend>
             <input
               type="url"
               inputMode="url"
@@ -86,7 +87,7 @@ export function RemodelStudio() {
           </fieldset>
 
           <fieldset>
-            <legend>2 · Tipo de espacio</legend>
+            <legend><i>02</i> Tipo de espacio</legend>
             <div className="chips">
               {roomTypes.map((r) => (
                 <button
@@ -96,14 +97,14 @@ export function RemodelStudio() {
                   aria-pressed={roomType === r}
                   onClick={() => setRoomType(r)}
                 >
-                  {ROOM_TYPES[r]?.icon} {ROOM_TYPES[r]?.label ?? r}
+                  {ROOM_TYPES[r]?.label ?? r}
                 </button>
               ))}
             </div>
           </fieldset>
 
           <fieldset>
-            <legend>3 · Estilo</legend>
+            <legend><i>03</i> Estilo</legend>
             <div className="style-grid">
               {styles.map((s) => {
                 const info = STYLES[s] ?? { label: s, description: '', swatch: ['#ccc'] };
@@ -128,7 +129,7 @@ export function RemodelStudio() {
 
           <fieldset className="row">
             <label>
-              <span>4 · Presupuesto (USD, opcional)</span>
+              <span><i>04</i> Presupuesto en USD <small>(opcional)</small></span>
               <input
                 type="number"
                 min="0"
@@ -147,7 +148,7 @@ export function RemodelStudio() {
           </fieldset>
 
           <fieldset>
-            <legend>5 · Colores preferidos <small>({colors.length}/{MAX_COLORS})</small></legend>
+            <legend><i>05</i> Colores preferidos <small>({colors.length}/{MAX_COLORS})</small></legend>
             <div className="palette">
               {COLOR_PRESETS.map((c) => (
                 <button
@@ -166,7 +167,7 @@ export function RemodelStudio() {
           {error && <p className="alert" role="alert">{error}</p>}
 
           <button className="btn btn-primary btn-block" disabled={loading}>
-            {loading ? <><span className="spinner" /> Generando propuesta…</> : '🪄 Remodelar'}
+            {loading ? <><span className="spinner" /> Generando propuesta…</> : 'Generar propuesta'}
           </button>
         </form>
 
@@ -181,9 +182,9 @@ export function RemodelStudio() {
 
           {!loading && !result && (
             <div className="empty">
-              <span>🏡</span>
+              <span className="empty-mark" aria-hidden="true">◇</span>
               <h3>Tu propuesta aparecerá aquí</h3>
-              <p>Completa los pasos y presiona “Remodelar”.</p>
+              <p>Completa los pasos y presiona “Generar propuesta”.</p>
             </div>
           )}
 
@@ -193,7 +194,7 @@ export function RemodelStudio() {
               <div className="result-meta">
                 <span className="badge">{STYLES[result.style]?.label ?? result.style}</span>
                 {result.analysis?.lighting && (
-                  <span className="badge badge-soft">💡 Luz: {LIGHTING[result.analysis.lighting] ?? result.analysis.lighting}</span>
+                  <span className="badge badge-soft">Luz: {LIGHTING[result.analysis.lighting] ?? result.analysis.lighting}</span>
                 )}
                 <span className="badge badge-soft">IA: {result.provider}</span>
               </div>
