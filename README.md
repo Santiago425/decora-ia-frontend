@@ -27,12 +27,12 @@ Este repositorio es el **frontend**. Se comunica con el backend por REST (`/api/
 
 ## ✨ Qué muestra hoy
 
-- **Portada** con la propuesta de valor y un paso a paso de cómo funciona.
-- **Estudio de remodelación**: foto del espacio con vista previa, tipo de espacio, estilo (tarjetas con su paleta), presupuesto, conservar muebles y hasta 5 colores preferidos.
+- **Pantalla de bienvenida** animada con el logo y una portada a pantalla completa con la foto de fondo en movimiento y estilos que van rotando.
+- **Colección de estilos**: cinco tarjetas interactivas; al elegir una se selecciona en el estudio.
+- **Estudio de remodelación**: foto del espacio con vista previa, tipo de espacio, estilo, presupuesto, conservar muebles y hasta 5 colores preferidos.
 - **Resultado** con comparador deslizante **antes / después**, análisis del espacio (luz y objetos detectados) y sugerencias de la IA.
-- Sección de **patrones de diseño** aplicados en el proyecto.
-- **Estado en vivo** de frontend, backend y base de datos, también visible en la barra superior.
-- Diseño adaptable a celular, accesible con teclado y con estados de carga y error.
+- **Estado en vivo** del servidor y la base de datos en la barra superior y el pie de página.
+- Tema oscuro con acentos dorados, adaptable a celular y accesible con teclado (respeta "reducir movimiento").
 
 ## 🧩 Patrones de diseño
 

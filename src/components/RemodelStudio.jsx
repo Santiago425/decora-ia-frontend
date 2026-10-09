@@ -7,12 +7,11 @@ import { SafeImage } from './SafeImage.jsx';
 
 const LIGHTING = { natural: 'Natural', artificial: 'Artificial', low: 'Poca luz', unknown: 'Sin determinar' };
 
-export function RemodelStudio() {
+export function RemodelStudio({ style, onStyleChange }) {
   const [styles, setStyles] = useState(Object.keys(STYLES));
   const [roomTypes, setRoomTypes] = useState(Object.keys(ROOM_TYPES));
   const [photoUrl, setPhotoUrl] = useState(SAMPLE_PHOTO);
   const [roomType, setRoomType] = useState('bedroom');
-  const [style, setStyle] = useState('nordic');
   const [budget, setBudget] = useState('');
   const [colors, setColors] = useState([]);
   const [keepFurniture, setKeepFurniture] = useState(false);
@@ -114,7 +113,7 @@ export function RemodelStudio() {
                     key={s}
                     className={`style-card ${style === s ? 'selected' : ''}`}
                     aria-pressed={style === s}
-                    onClick={() => setStyle(s)}
+                    onClick={() => onStyleChange(s)}
                   >
                     <span className="swatch">
                       {info.swatch.map((c) => <span key={c} style={{ background: c }} />)}

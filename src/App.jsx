@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react';
 import { api } from './api/ApiClient.js';
+import { Splash } from './components/Splash.jsx';
 import { Navbar } from './components/Navbar.jsx';
 import { Hero } from './components/Hero.jsx';
+import { StyleGallery } from './components/StyleGallery.jsx';
 import { HowItWorks } from './components/HowItWorks.jsx';
 import { RemodelStudio } from './components/RemodelStudio.jsx';
-import { PatternsSection } from './components/PatternsSection.jsx';
-import { SystemStatus } from './components/SystemStatus.jsx';
+import { Footer } from './components/Footer.jsx';
 
 export default function App() {
   const [backend, setBackend] = useState({ state: 'loading', detail: 'Conectando…' });
   const [database, setDatabase] = useState({ state: 'loading', detail: 'Conectando…' });
+  const [style, setStyle] = useState('nordic');
 
   useEffect(() => {
     api.hello()
@@ -22,17 +24,21 @@ export default function App() {
 
   return (
     <>
+      <Splash />
       <Navbar apiState={backend.state} />
       <main>
         <Hero />
+        <StyleGallery selected={style} onSelect={setStyle} />
+        <RemodelStudio style={style} onStyleChange={setStyle} />
         <HowItWorks />
-        <RemodelStudio />
-        <PatternsSection />
-        <SystemStatus backend={backend} database={database} />
       </main>
-      <footer>
-        <strong>DecoraIA</strong> · Santiago Campoverde · Never Melo
-      </footer>
+      <Footer
+        services={[
+          { title: 'App', state: 'up', detail: 'Hello World desde DecoraIA' },
+          { title: 'Servidor', ...backend },
+          { title: 'Base de datos', ...database },
+        ]}
+      />
     </>
   );
 }
