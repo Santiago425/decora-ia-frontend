@@ -33,7 +33,7 @@ Este repositorio es el **frontend**. Se comunica con el backend por REST (`/api/
 - **Estudio de remodelación**: foto del espacio con vista previa, tipo de espacio, estilo, presupuesto, conservar muebles y hasta 5 colores preferidos.
 - **Resultado** con comparador deslizante **antes / después**, análisis del espacio (luz y objetos detectados) y sugerencias de la IA.
 - **Estado en vivo** del servidor y la base de datos en la barra superior y el pie de página.
-- Tema oscuro con acentos dorados, adaptable a celular y accesible con teclado (respeta "reducir movimiento").
+- Tema futurista azul medianoche con aurora animada, rejilla luminosa, paneles de vidrio y acentos dorados y cian, adaptable a celular y accesible con teclado (respeta "reducir movimiento").
 
 ## 🧩 Patrones de diseño
 

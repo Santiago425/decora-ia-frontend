@@ -72,7 +72,7 @@ export function RemodelStudio({ style, onStyleChange }) {
       <p className="section-subtitle">Configura tu espacio y deja que la inteligencia artificial haga el resto.</p>
 
       <div className="studio">
-        <form className="card studio-form" onSubmit={handleSubmit} noValidate>
+        <form className="card studio-form hud" onSubmit={handleSubmit} noValidate>
           <fieldset>
             <legend><i>01</i> Foto de tu espacio</legend>
             <input
@@ -182,7 +182,7 @@ export function RemodelStudio({ style, onStyleChange }) {
           )}
         </form>
 
-        <div className="card studio-result" aria-live="polite">
+        <div className="card studio-result hud" aria-live="polite">
           {loading && (
             <div className="skeleton">
               <div className="skeleton-img" />

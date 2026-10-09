@@ -51,7 +51,7 @@ export function AuthModal() {
 
   return (
     <div className="modal-backdrop" onMouseDown={(e) => e.target === e.currentTarget && closeAuth()}>
-      <div className="modal" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+      <div className="modal hud" role="dialog" aria-modal="true" aria-labelledby="auth-title">
         <button type="button" className="modal-close" onClick={closeAuth} aria-label="Cerrar">×</button>
         <span className="kicker">{isRegister ? 'Nueva cuenta' : 'Bienvenido de nuevo'}</span>
         <h2 id="auth-title">{isRegister ? <>Crea tu <em>cuenta</em></> : <>Inicia <em>sesión</em></>}</h2>
