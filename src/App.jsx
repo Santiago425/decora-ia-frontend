@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 import { api } from './api/ApiClient.js';
-import { StatusCard } from './components/StatusCard.jsx';
-import { RemodelDemo } from './components/RemodelDemo.jsx';
+import { Navbar } from './components/Navbar.jsx';
+import { Hero } from './components/Hero.jsx';
+import { HowItWorks } from './components/HowItWorks.jsx';
+import { RemodelStudio } from './components/RemodelStudio.jsx';
+import { PatternsSection } from './components/PatternsSection.jsx';
+import { SystemStatus } from './components/SystemStatus.jsx';
 
 export default function App() {
   const [backend, setBackend] = useState({ state: 'loading', detail: 'Conectando…' });
@@ -17,22 +21,18 @@ export default function App() {
   }, []);
 
   return (
-    <main>
-      <header className="hero">
-        <span className="tag">Proyecto final · Patrones de Diseño</span>
-        <h1>DecoraIA</h1>
-        <p>Toma una foto de tu cuarto y deja que la inteligencia artificial te proponga cómo remodelarlo.</p>
-      </header>
-
-      <section className="status">
-        <StatusCard title="Frontend" state="up" detail="Hello World desde DecoraIA" />
-        <StatusCard title="Backend" {...backend} />
-        <StatusCard title="Base de datos" {...database} />
-      </section>
-
-      <RemodelDemo />
-
-      <footer>Santiago Campoverde · Never Melo</footer>
-    </main>
+    <>
+      <Navbar apiState={backend.state} />
+      <main>
+        <Hero />
+        <HowItWorks />
+        <RemodelStudio />
+        <PatternsSection />
+        <SystemStatus backend={backend} database={database} />
+      </main>
+      <footer>
+        <strong>DecoraIA</strong> · Santiago Campoverde · Never Melo
+      </footer>
+    </>
   );
 }
