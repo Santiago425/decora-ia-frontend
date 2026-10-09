@@ -4,10 +4,12 @@ import { COLOR_PRESETS, MAX_COLORS, ROOM_TYPES, SAMPLE_PHOTO, STYLES } from '../
 import { isHttpUrl } from '../utils/validation.js';
 import { BeforeAfter } from './BeforeAfter.jsx';
 import { SafeImage } from './SafeImage.jsx';
+import { useAuth } from '../auth/AuthContext.jsx';
 
 const LIGHTING = { natural: 'Natural', artificial: 'Artificial', low: 'Poca luz', unknown: 'Sin determinar' };
 
 export function RemodelStudio({ style, onStyleChange }) {
+  const { user, openAuth } = useAuth();
   const [styles, setStyles] = useState(Object.keys(STYLES));
   const [roomTypes, setRoomTypes] = useState(Object.keys(ROOM_TYPES));
   const [photoUrl, setPhotoUrl] = useState(SAMPLE_PHOTO);
@@ -35,6 +37,10 @@ export function RemodelStudio({ style, onStyleChange }) {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    if (!user) {
+      openAuth('login');
+      return;
+    }
     if (!photoValid) {
       setError('Ingresa un enlace válido que empiece con http:// o https://');
       return;
@@ -166,8 +172,14 @@ export function RemodelStudio({ style, onStyleChange }) {
           {error && <p className="alert" role="alert">{error}</p>}
 
           <button className="btn btn-primary btn-block" disabled={loading}>
-            {loading ? <><span className="spinner" /> Generando propuesta…</> : 'Generar propuesta'}
+            {loading ? <><span className="spinner" /> Generando propuesta…</> : user ? 'Generar propuesta' : 'Inicia sesión para generar'}
           </button>
+          {!user && (
+            <p className="hint center">
+              ¿No tienes cuenta?{' '}
+              <button type="button" className="link-button" onClick={() => openAuth('register')}>Créala gratis</button>
+            </p>
+          )}
         </form>
 
         <div className="card studio-result" aria-live="polite">

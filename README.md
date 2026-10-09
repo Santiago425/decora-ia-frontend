@@ -28,6 +28,7 @@ Este repositorio es el **frontend**. Se comunica con el backend por REST (`/api/
 ## ✨ Qué muestra hoy
 
 - **Pantalla de bienvenida** animada con el logo y una portada a pantalla completa con la foto de fondo en movimiento y estilos que van rotando.
+- **Registro e inicio de sesión** en una ventana elegante; generar propuestas requiere una cuenta.
 - **Colección de estilos**: cinco tarjetas interactivas; al elegir una se selecciona en el estudio.
 - **Estudio de remodelación**: foto del espacio con vista previa, tipo de espacio, estilo, presupuesto, conservar muebles y hasta 5 colores preferidos.
 - **Resultado** con comparador deslizante **antes / después**, análisis del espacio (luz y objetos detectados) y sugerencias de la IA.
@@ -47,6 +48,7 @@ Los demás patrones del proyecto (Builder, Abstract Factory, Adapter, Decorator)
 | Medida | Dónde |
 |---|---|
 | Cabeceras HTTP seguras en Vercel: CSP, `X-Frame-Options`, `nosniff`, HSTS, `Referrer-Policy`, `Permissions-Policy` | [`vercel.json`](vercel.json) |
+| Sesión con token JWT enviado en la cabecera `Authorization`, guardado solo durante la pestaña (`sessionStorage`) y cerrado automáticamente si expira | [`src/auth/AuthContext.jsx`](src/auth/AuthContext.jsx) |
 | Validación de la URL de la foto (solo `http`/`https`) antes de enviarla | [`src/utils/validation.js`](src/utils/validation.js) |
 | Peticiones sin cookies, con tiempo máximo de espera y mensajes de error claros | [`src/api/ApiClient.js`](src/api/ApiClient.js) |
 | Imágenes externas cargadas sin enviar *referrer* | [`src/components/SafeImage.jsx`](src/components/SafeImage.jsx) |

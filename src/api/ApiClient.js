@@ -10,15 +10,29 @@ class ApiClient {
     return ApiClient.#instance;
   }
 
+  #token = null;
+  #onUnauthorized = () => {};
+
   constructor(baseUrl) {
     this.baseUrl = `${baseUrl}/api/v1`;
+  }
+
+  setToken(token) {
+    this.#token = token;
+  }
+
+  onUnauthorized(handler) {
+    this.#onUnauthorized = handler;
   }
 
   async request(path, options = {}) {
     let res;
     try {
       res = await fetch(`${this.baseUrl}${path}`, {
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(this.#token && { Authorization: `Bearer ${this.#token}` }),
+        },
         credentials: 'omit',
         signal: AbortSignal.timeout(TIMEOUT_MS),
         ...options,
@@ -27,7 +41,8 @@ class ApiClient {
       throw new Error('No se pudo conectar con el servidor. Si estuvo inactivo puede tardar unos segundos en despertar.');
     }
     const body = await res.json().catch(() => ({}));
-    if (res.status === 429) throw new Error('Hiciste muchas solicitudes seguidas. Espera un minuto e inténtalo de nuevo.');
+    if (res.status === 401 && this.#token) this.#onUnauthorized();
+    if (res.status === 429 && !body.error) throw new Error('Hiciste muchas solicitudes seguidas. Espera un minuto e inténtalo de nuevo.');
     if (!res.ok) throw new Error(body.error || (body.database && `Base de datos: ${body.database}`) || `Error ${res.status}`);
     return body;
   }
@@ -46,6 +61,18 @@ class ApiClient {
 
   roomTypes() {
     return this.request('/room-types');
+  }
+
+  register(payload) {
+    return this.request('/auth/register', { method: 'POST', body: JSON.stringify(payload) });
+  }
+
+  login(payload) {
+    return this.request('/auth/login', { method: 'POST', body: JSON.stringify(payload) });
+  }
+
+  me() {
+    return this.request('/auth/me');
   }
 
   previewRemodel(payload) {

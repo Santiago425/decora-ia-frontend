@@ -7,6 +7,7 @@ import { StyleGallery } from './components/StyleGallery.jsx';
 import { HowItWorks } from './components/HowItWorks.jsx';
 import { RemodelStudio } from './components/RemodelStudio.jsx';
 import { Footer } from './components/Footer.jsx';
+import { AuthModal } from './components/AuthModal.jsx';
 
 export default function App() {
   const [backend, setBackend] = useState({ state: 'loading', detail: 'Conectando…' });
@@ -26,6 +27,7 @@ export default function App() {
     <>
       <Splash />
       <Navbar apiState={backend.state} />
+      <AuthModal />
       <main>
         <Hero />
         <StyleGallery selected={style} onSelect={setStyle} />

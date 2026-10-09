@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
+import { useAuth } from '../auth/AuthContext.jsx';
 
 export function Navbar({ apiState }) {
   const [scrolled, setScrolled] = useState(false);
+  const { user, openAuth, logout } = useAuth();
   const label = { up: 'Servidor en línea', down: 'Servidor sin conexión', loading: 'Conectando…' }[apiState];
 
   useEffect(() => {
@@ -25,7 +27,18 @@ export function Navbar({ apiState }) {
         <span className="dot" />
         <span className="pill-text">{label}</span>
       </span>
-      <a href="#estudio" className="btn btn-primary btn-small">Diseñar</a>
+      {user ? (
+        <div className="user-menu">
+          <span className="avatar" aria-hidden="true">{user.fullName.trim().charAt(0).toUpperCase()}</span>
+          <span className="user-name">{user.fullName.split(' ')[0]}</span>
+          <button type="button" className="link-button" onClick={logout}>Salir</button>
+        </div>
+      ) : (
+        <>
+          <button type="button" className="link-button nav-login" onClick={() => openAuth('login')}>Ingresar</button>
+          <button type="button" className="btn btn-primary btn-small" onClick={() => openAuth('register')}>Crear cuenta</button>
+        </>
+      )}
     </nav>
   );
 }
