@@ -1,21 +1,29 @@
 {
-  "name": "decora-ia-frontend",
-  "version": "0.1.0",
+  "name": "habita-frontend",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "tsc -b && vite build",
     "preview": "vite preview",
+    "typecheck": "tsc -b",
     "test": "vitest run"
   },
   "dependencies": {
+    "@fontsource-variable/fraunces": "^5.3.0",
+    "@fontsource-variable/plus-jakarta-sans": "^5.3.0",
+    "lucide-react": "^1.65.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.18.5"
   },
   "devDependencies": {
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
     "@vitejs/plugin-react": "^4.7.0",
-    "vite": "^6.4.4",
-    "vitest": "^5.0.3"
+    "typescript": "~5.9.3",
+    "vite": "^6.4.5",
+    "vitest": "^3.2.7"
   }
 }

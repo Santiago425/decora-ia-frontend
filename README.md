@@ -1,73 +1,95 @@
 <div align="center">
 
-# 🛋️ DecoraIA · Frontend
+# Habita · Frontend
 
-**Toma una foto de tu cuarto y deja que la inteligencia artificial te proponga cómo remodelarlo.**
+**Diseño de interiores con inteligencia artificial y modelado 3D.**
 
-Interfaz web del proyecto final de **Patrones de Diseño**
+Proyecto final de **Patrones de Diseño**
 
 ![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white)
 ![Vercel](https://img.shields.io/badge/Deploy-Vercel-000000?logo=vercel&logoColor=white)
 
 </div>
 
----
+## ¿En qué consiste?
 
-## 📌 ¿En qué consiste?
+**Habita** permite tomar o subir una foto de un espacio, elegir un estilo y ver cómo quedaría rediseñado por la IA, armar el espacio en un editor 3D con muebles reales del catálogo, calcular un presupuesto y guardar proyectos. **Lumi**, la asistente, guía al usuario por voz o texto.
 
-**DecoraIA** es una aplicación de diseño de interiores: subes una foto de tu cuarto, eliges un estilo (moderno, nórdico, industrial, bohemio o minimalista) y la IA te devuelve una propuesta de remodelación con imagen y sugerencias.
-
-Este repositorio es el **frontend**. Se comunica con el backend por REST (`/api/v1`), que a su vez usa la base de datos y el componente de IA.
-
-| Componente | Repositorio | URL en producción |
+| Componente | Repositorio | Producción |
 |---|---|---|
 | Frontend | [decora-ia-frontend](https://github.com/Santiago425/decora-ia-frontend) | https://decora-ia-frontend.vercel.app |
 | Backend | [decora-ia-backend](https://github.com/Santiago425/decora-ia-backend) | https://decora-ia-backend.onrender.com/api/v1/hello |
 
-## ✨ Qué muestra hoy
+## Avance
 
-- **Pantalla de bienvenida** animada con el logo y una portada a pantalla completa con la foto de fondo en movimiento y estilos que van rotando.
-- **Registro e inicio de sesión** en una ventana elegante; generar propuestas requiere una cuenta.
-- **Colección de estilos**: cinco tarjetas interactivas; al elegir una se selecciona en el estudio.
-- **Estudio de remodelación**: foto del espacio con vista previa, tipo de espacio, estilo, presupuesto, conservar muebles y hasta 5 colores preferidos.
-- **Resultado** con comparador deslizante **antes / después**, análisis del espacio (luz y objetos detectados) y sugerencias de la IA.
-- **Estado en vivo** del servidor y la base de datos en la barra superior y el pie de página.
-- Tema futurista azul medianoche con aurora animada, rejilla luminosa, paneles de vidrio y acentos dorados y cian, adaptable a celular y accesible con teclado (respeta "reducir movimiento").
-
-## 🧩 Patrones de diseño
-
-| Patrón | Dónde | Para qué |
+| Fase | Contenido | Estado |
 |---|---|---|
-| **Singleton** | [`src/api/ApiClient.js`](src/api/ApiClient.js) | Un único cliente HTTP con la URL del backend, compartido por todos los componentes. |
+| 1 | Estructura, configuración, autenticación y login centrado | ✅ |
+| 2 | Dashboard y diseño visual general | ⏳ |
+| 3 | Rediseño con foto y comparador antes/después | ⏳ |
+| 4 | Editor 3D | ⏳ |
+| 5 | Lumi con voz y texto | ⏳ |
+| 6 | Administrador, Mis proyectos y Documentación | ⏳ |
+| 7 | Pruebas, README final y despliegue | ⏳ |
 
-Los demás patrones del proyecto (Builder, Abstract Factory, Adapter, Decorator) viven en el backend; ver su README.
+## Patrones aplicados en el frontend
 
-## 🔒 Seguridad
+| Patrón | Tipo | Dónde | Para qué |
+|---|---|---|---|
+| **Singleton** | Creacional | [`src/services/apiClient.ts`](src/services/apiClient.ts) | Un único cliente HTTP con el token de la sesión para toda la app. |
+| **Observer** | Comportamiento | [`src/context/AuthContext.tsx`](src/context/AuthContext.tsx) | Las pantallas se suscriben a la sesión y se actualizan solas al entrar o salir. |
 
-| Medida | Dónde |
-|---|---|
-| Cabeceras HTTP seguras en Vercel: CSP, `X-Frame-Options`, `nosniff`, HSTS, `Referrer-Policy`, `Permissions-Policy` | [`vercel.json`](vercel.json) |
-| Sesión con token JWT enviado en la cabecera `Authorization`, guardado solo durante la pestaña (`sessionStorage`) y cerrado automáticamente si expira | [`src/auth/AuthContext.jsx`](src/auth/AuthContext.jsx) |
-| Validación de la URL de la foto (solo `http`/`https`) antes de enviarla | [`src/utils/validation.js`](src/utils/validation.js) |
-| Peticiones sin cookies, con tiempo máximo de espera y mensajes de error claros | [`src/api/ApiClient.js`](src/api/ApiClient.js) |
-| Imágenes externas cargadas sin enviar *referrer* | [`src/components/SafeImage.jsx`](src/components/SafeImage.jsx) |
-| React escapa todo el contenido (sin `dangerouslySetInnerHTML`) | Todos los componentes |
-| Dependencias sin vulnerabilidades conocidas (`npm audit`) | [`package.json`](package.json) |
+## Cuentas de prueba
 
-## 🚀 Ejecutar en local
+| Rol | Correo | Contraseña |
+|---|---|---|
+| Usuario | `usuario@habita.app` | `Habita2026` |
+| Administrador | `admin@habita.app` | `Habita2026` |
+
+Las crea el script de semilla del backend; la contraseña sale de la variable `DEMO_PASSWORD`.
+
+## Ejecutar en local
 
 ```bash
 npm install
-cp .env.example .env.local   # VITE_API_URL apuntando al backend
-npm run dev                  # http://localhost:5173
+cp .env.example .env
+npm run dev        # http://localhost:5173
+npm test
+npm run build
 ```
 
-## ☁️ Despliegue
+## Variables de entorno
 
-Desplegado en [Vercel](https://vercel.com) (framework Vite). Variable de entorno: `VITE_API_URL` con la URL del backend en Render. GitHub Actions compila el proyecto en cada push.
+Todas están documentadas en [`.env.example`](.env.example) y se leen en un único módulo: [`src/config.ts`](src/config.ts).
 
-## 👥 Equipo
+| Variable | Para qué |
+|---|---|
+| `VITE_APP_NAME` | Nombre de la app en la interfaz |
+| `VITE_ASSISTANT_NAME` | Nombre de la asistente |
+| `VITE_API_URL` / `VITE_API_PREFIX` | Dirección del backend |
+| `VITE_REQUEST_TIMEOUT_MS` | Tiempo máximo de espera de una petición |
+| `VITE_CURRENCY` / `VITE_LOCALE` | Moneda y formato de precios |
+| `VITE_AUTH_IMAGE_URL` | Foto de fondo del login |
+| `VITE_PHOTO_CREDITS_NAME` / `VITE_PHOTO_CREDITS_URL` | Créditos de las fotos |
+
+## Estructura
+
+```
+src/
+├── config.ts        Configuración leída de VITE_*
+├── pages/           Login, Register, inicio…
+├── components/      Piezas reutilizables de la interfaz
+├── context/         Sesión del usuario
+├── hooks/           Hooks propios
+├── services/        Cliente API y servicios
+├── styles/          Tokens de diseño y estilos
+├── types/           Tipos compartidos
+└── utils/           Validaciones
+```
+
+## Equipo
 
 | Integrante | GitHub |
 |---|---|
