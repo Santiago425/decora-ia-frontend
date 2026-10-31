@@ -1,15 +1,20 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { AppLayout } from './components/layout/AppLayout';
 import { GuestRoute, ProtectedRoute } from './components/ProtectedRoute';
+import { LoadingScreen } from './components/LoadingScreen';
 import { Toaster } from './components/Toaster';
 import { config } from './config';
 import { AuthProvider } from './context/AuthContext';
 import ComingSoon from './pages/ComingSoon';
 import Dashboard from './pages/Dashboard';
+import EditorHome from './pages/EditorHome';
 import Login from './pages/Login';
 import NotFound from './pages/NotFound';
 import Redesign from './pages/Redesign';
 import Register from './pages/Register';
+
+const Editor = lazy(() => import('./pages/Editor'));
 
 export default function App() {
   return (
@@ -25,7 +30,15 @@ export default function App() {
               <Route path="/" element={<Dashboard />} />
               <Route path="/redesign" element={<Redesign />} />
               <Route path="/assistant" element={<ComingSoon title={config.assistantName} />} />
-              <Route path="/editor" element={<ComingSoon title="Editor 3D" />} />
+              <Route path="/editor" element={<EditorHome />} />
+              <Route
+                path="/editor/:projectId"
+                element={
+                  <Suspense fallback={<LoadingScreen />}>
+                    <Editor />
+                  </Suspense>
+                }
+              />
               <Route path="/projects" element={<ComingSoon title="Mis proyectos" />} />
               <Route path="/docs" element={<ComingSoon title="Documentación" />} />
               <Route element={<ProtectedRoute role="admin" />}>

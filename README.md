@@ -9,6 +9,7 @@ Proyecto final de **Patrones de Diseño**
 ![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white)
+![Three.js](https://img.shields.io/badge/Three.js-R3F-000000?logo=threedotjs&logoColor=white)
 ![Vercel](https://img.shields.io/badge/Deploy-Vercel-000000?logo=vercel&logoColor=white)
 
 </div>
@@ -29,7 +30,7 @@ Proyecto final de **Patrones de Diseño**
 | 1 | Estructura, configuración, autenticación y login centrado | ✅ |
 | 2 | Dashboard y diseño visual general | ✅ |
 | 3 | Rediseño con foto y comparador antes/después | ✅ |
-| 4 | Editor 3D | ⏳ |
+| 4 | Editor 3D | ✅ |
 | 5 | Lumi con voz y texto | ⏳ |
 | 6 | Administrador, Mis proyectos y Documentación | ⏳ |
 | 7 | Pruebas, README final y despliegue | ⏳ |
@@ -41,6 +42,13 @@ Proyecto final de **Patrones de Diseño**
 | **Singleton** | Creacional | [`src/services/apiClient.ts`](src/services/apiClient.ts) | Un único cliente HTTP con el token de la sesión para toda la app. |
 | **Observer** | Comportamiento | [`src/services/notificationCenter.ts`](src/services/notificationCenter.ts) | Cualquier parte de la app publica un aviso y los suscriptores (como el `Toaster`) reaccionan sin conocerse entre sí. |
 | **Proxy** | Estructural | [`src/components/ImageProxy.tsx`](src/components/ImageProxy.tsx) | Ocupa el lugar de la imagen real: la carga solo cuando entra en pantalla y muestra un marcador mientras tanto. |
+| **Command** | Comportamiento | [`src/editor/commands.ts`](src/editor/commands.ts) | Agregar, mover, rotar, eliminar, cambiar color o complementos, agrupar y restaurar versiones son objetos que saben aplicarse y revertirse: así funcionan deshacer y rehacer (Ctrl + Z / Ctrl + Y). |
+| **Factory Method** | Creacional | [`src/editor/furnitureFactory.ts`](src/editor/furnitureFactory.ts) | Cada tipo de mueble (sofá, cama, mesa, silla, lámpara, planta…) tiene su fábrica que decide de qué piezas 3D está hecho; la forma viene de la categoría guardada en la base de datos. |
+| **Composite** | Estructural | [`src/editor/composite.ts`](src/editor/composite.ts) | Un mueble, un grupo de muebles y la habitación completa se cotizan, cuentan, mueven y duplican de la misma forma. |
+| **Prototype** | Creacional | [`src/editor/composite.ts`](src/editor/composite.ts) | Duplicar un mueble o un grupo clona la pieza con identificadores nuevos. |
+| **Decorator** | Estructural | [`src/editor/furnitureDecorators.ts`](src/editor/furnitureDecorators.ts) | Cojines, manta, cubierta de vidrio, patas de latón o luz LED envuelven al mueble y le suman precio y apariencia sin modificar su clase. |
+| **Abstract Factory** | Creacional | [`src/editor/styleTheme.ts`](src/editor/styleTheme.ts) | `StyleThemeFactory`: cada estilo produce una familia coherente de luz, acabado de paredes, piso y colores de acento. |
+| **Observer** | Comportamiento | [`src/editor/editorStore.ts`](src/editor/editorStore.ts) | El lienzo 3D, los paneles y la barra de herramientas se suscriben al estado del editor y se actualizan cuando cambia la escena. |
 
 ## Cuentas de prueba
 
@@ -74,6 +82,8 @@ Todas están documentadas en [`.env.example`](.env.example) y se leen en un úni
 | `VITE_AI_TIMEOUT_MS` | Tiempo máximo de espera de un rediseño con IA |
 | `VITE_MAX_PHOTO_SIDE` | Tamaño máximo al que se reduce la foto antes de subirla |
 | `VITE_CURRENCY` / `VITE_LOCALE` | Moneda y formato de precios |
+| `VITE_EDITOR_SNAP`, `VITE_EDITOR_MOVE_STEP`, `VITE_EDITOR_ROTATE_STEP` | Cuadrícula, paso al mover con flechas y grados al rotar en el editor 3D |
+| `VITE_EDITOR_HISTORY_LIMIT`, `VITE_EDITOR_AUTOSAVE_MS`, `VITE_EDITOR_DUPLICATE_OFFSET` | Pasos que se pueden deshacer, espera del guardado automático y separación de una copia |
 | `VITE_AUTH_IMAGE_URL` | Foto de fondo del login |
 | `VITE_DASHBOARD_BANNER_URL` | Foto del banner del inicio |
 | `VITE_PHOTO_CREDITS_NAME` / `VITE_PHOTO_CREDITS_URL` | Créditos de las fotos |
@@ -86,6 +96,8 @@ src/
 ├── pages/           Login, Register, Dashboard…
 ├── components/layout/ Menú lateral y menú inferior del celular
 ├── components/dashboard/ Tarjetas, gráfica, actividad y proyectos
+├── components/editor/ Lienzo 3D (React Three Fiber), catálogo, propiedades y versiones
+├── editor/          Lógica del editor 3D: comandos, fábricas, composite, decoradores, temas
 ├── components/      Piezas reutilizables de la interfaz
 ├── context/         Sesión del usuario
 ├── hooks/           Hooks propios

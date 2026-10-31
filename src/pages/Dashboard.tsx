@@ -103,7 +103,9 @@ export default function Dashboard() {
             {data.recent_projects.length ? (
               <div className="project-grid">
                 {data.recent_projects.map((project, index) => (
-                  <ProjectCard key={project.id} project={project} delay={index * 70} />
+                  <Link key={project.id} to={`/editor/${project.id}`} className="project-link" aria-label={`Abrir ${project.name} en el editor 3D`}>
+                    <ProjectCard project={project} delay={index * 70} />
+                  </Link>
                 ))}
               </div>
             ) : (
