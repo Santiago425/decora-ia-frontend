@@ -13,5 +13,6 @@ export const config = Object.freeze({
   currency: read('VITE_CURRENCY'),
   locale: read('VITE_LOCALE'),
   authImageUrl: read('VITE_AUTH_IMAGE_URL'),
+  dashboardBannerUrl: read('VITE_DASHBOARD_BANNER_URL'),
   photoCredits: { name: read('VITE_PHOTO_CREDITS_NAME'), url: read('VITE_PHOTO_CREDITS_URL') },
 });

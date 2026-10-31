@@ -3,7 +3,9 @@ import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthLayout } from '../components/AuthLayout';
 import { FormField } from '../components/FormField';
+import { config } from '../config';
 import { useAuth } from '../hooks/useAuth';
+import { notificationCenter } from '../services/notificationCenter';
 import { validateEmail, validateFullName, validatePassword } from '../utils/validation';
 
 type Errors = Partial<Record<'fullName' | 'email' | 'password' | 'confirm', string | null>>;
@@ -32,7 +34,8 @@ export default function Register() {
     setLoading(true);
     setServerError('');
     try {
-      await register({ full_name: form.fullName.trim(), email: form.email.trim(), password: form.password });
+      const user = await register({ full_name: form.fullName.trim(), email: form.email.trim(), password: form.password });
+      notificationCenter.notify(`Bienvenido a ${config.appName}, ${user.full_name.split(' ')[0]}`, 'success');
       navigate('/', { replace: true });
     } catch (error) {
       setServerError((error as Error).message);

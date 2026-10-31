@@ -27,7 +27,7 @@ Proyecto final de **Patrones de Diseño**
 | Fase | Contenido | Estado |
 |---|---|---|
 | 1 | Estructura, configuración, autenticación y login centrado | ✅ |
-| 2 | Dashboard y diseño visual general | ⏳ |
+| 2 | Dashboard y diseño visual general | ✅ |
 | 3 | Rediseño con foto y comparador antes/después | ⏳ |
 | 4 | Editor 3D | ⏳ |
 | 5 | Lumi con voz y texto | ⏳ |
@@ -39,7 +39,8 @@ Proyecto final de **Patrones de Diseño**
 | Patrón | Tipo | Dónde | Para qué |
 |---|---|---|---|
 | **Singleton** | Creacional | [`src/services/apiClient.ts`](src/services/apiClient.ts) | Un único cliente HTTP con el token de la sesión para toda la app. |
-| **Observer** | Comportamiento | [`src/context/AuthContext.tsx`](src/context/AuthContext.tsx) | Las pantallas se suscriben a la sesión y se actualizan solas al entrar o salir. |
+| **Observer** | Comportamiento | [`src/services/notificationCenter.ts`](src/services/notificationCenter.ts) | Cualquier parte de la app publica un aviso y los suscriptores (como el `Toaster`) reaccionan sin conocerse entre sí. |
+| **Proxy** | Estructural | [`src/components/ImageProxy.tsx`](src/components/ImageProxy.tsx) | Ocupa el lugar de la imagen real: la carga solo cuando entra en pantalla y muestra un marcador mientras tanto. |
 
 ## Cuentas de prueba
 
@@ -72,6 +73,7 @@ Todas están documentadas en [`.env.example`](.env.example) y se leen en un úni
 | `VITE_REQUEST_TIMEOUT_MS` | Tiempo máximo de espera de una petición |
 | `VITE_CURRENCY` / `VITE_LOCALE` | Moneda y formato de precios |
 | `VITE_AUTH_IMAGE_URL` | Foto de fondo del login |
+| `VITE_DASHBOARD_BANNER_URL` | Foto del banner del inicio |
 | `VITE_PHOTO_CREDITS_NAME` / `VITE_PHOTO_CREDITS_URL` | Créditos de las fotos |
 
 ## Estructura
@@ -79,7 +81,9 @@ Todas están documentadas en [`.env.example`](.env.example) y se leen en un úni
 ```
 src/
 ├── config.ts        Configuración leída de VITE_*
-├── pages/           Login, Register, inicio…
+├── pages/           Login, Register, Dashboard…
+├── components/layout/ Menú lateral y menú inferior del celular
+├── components/dashboard/ Tarjetas, gráfica, actividad y proyectos
 ├── components/      Piezas reutilizables de la interfaz
 ├── context/         Sesión del usuario
 ├── hooks/           Hooks propios

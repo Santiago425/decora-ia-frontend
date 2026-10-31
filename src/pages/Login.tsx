@@ -5,6 +5,7 @@ import { AuthLayout } from '../components/AuthLayout';
 import { FormField } from '../components/FormField';
 import { RoleSwitch } from '../components/RoleSwitch';
 import { useAuth } from '../hooks/useAuth';
+import { notificationCenter } from '../services/notificationCenter';
 import type { UserRole } from '../types/auth';
 import { validateEmail, validatePassword } from '../utils/validation';
 
@@ -29,7 +30,8 @@ export default function Login() {
     try {
       const user = await login({ email: email.trim(), password, role });
       const from = (location.state as { from?: string } | null)?.from;
-      navigate(from ?? (user.role === 'admin' ? '/admin' : '/'), { replace: true });
+      notificationCenter.notify(`Hola de nuevo, ${user.full_name.split(' ')[0]}`, 'success');
+      navigate(from ?? '/', { replace: true });
     } catch (error) {
       setServerError((error as Error).message);
     } finally {
