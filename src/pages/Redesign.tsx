@@ -27,10 +27,10 @@ export default function Redesign() {
 
   const [photo, setPhoto] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
-  const [roomType, setRoomType] = useState('');
+  const [roomType, setRoomType] = useState(params.get('room_type') ?? '');
   const [style, setStyle] = useState(params.get('style') ?? '');
   const [paletteId, setPaletteId] = useState<number | null>(null);
-  const [budget, setBudget] = useState('');
+  const [budget, setBudget] = useState(params.get('budget') ?? '');
   const [keepStructure, setKeepStructure] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');

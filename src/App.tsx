@@ -4,9 +4,9 @@ import { AppLayout } from './components/layout/AppLayout';
 import { GuestRoute, ProtectedRoute } from './components/ProtectedRoute';
 import { LoadingScreen } from './components/LoadingScreen';
 import { Toaster } from './components/Toaster';
-import { config } from './config';
 import { AuthProvider } from './context/AuthContext';
 import ComingSoon from './pages/ComingSoon';
+import Assistant from './pages/Assistant';
 import Dashboard from './pages/Dashboard';
 import EditorHome from './pages/EditorHome';
 import Login from './pages/Login';
@@ -29,7 +29,7 @@ export default function App() {
             <Route element={<AppLayout />}>
               <Route path="/" element={<Dashboard />} />
               <Route path="/redesign" element={<Redesign />} />
-              <Route path="/assistant" element={<ComingSoon title={config.assistantName} />} />
+              <Route path="/assistant" element={<Assistant />} />
               <Route path="/editor" element={<EditorHome />} />
               <Route
                 path="/editor/:projectId"

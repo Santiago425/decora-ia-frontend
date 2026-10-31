@@ -7,6 +7,7 @@ import { EditorToolbar, type SaveState } from '../components/editor/EditorToolba
 import { Inspector } from '../components/editor/Inspector';
 import { RoomPanel } from '../components/editor/RoomPanel';
 import { VersionsPanel } from '../components/editor/VersionsPanel';
+import { assistantBus } from '../assistant/assistantBus';
 import { config } from '../config';
 import {
   AddNodesCommand,
@@ -184,6 +185,65 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [store, duplicate, remove, rotate, move]);
+
+  useEffect(
+    () =>
+      assistantBus.subscribe((action) => {
+        const { params } = action;
+        const editor = store.getState();
+        const selected = editor.selection;
+        const needsSelection = ['rotate_selected', 'remove_selected', 'duplicate_selected'].includes(action.type);
+        if (needsSelection && selected.length === 0) {
+          notificationCenter.notify('Primero selecciona un mueble en la habitación', 'info');
+          return true;
+        }
+        if (editor.readOnly && action.type !== 'undo' && action.type !== 'redo') {
+          notificationCenter.notify('Este proyecto está terminado. Reábrelo para seguir editando', 'info');
+          return true;
+        }
+        switch (action.type) {
+          case 'add_furniture': {
+            const item = catalog.furniture.find((f) => f.id === Number(params.furniture_id));
+            if (item) addFurniture(item);
+            return true;
+          }
+          case 'change_style':
+            applyStyle(String(params.style));
+            return true;
+          case 'change_wall':
+          case 'change_floor': {
+            const key = action.type === 'change_wall' ? 'wall_material' : 'floor_material';
+            const label = action.type === 'change_wall' ? 'Cambiar paredes' : 'Cambiar piso';
+            store.execute(new UpdateSceneCommand({ room: { ...editor.scene.room, [key]: String(params.material) } }, label));
+            return true;
+          }
+          case 'set_lighting': {
+            const { lighting } = editor.scene;
+            const intensity = Math.min(2, Math.max(0.3, lighting.intensity + Number(params.delta) * 0.4));
+            store.execute(new UpdateSceneCommand({ lighting: { ...lighting, intensity: Number(intensity.toFixed(2)) } }, 'Cambiar luz'));
+            return true;
+          }
+          case 'undo':
+            store.undo();
+            return true;
+          case 'redo':
+            store.redo();
+            return true;
+          case 'rotate_selected':
+            selected.forEach((id) => rotate(id, Number(params.degrees) || config.editor.rotateStep));
+            return true;
+          case 'remove_selected':
+            selected.forEach(remove);
+            return true;
+          case 'duplicate_selected':
+            selected.forEach(duplicate);
+            return true;
+          default:
+            return false;
+        }
+      }),
+    [store, catalog, addFurniture, applyStyle, rotate, remove, duplicate],
+  );
 
   async function runProjectAction(action: ProjectAction) {
     setBusy(true);

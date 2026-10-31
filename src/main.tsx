@@ -7,6 +7,7 @@ import './styles/layout.css';
 import './styles/dashboard.css';
 import './styles/redesign.css';
 import './styles/editor.css';
+import './styles/assistant.css';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';

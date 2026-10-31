@@ -1,3 +1,4 @@
+import { chatStore } from '../assistant/chatStore';
 import { createContext, useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { apiClient } from '../services/apiClient';
 import { authService } from '../services/authService';
@@ -22,6 +23,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     sessionStore.clear();
     apiClient.setToken(null);
     setUser(null);
+    chatStore.reset();
   }, []);
 
   const start = useCallback((session: Session) => {

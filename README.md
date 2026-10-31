@@ -31,7 +31,7 @@ Proyecto final de **Patrones de Diseño**
 | 2 | Dashboard y diseño visual general | ✅ |
 | 3 | Rediseño con foto y comparador antes/después | ✅ |
 | 4 | Editor 3D | ✅ |
-| 5 | Lumi con voz y texto | ⏳ |
+| 5 | Lumi con voz y texto | ✅ |
 | 6 | Administrador, Mis proyectos y Documentación | ⏳ |
 | 7 | Pruebas, README final y despliegue | ⏳ |
 
@@ -49,6 +49,9 @@ Proyecto final de **Patrones de Diseño**
 | **Decorator** | Estructural | [`src/editor/furnitureDecorators.ts`](src/editor/furnitureDecorators.ts) | Cojines, manta, cubierta de vidrio, patas de latón o luz LED envuelven al mueble y le suman precio y apariencia sin modificar su clase. |
 | **Abstract Factory** | Creacional | [`src/editor/styleTheme.ts`](src/editor/styleTheme.ts) | `StyleThemeFactory`: cada estilo produce una familia coherente de luz, acabado de paredes, piso y colores de acento. |
 | **Observer** | Comportamiento | [`src/editor/editorStore.ts`](src/editor/editorStore.ts) | El lienzo 3D, los paneles y la barra de herramientas se suscriben al estado del editor y se actualizan cuando cambia la escena. |
+| **Adapter** | Estructural | [`src/assistant/voiceAdapter.ts`](src/assistant/voiceAdapter.ts) | `VoiceAdapter` envuelve el reconocimiento de voz y la síntesis del navegador (con nombres distintos según el navegador) en una interfaz simple: escuchar, hablar y detener. |
+| **Observer** | Comportamiento | [`src/assistant/assistantBus.ts`](src/assistant/assistantBus.ts) | Lumi publica sus acciones y quien puede ejecutarlas se suscribe: el enrutador abre páginas y proyectos, el editor 3D agrega muebles, cambia paredes, luz o estilo y deshace. |
+| **Observer** | Comportamiento | [`src/assistant/chatStore.ts`](src/assistant/chatStore.ts) | El chat flotante y la página de Lumi comparten la misma conversación y se mantienen sincronizados. |
 
 ## Cuentas de prueba
 
@@ -76,7 +79,7 @@ Todas están documentadas en [`.env.example`](.env.example) y se leen en un úni
 | Variable | Para qué |
 |---|---|
 | `VITE_APP_NAME` | Nombre de la app en la interfaz |
-| `VITE_ASSISTANT_NAME` | Nombre de la asistente |
+| `VITE_ASSISTANT_NAME` | Nombre de la asistente (el reconocimiento y la voz usan `VITE_LOCALE`) |
 | `VITE_API_URL` / `VITE_API_PREFIX` | Dirección del backend |
 | `VITE_REQUEST_TIMEOUT_MS` | Tiempo máximo de espera de una petición |
 | `VITE_AI_TIMEOUT_MS` | Tiempo máximo de espera de un rediseño con IA |
@@ -98,6 +101,8 @@ src/
 ├── components/dashboard/ Tarjetas, gráfica, actividad y proyectos
 ├── components/editor/ Lienzo 3D (React Three Fiber), catálogo, propiedades y versiones
 ├── editor/          Lógica del editor 3D: comandos, fábricas, composite, decoradores, temas
+├── components/assistant/ Chat de Lumi, botón flotante y ejecutor de acciones
+├── assistant/       Voz (Adapter), bus de acciones y conversación (Observer)
 ├── components/      Piezas reutilizables de la interfaz
 ├── context/         Sesión del usuario
 ├── hooks/           Hooks propios
