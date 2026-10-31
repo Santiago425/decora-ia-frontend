@@ -11,6 +11,7 @@ Proyecto final de **Patrones de Diseño**
 ![Vite](https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white)
 ![Three.js](https://img.shields.io/badge/Three.js-R3F-000000?logo=threedotjs&logoColor=white)
 ![Vercel](https://img.shields.io/badge/Deploy-Vercel-000000?logo=vercel&logoColor=white)
+![CI](https://github.com/Santiago425/decora-ia-frontend/actions/workflows/ci.yml/badge.svg)
 
 </div>
 
@@ -23,17 +24,40 @@ Proyecto final de **Patrones de Diseño**
 | Frontend | [decora-ia-frontend](https://github.com/Santiago425/decora-ia-frontend) | https://decora-ia-frontend.vercel.app |
 | Backend | [decora-ia-backend](https://github.com/Santiago425/decora-ia-backend) | https://decora-ia-backend.onrender.com/api/v1/hello |
 
-## Avance
+## Capturas
 
-| Fase | Contenido | Estado |
-|---|---|---|
-| 1 | Estructura, configuración, autenticación y login centrado | ✅ |
-| 2 | Dashboard y diseño visual general | ✅ |
-| 3 | Rediseño con foto y comparador antes/después | ✅ |
-| 4 | Editor 3D | ✅ |
-| 5 | Lumi con voz y texto | ✅ |
-| 6 | Administrador, Mis proyectos y Documentación | ✅ |
-| 7 | Pruebas, README final y despliegue | ⏳ |
+| Login con selector de cuenta | Inicio |
+|---|---|
+| ![Login](docs/screenshots/login.jpg) | ![Inicio](docs/screenshots/dashboard.jpg) |
+| **Rediseño con foto (antes / después)** | **Editor 3D** |
+| ![Rediseño](docs/screenshots/rediseno.jpg) | ![Editor 3D](docs/screenshots/editor-3d.jpg) |
+| **Lumi ejecutando órdenes en el editor** | **Mis proyectos** |
+| ![Lumi](docs/screenshots/lumi-editor.jpg) | ![Mis proyectos](docs/screenshots/mis-proyectos.jpg) |
+| **Panel de administración** | **Documentación con UML dentro de la app** |
+| ![Administración](docs/screenshots/admin.jpg) | ![Documentación](docs/screenshots/documentacion.jpg) |
+
+## Funcionalidades
+
+| Sección | Qué hace |
+|---|---|
+| **Login y registro** | Login centrado con selector Usuario / Administrador, validaciones en vivo y sesión con JWT. |
+| **Inicio** | Resumen de proyectos, rediseños, estilo favorito y presupuesto, con gráfica de estilos y actividad reciente. |
+| **Rediseño con foto** | Sube o toma una foto con la cámara del celular, elige habitación, estilo, paleta y presupuesto; la IA devuelve la imagen rediseñada, colores, muebles y materiales con precio. Comparador antes / después y variaciones. |
+| **Editor 3D** | Arma la habitación con muebles del catálogo: mover, rotar, duplicar, agrupar, colores, acabados y complementos, deshacer y rehacer, vista de planta, captura, versiones y guardado automático. |
+| **Lumi** | Asistente por voz o texto. Entiende lo que pides y lo hace: crea proyectos, te lleva al rediseño, agrega muebles, pinta paredes, cambia la luz o deshace cambios. Puede leer sus respuestas en voz alta. |
+| **Mis proyectos** | Buscar, filtrar por estado o tipo, ordenar, renombrar, duplicar y eliminar. |
+| **Administración** | Solo para administradores: métricas de la plataforma, usuarios (rol y activación), catálogo (precios, muebles nuevos, estilos y complementos visibles) y reportes CSV. |
+| **Documentación** | Arquitectura, cuentas de prueba, diagrama entidad relación y cada patrón con su problema, solución, archivos y diagrama UML (Mermaid). |
+
+## Guía rápida para la evaluación
+
+1. Abrir https://decora-ia-frontend.vercel.app (si el backend estuvo dormido, el primer ingreso tarda unos segundos en Render).
+2. Entrar como **Usuario** con `usuario@habita.app` / `Habita2026`.
+3. **Rediseño:** subir una foto de una sala, elegir *Japandi* y ver el antes / después con su presupuesto.
+4. **Editor 3D:** abrir un proyecto, mover un mueble, agregarle cojines y probar *Deshacer* (Ctrl + Z).
+5. **Lumi:** tocar el botón flotante y decir o escribir *"agrega una planta"* y *"pinta las paredes verde salvia"*.
+6. **Documentación:** mostrar los patrones con sus diagramas UML y el diagrama de la base de datos.
+7. Cerrar sesión y entrar como **Administrador** con `admin@habita.app` / `Habita2026` para ver métricas, usuarios, catálogo y reportes.
 
 ## Patrones aplicados en el frontend
 
@@ -72,6 +96,19 @@ npm run dev        # http://localhost:5173
 npm test
 npm run build
 ```
+
+Con Docker (sirve la app compilada con nginx):
+
+```bash
+docker build -t habita-frontend --build-arg VITE_API_URL=http://localhost:8000 .
+docker run -p 8080:80 habita-frontend      # http://localhost:8080
+```
+
+## Calidad
+
+- **45 pruebas** con Vitest: comandos de deshacer / rehacer, fábricas de muebles, composite, filtros y orden de proyectos, bus de Lumi, conversación, adaptador de voz, formatos y validaciones.
+- **Integración continua** con GitHub Actions: en cada push se ejecutan las pruebas, la compilación de TypeScript y la imagen de Docker.
+- Despliegue automático en **Vercel** desde `main`, con cabeceras de seguridad (CSP, HSTS, permisos de cámara y micrófono) en [`vercel.json`](vercel.json).
 
 ## Variables de entorno
 
