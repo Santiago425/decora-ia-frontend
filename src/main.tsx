@@ -5,6 +5,7 @@ import './styles/global.css';
 import './styles/auth.css';
 import './styles/layout.css';
 import './styles/dashboard.css';
+import './styles/redesign.css';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';

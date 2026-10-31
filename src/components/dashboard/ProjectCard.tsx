@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { ProjectStatus, ProjectSummary } from '../../types/dashboard';
 import { formatCurrency } from '../../utils/format';
+import { resolveMediaUrl } from '../../utils/media';
 import { ImageProxy } from '../ImageProxy';
 
 export const STATUS_LABELS: Record<ProjectStatus, string> = {
@@ -24,11 +25,11 @@ export function ProjectCard({ project, delay }: { project: ProjectSummary; delay
         }}
         onPointerLeave={() => setSplit(50)}
       >
-        <ImageProxy src={project.after_image_url ?? project.before_image_url} alt={`Diseño de ${project.name}`} />
+        <ImageProxy src={resolveMediaUrl(project.after_image_url ?? project.before_image_url)} alt={`Diseño de ${project.name}`} />
         {hasComparison && (
           <>
             <div className="thumb-before" style={{ clipPath: `inset(0 ${100 - split}% 0 0)` }}>
-              <ImageProxy src={project.before_image_url} alt={`Foto original de ${project.name}`} />
+              <ImageProxy src={resolveMediaUrl(project.before_image_url)} alt={`Foto original de ${project.name}`} />
             </div>
             <span className="thumb-divider" style={{ left: `${split}%` }} />
             <span className="thumb-tag before">Antes</span>

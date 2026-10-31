@@ -8,6 +8,7 @@ import ComingSoon from './pages/ComingSoon';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import NotFound from './pages/NotFound';
+import Redesign from './pages/Redesign';
 import Register from './pages/Register';
 
 export default function App() {
@@ -22,7 +23,7 @@ export default function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<AppLayout />}>
               <Route path="/" element={<Dashboard />} />
-              <Route path="/redesign" element={<ComingSoon title="Rediseño con foto" />} />
+              <Route path="/redesign" element={<Redesign />} />
               <Route path="/assistant" element={<ComingSoon title={config.assistantName} />} />
               <Route path="/editor" element={<ComingSoon title="Editor 3D" />} />
               <Route path="/projects" element={<ComingSoon title="Mis proyectos" />} />

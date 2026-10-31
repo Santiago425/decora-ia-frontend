@@ -28,7 +28,7 @@ Proyecto final de **Patrones de Diseño**
 |---|---|---|
 | 1 | Estructura, configuración, autenticación y login centrado | ✅ |
 | 2 | Dashboard y diseño visual general | ✅ |
-| 3 | Rediseño con foto y comparador antes/después | ⏳ |
+| 3 | Rediseño con foto y comparador antes/después | ✅ |
 | 4 | Editor 3D | ⏳ |
 | 5 | Lumi con voz y texto | ⏳ |
 | 6 | Administrador, Mis proyectos y Documentación | ⏳ |
@@ -71,6 +71,8 @@ Todas están documentadas en [`.env.example`](.env.example) y se leen en un úni
 | `VITE_ASSISTANT_NAME` | Nombre de la asistente |
 | `VITE_API_URL` / `VITE_API_PREFIX` | Dirección del backend |
 | `VITE_REQUEST_TIMEOUT_MS` | Tiempo máximo de espera de una petición |
+| `VITE_AI_TIMEOUT_MS` | Tiempo máximo de espera de un rediseño con IA |
+| `VITE_MAX_PHOTO_SIDE` | Tamaño máximo al que se reduce la foto antes de subirla |
 | `VITE_CURRENCY` / `VITE_LOCALE` | Moneda y formato de precios |
 | `VITE_AUTH_IMAGE_URL` | Foto de fondo del login |
 | `VITE_DASHBOARD_BANNER_URL` | Foto del banner del inicio |

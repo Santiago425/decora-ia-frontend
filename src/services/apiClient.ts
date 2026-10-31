@@ -9,6 +9,8 @@ export class ApiError extends Error {
 
 type RequestOptions = Omit<RequestInit, 'body'> & { body?: unknown; timeoutMs?: number };
 
+const isForm = (body: unknown): body is FormData => typeof FormData !== 'undefined' && body instanceof FormData;
+
 const NETWORK_ERROR = 'No pudimos conectar con el servidor. Si estuvo inactivo, puede tardar unos segundos en despertar.';
 
 // Singleton: one HTTP client shared by the whole app, holding the session token.
@@ -39,11 +41,11 @@ export class ApiClient {
       response = await fetch(`${this.baseUrl}${path}`, {
         ...init,
         headers: {
-          ...(body !== undefined && { 'Content-Type': 'application/json' }),
+          ...(body !== undefined && !isForm(body) && { 'Content-Type': 'application/json' }),
           ...(this.#token && { Authorization: `Bearer ${this.#token}` }),
           ...headers,
         },
-        body: body === undefined ? undefined : JSON.stringify(body),
+        body: body === undefined ? undefined : isForm(body) ? body : JSON.stringify(body),
         credentials: 'omit',
         signal: AbortSignal.timeout(timeoutMs ?? this.timeoutMs),
       });
