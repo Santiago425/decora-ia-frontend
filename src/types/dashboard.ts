@@ -22,6 +22,8 @@ export interface ProjectSummary {
   estimated_budget: string;
   before_image_url: string | null;
   after_image_url: string | null;
+  redesign_count: number;
+  created_at: string | null;
   updated_at: string;
 }
 

@@ -1,3 +1,4 @@
+import { Box } from 'lucide-react';
 import { useState } from 'react';
 import type { ProjectStatus, ProjectSummary } from '../../types/dashboard';
 import { formatCurrency } from '../../utils/format';
@@ -25,7 +26,14 @@ export function ProjectCard({ project, delay }: { project: ProjectSummary; delay
         }}
         onPointerLeave={() => setSplit(50)}
       >
-        <ImageProxy src={resolveMediaUrl(project.after_image_url ?? project.before_image_url)} alt={`Diseño de ${project.name}`} />
+        {project.after_image_url || project.before_image_url ? (
+          <ImageProxy src={resolveMediaUrl(project.after_image_url ?? project.before_image_url)} alt={`Diseño de ${project.name}`} />
+        ) : (
+          <div className="thumb-scene" aria-hidden="true">
+            <Box size={34} strokeWidth={1.5} />
+            <span>Proyecto 3D</span>
+          </div>
+        )}
         {hasComparison && (
           <>
             <div className="thumb-before" style={{ clipPath: `inset(0 ${100 - split}% 0 0)` }}>

@@ -62,6 +62,26 @@ export class ApiClient {
     return data as T;
   }
 
+  async download(path: string): Promise<{ blob: Blob; fileName: string }> {
+    let response: Response;
+    try {
+      response = await fetch(`${this.baseUrl}${path}`, {
+        headers: this.#token ? { Authorization: `Bearer ${this.#token}` } : {},
+        credentials: 'omit',
+        signal: AbortSignal.timeout(this.timeoutMs),
+      });
+    } catch {
+      throw new ApiError(NETWORK_ERROR, 0);
+    }
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      throw new ApiError(typeof data.detail === 'string' ? data.detail : `Error ${response.status}`, response.status);
+    }
+    const disposition = response.headers.get('Content-Disposition') ?? '';
+    const fileName = /filename="([^"]+)"/.exec(disposition)?.[1] ?? 'reporte.csv';
+    return { blob: await response.blob(), fileName };
+  }
+
   get<T>(path: string, options?: RequestOptions) {
     return this.request<T>(path, { ...options, method: 'GET' });
   }

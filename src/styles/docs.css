@@ -1,0 +1,402 @@
+.docs-page {
+  max-width: 1100px;
+}
+
+.docs-page > *,
+.docs-section > *,
+.pattern-list > * {
+  min-width: 0;
+}
+
+.docs-hero {
+  display: grid;
+  gap: 6px;
+}
+
+.docs-kicker {
+  color: var(--terracotta-dark);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.docs-hero .page-subtitle {
+  max-width: 760px;
+}
+
+.docs-index {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.docs-index a {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid var(--sand-300);
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--ink-soft);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.docs-index a:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.docs-section {
+  display: grid;
+  gap: 14px;
+  padding: 26px;
+  border-radius: var(--radius-lg);
+  background: var(--white);
+  box-shadow: var(--shadow-sm);
+  scroll-margin-top: 80px;
+}
+
+.docs-section > h2 {
+  font-size: 26px;
+}
+
+.docs-section > p {
+  max-width: 780px;
+  margin: 0;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+
+.docs-section code,
+.file-list code {
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: var(--sand-100);
+  font-size: 0.9em;
+}
+
+.mermaid-box {
+  overflow-x: auto;
+  padding: 16px;
+  border: 1px solid var(--sand-200);
+  border-radius: var(--radius-md);
+  background: var(--sand-50);
+}
+
+.mermaid-svg {
+  display: flex;
+  justify-content: center;
+}
+
+.mermaid-svg svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.mermaid-loading {
+  display: grid;
+  place-items: center;
+  min-height: 180px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.mermaid-code {
+  margin: 0;
+  font-size: 12px;
+  white-space: pre-wrap;
+}
+
+.docs-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.docs-facts div {
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: var(--sand-100);
+}
+
+.docs-facts dt {
+  color: var(--muted);
+  font-size: 12.5px;
+}
+
+.docs-facts dd {
+  margin: 2px 0 0;
+  font-weight: 700;
+}
+
+.account-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px;
+}
+
+.account-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 18px;
+  border: 1px solid var(--sand-200);
+  border-radius: var(--radius-md);
+}
+
+.account-card h3 {
+  font-size: 18px;
+}
+
+.account-card small {
+  color: var(--muted);
+}
+
+.account-card dl {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 8px;
+  margin: 0;
+}
+
+.account-card dl div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.account-card dt {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.account-card dd {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  min-width: 0;
+}
+
+.account-card dd code {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.account-card .icon-button {
+  width: 30px;
+  height: 30px;
+}
+
+.account-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: var(--sage-light);
+  color: var(--sage-dark);
+}
+
+.account-icon.admin {
+  background: var(--ink);
+  color: var(--sand-50);
+}
+
+.docs-filters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.docs-filters .chips {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.docs-filters .chip {
+  flex: none;
+  min-height: 36px;
+  font-size: 13.5px;
+}
+
+.pattern-list {
+  display: grid;
+  gap: 10px;
+}
+
+.pattern-card {
+  overflow: hidden;
+  border: 1px solid var(--sand-200);
+  border-radius: var(--radius-md);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.pattern-card.open {
+  border-color: var(--sand-300);
+  box-shadow: var(--shadow-sm);
+}
+
+.pattern-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  padding: 16px 18px;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.pattern-head:hover {
+  background: var(--sand-50);
+}
+
+.pattern-head h3 {
+  margin-top: 6px;
+  font-size: 19px;
+}
+
+.pattern-head p {
+  margin: 2px 0 0;
+  color: var(--ink-soft);
+  font-size: 14.5px;
+}
+
+.pattern-chevron {
+  flex: none;
+  color: var(--muted);
+  transition: transform 0.25s var(--ease-out);
+}
+
+.pattern-card.open .pattern-chevron {
+  transform: rotate(180deg);
+}
+
+.pattern-tags {
+  display: flex;
+  gap: 6px;
+}
+
+.tag {
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.tag-creacional {
+  background: #f6e1d6;
+  color: var(--terracotta-dark);
+}
+
+.tag-estructural {
+  background: #ecdfd2;
+  color: var(--wood-dark);
+}
+
+.tag-comportamiento {
+  background: var(--sage-light);
+  color: var(--sage-dark);
+}
+
+.tag-arquitectura {
+  background: var(--sand-200);
+  color: var(--ink);
+}
+
+.tag-side {
+  background: var(--sand-100);
+  color: var(--ink-soft);
+}
+
+.pattern-body {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 20px;
+  padding: 4px 18px 18px;
+  animation: rise 0.3s var(--ease-out);
+}
+
+.pattern-text h4 {
+  margin: 12px 0 4px;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.pattern-text h4:first-child {
+  margin-top: 0;
+}
+
+.pattern-text p {
+  margin: 0;
+  line-height: 1.55;
+}
+
+.file-list {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+}
+
+.file-list code {
+  overflow-wrap: anywhere;
+}
+
+.stack-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.stack-card {
+  padding: 16px;
+  border-radius: var(--radius-md);
+  background: var(--sand-50);
+}
+
+.stack-card h3 {
+  font-size: 17px;
+}
+
+.stack-card ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+@media (max-width: 760px) {
+  .docs-section {
+    padding: 18px;
+  }
+
+  .docs-facts,
+  .pattern-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

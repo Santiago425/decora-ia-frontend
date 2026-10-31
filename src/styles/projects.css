@@ -1,0 +1,213 @@
+.projects-header,
+.admin-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.projects-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 14px;
+  border-radius: var(--radius-lg);
+  background: var(--white);
+  box-shadow: var(--shadow-sm);
+}
+
+.projects-toolbar .chips {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.projects-toolbar .chip {
+  flex: none;
+  min-height: 38px;
+  font-size: 14px;
+}
+
+.search-box {
+  display: flex;
+  flex: 1 1 260px;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--sand-300);
+  border-radius: 999px;
+  background: var(--sand-50);
+  color: var(--muted);
+}
+
+.search-box:focus-within {
+  border-color: var(--terracotta);
+  outline: 2px solid color-mix(in srgb, var(--terracotta) 35%, transparent);
+}
+
+.search-box input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  outline: none;
+}
+
+.toolbar-selects {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.toolbar-selects select,
+.admin-select {
+  min-height: 40px;
+  padding: 0 32px 0 12px;
+  border: 1px solid var(--sand-300);
+  border-radius: var(--radius-sm);
+  background: var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237f857f' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center;
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  appearance: none;
+}
+
+.project-item {
+  position: relative;
+}
+
+.project-item .project-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.project-actions {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(251, 248, 243, 0.92);
+  backdrop-filter: blur(8px);
+  box-shadow: var(--shadow-sm);
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.2s, transform 0.2s var(--ease-out);
+}
+
+.project-item:hover .project-actions,
+.project-item:focus-within .project-actions {
+  opacity: 1;
+  transform: none;
+}
+
+.project-actions .icon-button {
+  width: 34px;
+  height: 34px;
+}
+
+.icon-button.danger {
+  color: var(--danger);
+}
+
+.icon-button.danger:hover {
+  background: var(--danger-bg);
+}
+
+.rename-form input {
+  width: 200px;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--terracotta);
+  border-radius: 999px;
+  font: inherit;
+  font-size: 14px;
+}
+
+.project-skeleton {
+  min-height: 290px;
+  background: linear-gradient(110deg, var(--sand-200) 30%, var(--sand-50) 50%, var(--sand-200) 70%) 0 0 / 300% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+
+.confirm-dialog {
+  width: min(420px, calc(100vw - 32px));
+  padding: 24px;
+  border: 0;
+  border-radius: var(--radius-lg);
+  background: var(--white);
+  color: var(--ink);
+  box-shadow: var(--shadow-lg);
+}
+
+.confirm-dialog::backdrop {
+  background: rgba(35, 48, 42, 0.4);
+  backdrop-filter: blur(3px);
+}
+
+.confirm-dialog h2 {
+  font-size: 22px;
+}
+
+.confirm-dialog p {
+  color: var(--ink-soft);
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.button-danger {
+  background: var(--danger);
+  color: var(--white);
+}
+
+.button-danger:hover:not(:disabled) {
+  background: #9b3524;
+}
+
+@media (hover: none) {
+  .project-actions {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .projects-header .header-actions {
+    width: 100%;
+  }
+
+  .projects-header .header-actions .button {
+    flex: 1;
+    padding: 0 12px;
+    white-space: nowrap;
+  }
+
+  .toolbar-selects {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .toolbar-selects select {
+    flex: 1;
+    min-width: 0;
+  }
+}

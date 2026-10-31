@@ -32,7 +32,7 @@ Proyecto final de **Patrones de Diseño**
 | 3 | Rediseño con foto y comparador antes/después | ✅ |
 | 4 | Editor 3D | ✅ |
 | 5 | Lumi con voz y texto | ✅ |
-| 6 | Administrador, Mis proyectos y Documentación | ⏳ |
+| 6 | Administrador, Mis proyectos y Documentación | ✅ |
 | 7 | Pruebas, README final y despliegue | ⏳ |
 
 ## Patrones aplicados en el frontend
@@ -51,6 +51,7 @@ Proyecto final de **Patrones de Diseño**
 | **Observer** | Comportamiento | [`src/editor/editorStore.ts`](src/editor/editorStore.ts) | El lienzo 3D, los paneles y la barra de herramientas se suscriben al estado del editor y se actualizan cuando cambia la escena. |
 | **Adapter** | Estructural | [`src/assistant/voiceAdapter.ts`](src/assistant/voiceAdapter.ts) | `VoiceAdapter` envuelve el reconocimiento de voz y la síntesis del navegador (con nombres distintos según el navegador) en una interfaz simple: escuchar, hablar y detener. |
 | **Observer** | Comportamiento | [`src/assistant/assistantBus.ts`](src/assistant/assistantBus.ts) | Lumi publica sus acciones y quien puede ejecutarlas se suscribe: el enrutador abre páginas y proyectos, el editor 3D agrega muebles, cambia paredes, luz o estilo y deshace. |
+| **Strategy** | Comportamiento | [`src/projects/projectQuery.ts`](src/projects/projectQuery.ts) | Mis proyectos se ordena por fecha, nombre o presupuesto: cada orden es una estrategia intercambiable. |
 | **Observer** | Comportamiento | [`src/assistant/chatStore.ts`](src/assistant/chatStore.ts) | El chat flotante y la página de Lumi comparten la misma conversación y se mantienen sincronizados. |
 
 ## Cuentas de prueba
@@ -101,6 +102,10 @@ src/
 ├── components/dashboard/ Tarjetas, gráfica, actividad y proyectos
 ├── components/editor/ Lienzo 3D (React Three Fiber), catálogo, propiedades y versiones
 ├── editor/          Lógica del editor 3D: comandos, fábricas, composite, decoradores, temas
+├── components/admin/ Panel de administración: resumen, usuarios, catálogo y reportes
+├── components/docs/ Diagramas UML con Mermaid
+├── docs/            Contenido de la sección Documentación (patrones, arquitectura, diagrama ER)
+├── projects/        Búsqueda, filtros y orden de Mis proyectos
 ├── components/assistant/ Chat de Lumi, botón flotante y ejecutor de acciones
 ├── assistant/       Voz (Adapter), bus de acciones y conversación (Observer)
 ├── components/      Piezas reutilizables de la interfaz

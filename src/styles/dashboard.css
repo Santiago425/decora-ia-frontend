@@ -557,3 +557,18 @@
     grid-auto-columns: 62%;
   }
 }
+
+.thumb-scene {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 6px;
+  background:
+    linear-gradient(135deg, transparent 49.5%, rgba(164, 117, 81, 0.08) 50%, transparent 50.5%) 0 0 / 28px 28px,
+    linear-gradient(160deg, var(--sand-100), var(--sand-200));
+  color: var(--wood);
+  font-size: 13px;
+  font-weight: 650;
+}

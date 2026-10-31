@@ -5,16 +5,18 @@ import { GuestRoute, ProtectedRoute } from './components/ProtectedRoute';
 import { LoadingScreen } from './components/LoadingScreen';
 import { Toaster } from './components/Toaster';
 import { AuthProvider } from './context/AuthContext';
-import ComingSoon from './pages/ComingSoon';
+import Admin from './pages/Admin';
 import Assistant from './pages/Assistant';
 import Dashboard from './pages/Dashboard';
 import EditorHome from './pages/EditorHome';
 import Login from './pages/Login';
+import Projects from './pages/Projects';
 import NotFound from './pages/NotFound';
 import Redesign from './pages/Redesign';
 import Register from './pages/Register';
 
 const Editor = lazy(() => import('./pages/Editor'));
+const Docs = lazy(() => import('./pages/Docs'));
 
 export default function App() {
   return (
@@ -39,10 +41,17 @@ export default function App() {
                   </Suspense>
                 }
               />
-              <Route path="/projects" element={<ComingSoon title="Mis proyectos" />} />
-              <Route path="/docs" element={<ComingSoon title="Documentación" />} />
+              <Route path="/projects" element={<Projects />} />
+              <Route
+                path="/docs"
+                element={
+                  <Suspense fallback={<LoadingScreen />}>
+                    <Docs />
+                  </Suspense>
+                }
+              />
               <Route element={<ProtectedRoute role="admin" />}>
-                <Route path="/admin" element={<ComingSoon title="Administración" />} />
+                <Route path="/admin" element={<Admin />} />
               </Route>
             </Route>
           </Route>
