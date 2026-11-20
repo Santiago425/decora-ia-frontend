@@ -41,7 +41,7 @@ export function MobileNav() {
             {label}
           </NavLink>
         ))}
-        <PatternModeToggle className="sheet-link" tabIndex={open ? 0 : -1} />
+        {user.role === 'admin' && <PatternModeToggle className="sheet-link" tabIndex={open ? 0 : -1} />}
         <button className="sheet-link" onClick={logout} tabIndex={open ? 0 : -1}>
           <LogOut size={20} />
           Cerrar sesión
