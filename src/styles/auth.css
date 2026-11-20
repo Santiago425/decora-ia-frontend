@@ -1,20 +1,19 @@
 .auth-page {
+  position: relative;
   min-height: 100vh;
   min-height: 100dvh;
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(460px, 1fr);
-  background: var(--bg);
-}
-
-.auth-photos {
-  position: relative;
-  display: flex;
-  align-items: flex-end;
-  min-height: 100%;
-  padding: clamp(28px, 4vw, 56px);
-  overflow: hidden;
+  grid-template-columns: minmax(0, 1.1fr) minmax(480px, 1fr);
   background: var(--grad-hero);
   isolation: isolate;
+}
+
+/* One full-bleed photo behind the whole page: the stage floats over it as frosted linen. */
+.auth-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
 }
 
 .photo-carousel {
@@ -33,13 +32,13 @@
   opacity: 0;
   transform: scale(1.06);
   transition:
-    opacity 1.2s var(--ease-out),
-    transform 7s linear;
+    opacity 1.6s var(--ease-out),
+    transform 12s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 .photo-carousel img.active.loaded {
   opacity: 1;
-  transform: scale(1);
+  transform: scale(1.14) translate3d(-1.5%, -1%, 0);
 }
 
 .auth-carousel {
@@ -49,22 +48,21 @@
 .auth-veil {
   position: absolute;
   inset: 0;
-  z-index: -1;
-  background: var(--grad-hero);
-  opacity: 0.38;
+  background: var(--auth-veil);
 }
 
-.auth-veil::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--photo-veil);
+.auth-photos {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  min-height: 100%;
+  padding: clamp(28px, 4vw, 64px);
 }
 
 .auth-logo {
   position: absolute;
   top: clamp(24px, 3vw, 40px);
-  left: clamp(28px, 4vw, 56px);
+  left: clamp(28px, 4vw, 64px);
   color: var(--text-inverse);
 }
 
@@ -75,43 +73,44 @@
 .auth-showcase {
   display: grid;
   gap: 18px;
-  max-width: 520px;
+  max-width: 540px;
   color: var(--text-inverse);
-  animation: rise 0.7s var(--ease-out) both;
+  animation: rise 0.9s var(--ease-out) both;
 }
 
 .auth-showcase-kicker {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
   color: var(--primary-on-dark);
 }
 
 .auth-showcase-kicker::before {
   content: '';
-  width: 28px;
+  width: 40px;
   height: 1px;
-  background: var(--wood);
+  background: linear-gradient(90deg, transparent, var(--primary-on-dark));
 }
 
 .auth-showcase-title {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(36px, 3.8vw, 56px);
-  font-weight: 500;
-  letter-spacing: var(--tracking-display);
-  line-height: 1.04;
+  font-size: clamp(38px, 4.2vw, 64px);
+  font-weight: 450;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
   text-wrap: balance;
+  text-shadow: 0 2px 30px rgb(var(--shadow-color) / 0.35);
 }
 
 .auth-showcase ul {
   display: grid;
   gap: 10px;
-  margin: 8px 0 0;
+  margin: 10px 0 0;
   padding: 0;
   list-style: none;
 }
@@ -120,11 +119,33 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 12px 14px;
-  border: 1px solid color-mix(in srgb, var(--text-inverse) 18%, transparent);
+  padding: 12px 16px;
+  border: 1px solid color-mix(in srgb, var(--text-inverse) 22%, transparent);
   border-radius: var(--radius);
-  background: color-mix(in srgb, var(--scrim) 30%, transparent);
-  backdrop-filter: var(--glass-blur);
+  background: linear-gradient(
+    120deg,
+    color-mix(in srgb, var(--text-inverse) 16%, transparent),
+    color-mix(in srgb, var(--text-inverse) 4%, transparent)
+  );
+  backdrop-filter: blur(18px) saturate(150%);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--text-inverse) 24%, transparent);
+  animation: rise 0.8s var(--ease-out) both;
+  transition:
+    transform var(--duration) var(--ease-out),
+    border-color var(--duration);
+}
+
+.auth-showcase li:nth-child(2) {
+  animation-delay: 0.08s;
+}
+
+.auth-showcase li:nth-child(3) {
+  animation-delay: 0.16s;
+}
+
+.auth-showcase li:hover {
+  transform: translateX(4px);
+  border-color: color-mix(in srgb, var(--primary-on-dark) 60%, transparent);
 }
 
 .auth-showcase li > span {
@@ -134,7 +155,8 @@
   width: 38px;
   height: 38px;
   border-radius: var(--radius-s);
-  background: color-mix(in srgb, var(--text-inverse) 16%, transparent);
+  background: color-mix(in srgb, var(--primary) 70%, transparent);
+  box-shadow: 0 0 18px rgb(47 93 80 / 0.55);
 }
 
 .auth-showcase li div {
@@ -142,7 +164,7 @@
 }
 
 .auth-showcase small {
-  color: color-mix(in srgb, var(--text-inverse) 80%, transparent);
+  color: color-mix(in srgb, var(--text-inverse) 82%, transparent);
   font-size: 13.5px;
 }
 
@@ -153,8 +175,50 @@
   align-items: center;
   justify-content: center;
   min-width: 0;
-  padding: 24px clamp(16px, 4vw, 48px) 32px;
-  background: radial-gradient(ellipse at 50% 30%, var(--surface) 0%, transparent 65%), var(--bg);
+  padding: 24px clamp(16px, 4vw, 56px) 32px;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--auth-stage);
+  backdrop-filter: blur(26px) saturate(160%);
+  border-left: 1px solid color-mix(in srgb, var(--white) 55%, transparent);
+  box-shadow: -40px 0 80px -40px rgb(var(--shadow-color) / 0.35);
+}
+
+/* Two soft lights drifting behind the card: sage and wood, never dark. */
+.auth-aurora {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.auth-aurora span {
+  position: absolute;
+  width: 460px;
+  height: 460px;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.5;
+  animation: aurora-drift 18s ease-in-out infinite alternate;
+}
+
+.auth-aurora span:first-child {
+  top: -120px;
+  right: -140px;
+  background: var(--sage-200);
+}
+
+.auth-aurora span:last-child {
+  bottom: -160px;
+  left: -160px;
+  background: color-mix(in srgb, var(--wood) 55%, var(--linen-100));
+  animation-delay: -9s;
+}
+
+@keyframes aurora-drift {
+  to {
+    transform: translate3d(-60px, 50px, 0) scale(1.15);
+  }
 }
 
 .auth-room {
@@ -162,7 +226,7 @@
   flex: 1 1 260px;
   width: 100%;
   min-height: 220px;
-  max-height: 460px;
+  max-height: 440px;
   cursor: grab;
   touch-action: pan-y;
   animation: intro-in 0.8s var(--ease-out) both;
@@ -182,13 +246,40 @@
   z-index: 1;
   width: min(440px, 100%);
   margin-top: -64px;
-  padding: 28px 30px 24px;
-  background: var(--glass);
-  backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
+  padding: 30px 32px 26px;
   border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-lg);
-  animation: rise 0.7s var(--ease-out) 0.1s both;
+  background: var(--auth-card);
+  backdrop-filter: blur(24px) saturate(160%);
+  box-shadow:
+    inset 0 1px 0 var(--white),
+    0 30px 60px -24px rgb(var(--shadow-color) / 0.3),
+    0 0 0 1px rgb(255 255 255 / 0.6),
+    0 0 60px -12px rgb(47 93 80 / 0.28);
+  animation: rise 0.8s var(--ease-out) 0.1s both;
+}
+
+/* Hairline border that shifts from sage to wood. */
+.auth-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: var(--auth-card-edge);
+  background-size: 200% 200%;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: edge-flow 8s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes edge-flow {
+  to {
+    background-position: 200% 0;
+  }
 }
 
 .auth-header {
@@ -200,16 +291,33 @@
 }
 
 .auth-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   margin-top: 4px;
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 700;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.32em;
   text-transform: uppercase;
   color: var(--primary-strong);
 }
 
+.auth-brand::before,
+.auth-brand::after {
+  content: '';
+  width: 22px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--primary));
+}
+
+.auth-brand::after {
+  transform: scaleX(-1);
+}
+
 .auth-header h1 {
-  font-size: 30px;
+  font-size: 32px;
+  font-weight: 480;
+  letter-spacing: -0.025em;
 }
 
 .auth-header p {
@@ -220,6 +328,34 @@
 .auth-form {
   display: grid;
   gap: 16px;
+}
+
+.auth-card .button-primary {
+  background: var(--grad-primary);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.18),
+    0 10px 24px -10px rgb(47 93 80 / 0.7);
+}
+
+.auth-card .button-primary:hover:not(:disabled) {
+  background: var(--grad-primary);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.22),
+    0 14px 32px -10px rgb(47 93 80 / 0.85);
+}
+
+.auth-card .button-primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(110deg, transparent 30%, rgb(255 255 255 / 0.22) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.9s var(--ease-out);
+}
+
+.auth-card .button-primary:hover:not(:disabled)::after {
+  transform: translateX(100%);
 }
 
 .auth-switch {
@@ -303,12 +439,13 @@
   padding: 0 44px 0 42px;
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-md);
-  background: var(--surface);
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
   color: var(--text);
   font: inherit;
   transition:
     border-color 0.2s,
-    box-shadow 0.2s;
+    box-shadow 0.2s,
+    background 0.2s;
 }
 
 .field input::placeholder {
@@ -318,7 +455,14 @@
 .field input:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: var(--focus-ring);
+  background: var(--surface);
+  box-shadow:
+    var(--focus-ring),
+    0 0 24px -6px rgb(47 93 80 / 0.35);
+}
+
+.field-control:focus-within .field-icon {
+  color: var(--primary);
 }
 
 .field.has-error input {
@@ -444,8 +588,8 @@
   }
 
   .auth-photos {
-    min-height: 260px;
-    padding: 84px 20px 28px;
+    min-height: 300px;
+    padding: 84px 20px 40px;
   }
 
   .auth-logo {
@@ -463,12 +607,16 @@
   }
 
   .auth-showcase-title {
-    font-size: clamp(28px, 7vw, 40px);
+    font-size: clamp(30px, 8vw, 42px);
   }
 
   .auth-stage {
     justify-content: flex-start;
     padding-top: 0;
+    border-left: 0;
+    border-top: 1px solid color-mix(in srgb, var(--white) 55%, transparent);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    box-shadow: 0 -30px 60px -30px rgb(var(--shadow-color) / 0.35);
   }
 
   .auth-room {
@@ -589,5 +737,17 @@
 @media (max-width: 480px) {
   .demo-access-buttons {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-aurora span,
+  .auth-card::before {
+    animation: none;
+  }
+
+  .photo-carousel img,
+  .photo-carousel img.active.loaded {
+    transform: none;
   }
 }

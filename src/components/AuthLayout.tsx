@@ -17,9 +17,11 @@ const HIGHLIGHTS = [
 export function AuthLayout({ title, subtitle, children }: { title: string; subtitle: string; children: ReactNode }) {
   return (
     <div className="auth-page">
-      <section className="auth-photos">
+      <div className="auth-backdrop" aria-hidden="true">
         <PhotoCarousel photos={config.authImageUrls} className="auth-carousel" />
-        <div className="auth-veil" aria-hidden="true" />
+        <div className="auth-veil" />
+      </div>
+      <section className="auth-photos">
         <div className="auth-logo">
           <Logo size={40} withName />
         </div>
@@ -43,6 +45,10 @@ export function AuthLayout({ title, subtitle, children }: { title: string; subti
         <PhotoCredits />
       </section>
       <section className="auth-stage">
+        <div className="auth-aurora" aria-hidden="true">
+          <span />
+          <span />
+        </div>
         <div className="auth-room" aria-hidden="true">
           <SceneBoundary>
             <Suspense fallback={null}>
