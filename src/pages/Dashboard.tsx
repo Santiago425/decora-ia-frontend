@@ -8,6 +8,7 @@ import { StatCard } from '../components/dashboard/StatCard';
 import { StyleStrip } from '../components/dashboard/StyleStrip';
 import { DashboardSkeleton } from '../components/dashboard/DashboardSkeleton';
 import { GettingStarted } from '../components/dashboard/GettingStarted';
+import { ProjectProgress } from '../components/dashboard/ProjectProgress';
 import { ImageProxy } from '../components/ImageProxy';
 import { PhotoCredits } from '../components/PhotoCredits';
 import { ParallaxLayers, Reveal } from '../components/motion';
@@ -17,6 +18,7 @@ import { config } from '../config';
 import { useAsync } from '../hooks/useAsync';
 import { useAuth } from '../hooks/useAuth';
 import { dashboardService } from '../services/dashboardService';
+import { projectService } from '../services/projectService';
 import { formatCurrency, greeting } from '../utils/format';
 import { Button, Panel, Skeleton } from '../components/ui';
 import { preloadHandlers } from '../routes/pages';
@@ -32,6 +34,7 @@ const StyleUsageChart = lazy(() =>
 export default function Dashboard() {
   const { user } = useAuth();
   const { data, error, loading, retry } = useAsync(useCallback(() => dashboardService.overview(), []));
+  const { data: projects } = useAsync(useCallback(() => projectService.list(), []));
   if (!user) return null;
   const firstName = user.full_name.split(' ')[0];
 
@@ -97,6 +100,32 @@ export default function Dashboard() {
             />
           </section>
 
+          <Reveal as="section">
+            <header className="section-header">
+              <h2>Tus últimos proyectos</h2>
+              {data.recent_projects.length > 0 && <Link to="/projects">Ver todos</Link>}
+            </header>
+            <div className="project-grid">
+              {data.recent_projects.map((project, index) => (
+                <Link
+                  key={project.id}
+                  to={projectPath(project)}
+                  {...preloadHandlers(projectPath(project))}
+                  className="project-link"
+                  aria-label={projectLabel(project)}
+                >
+                  <ProjectCard project={project} delay={index * 70} />
+                </Link>
+              ))}
+            </div>
+          </Reveal>
+
+          {projects && projects.length > 0 && (
+            <Reveal as="section">
+              <ProjectProgress projects={projects} />
+            </Reveal>
+          )}
+
           <Reveal as="section" className="dashboard-row">
             <Panel as="article" title="Estilos más usados">
               {data.style_usage.length ? (
@@ -119,30 +148,10 @@ export default function Dashboard() {
               )}
             </Panel>
           </Reveal>
-
-          <Reveal as="section">
-            <header className="section-header">
-              <h2>Tus últimos proyectos</h2>
-              {data.recent_projects.length > 0 && <Link to="/projects">Ver todos</Link>}
-            </header>
-            <div className="project-grid">
-              {data.recent_projects.map((project, index) => (
-                <Link
-                  key={project.id}
-                  to={projectPath(project)}
-                  {...preloadHandlers(projectPath(project))}
-                  className="project-link"
-                  aria-label={projectLabel(project)}
-                >
-                  <ProjectCard project={project} delay={index * 70} />
-                </Link>
-              ))}
-            </div>
-          </Reveal>
         </>
       )}
 
-      <Reveal as="section" className="inspiration">
+      <Reveal as="section" className="inspiration" id="inspiracion">
         <header className="section-header">
           <div>
             <h2>Inspiración</h2>
