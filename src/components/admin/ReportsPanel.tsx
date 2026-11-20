@@ -2,7 +2,7 @@ import { Download, FileSpreadsheet } from 'lucide-react';
 import { useState } from 'react';
 import { adminService } from '../../services/adminService';
 import { notificationCenter } from '../../services/notificationCenter';
-import type { ReportKind } from '../../types/admin';
+import type { ReportFormat, ReportKind } from '../../types/admin';
 import { Button, Panel } from '../ui';
 
 const REPORTS: { kind: ReportKind; title: string; description: string }[] = [
@@ -18,13 +18,18 @@ const REPORTS: { kind: ReportKind; title: string; description: string }[] = [
   },
 ];
 
-export function ReportsPanel() {
-  const [busy, setBusy] = useState<ReportKind | null>(null);
+const FORMATS: { format: ReportFormat; label: string }[] = [
+  { format: 'csv', label: 'CSV' },
+  { format: 'json', label: 'JSON' },
+];
 
-  async function download(kind: ReportKind) {
-    setBusy(kind);
+export function ReportsPanel() {
+  const [busy, setBusy] = useState<string | null>(null);
+
+  async function download(kind: ReportKind, format: ReportFormat) {
+    setBusy(`${kind}-${format}`);
     try {
-      const { blob, fileName } = await adminService.report(kind);
+      const { blob, fileName } = await adminService.report(kind, format);
       const url = URL.createObjectURL(blob);
       const link = Object.assign(document.createElement('a'), { href: url, download: fileName });
       link.click();
@@ -40,7 +45,7 @@ export function ReportsPanel() {
     <Panel
       className="admin-panel"
       title="Reportes"
-      description="Descárgalos en CSV y ábrelos con Excel o Google Sheets."
+      description="CSV para abrir en Excel o Google Sheets, JSON para usar los datos en otro programa."
     >
       <div className="report-grid">
         {REPORTS.map((report) => (
@@ -52,9 +57,22 @@ export function ReportsPanel() {
               <h3>{report.title}</h3>
               <p>{report.description}</p>
             </div>
-            <Button variant="ghost" onClick={() => download(report.kind)} disabled={busy === report.kind}>
-              <Download size={17} /> {busy === report.kind ? 'Preparando…' : 'Descargar'}
-            </Button>
+            <div className="report-actions">
+              {FORMATS.map(({ format, label }) => {
+                const key = `${report.kind}-${format}`;
+                return (
+                  <Button
+                    key={format}
+                    variant="ghost"
+                    onClick={() => download(report.kind, format)}
+                    disabled={busy === key}
+                    aria-label={`Descargar ${report.title.toLowerCase()} en ${label}`}
+                  >
+                    <Download size={17} /> {busy === key ? 'Preparando…' : label}
+                  </Button>
+                );
+              })}
+            </div>
           </article>
         ))}
       </div>

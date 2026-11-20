@@ -110,3 +110,4 @@ export interface AdminAddon {
 }
 
 export type ReportKind = 'usuarios' | 'proyectos';
+export type ReportFormat = 'csv' | 'json';

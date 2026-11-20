@@ -136,6 +136,33 @@ export const PATTERNS: PatternDoc[] = [
   EditorWorkspace ..> StyleThemeFactory : applyStyle()`,
   },
   {
+    id: 'abstract-factory-ai',
+    name: 'Abstract Factory',
+    category: 'Creacional',
+    side: 'Backend',
+    summary: 'Cada proveedor de IA crea su familia: editor de imágenes y asesor de diseño.',
+    problem:
+      'Gemini, Cloudflare, Hugging Face y el modo demo crean objetos distintos con su propia configuración. Un switch gigante tendría que cambiar cada vez que llega un proveedor.',
+    solution:
+      'AIProviderFactory declara create_image_editor() y create_design_advisor(). GeminiFactory, CloudflareFactory, HuggingFaceFactory y MockFactory crean productos que combinan entre sí; el .env elige la fábrica.',
+    files: ['app/patterns/ai/provider_factories.py', 'app/patterns/ai/ai_client.py'],
+    diagram: `classDiagram
+  class AIProviderFactory {
+    <<abstract>>
+    +create_image_editor()* ImageEditor
+    +create_design_advisor(fallback) DesignAdvisor
+  }
+  class GeminiFactory
+  class CloudflareFactory
+  class HuggingFaceFactory
+  class MockFactory
+  AIProviderFactory <|-- GeminiFactory
+  AIProviderFactory <|-- CloudflareFactory
+  AIProviderFactory <|-- HuggingFaceFactory
+  AIProviderFactory <|-- MockFactory
+  AIClient ..> AIProviderFactory : factory_for(provider)`,
+  },
+  {
     id: 'builder-redesign',
     name: 'Builder',
     category: 'Creacional',
@@ -587,22 +614,21 @@ export const PATTERNS: PatternDoc[] = [
     name: 'Chain of Responsibility',
     category: 'Comportamiento',
     side: 'Backend',
-    summary: 'Si Gemini falla, el mensaje pasa a las reglas.',
-    problem: 'Un error de la IA no debería dejar al usuario sin respuesta.',
+    summary: 'Si Gemini falla, el mensaje pasa al siguiente eslabón hasta llegar a las reglas.',
+    problem: 'Un error de la IA (sin cuota, sin red o una respuesta rara) no debería dejar al usuario sin respuesta.',
     solution:
-      'FallbackInterpreter intenta con el primer intérprete y, ante un error de IA, pasa la petición al siguiente.',
+      'chain_interpreters() enlaza los intérpretes con InterpreterLink. Cada eslabón intenta responder y, ante un error de IA, entrega el mismo mensaje al siguiente; la cadena puede tener los eslabones que hagan falta.',
     files: ['app/patterns/assistant/interpreters.py'],
     diagram: `sequenceDiagram
   participant U as Usuario
-  participant F as FallbackInterpreter
-  participant G as GeminiIntentInterpreter
-  participant R as RuleBasedInterpreter
-  U->>F: "agrega una planta"
-  F->>G: interpret()
-  G-->>F: AIError (sin cuota)
-  F->>R: interpret()
-  R-->>F: add_furniture(planta)
-  F-->>U: respuesta + acción`,
+  participant L1 as InterpreterLink(Gemini)
+  participant L2 as InterpreterLink(Reglas)
+  U->>L1: "agrega una planta"
+  L1->>L1: GeminiIntentInterpreter.interpret()
+  Note over L1: AIError (sin cuota)
+  L1->>L2: successor.interpret()
+  L2->>L2: RuleBasedInterpreter.interpret()
+  L2-->>U: respuesta + add_furniture(planta)`,
   },
   {
     id: 'command',
@@ -757,7 +783,7 @@ export const PATTERNS: PatternDoc[] = [
     name: 'Template Method',
     category: 'Comportamiento',
     side: 'Backend',
-    summary: 'Reportes CSV de usuarios y proyectos.',
+    summary: 'Reportes de usuarios y proyectos con los mismos pasos.',
     problem:
       'Todos los reportes siguen los mismos pasos (encabezados, filas, formato, nombre del archivo) y solo cambia qué datos traen.',
     solution: 'ReportExporter.export() fija el algoritmo y cada reporte implementa columns(), records() y to_row().',
@@ -765,8 +791,8 @@ export const PATTERNS: PatternDoc[] = [
     diagram: `classDiagram
   class ReportExporter {
     <<abstract>>
-    +export() file
-    +file_name() str
+    +export(format) file
+    +file_name(format) str
     +format_value(value) str
     +columns()* list
     +records()* iterable
@@ -778,15 +804,45 @@ export const PATTERNS: PatternDoc[] = [
   ReportExporter <|-- ProjectsReport`,
   },
   {
+    id: 'bridge-reports',
+    name: 'Bridge',
+    category: 'Estructural',
+    side: 'Backend',
+    summary: 'Cualquier reporte sale en CSV o JSON sin combinar clases.',
+    problem:
+      'Con dos reportes y dos formatos harían falta cuatro clases (UsersCsv, UsersJson…), y cada formato nuevo multiplicaría el trabajo.',
+    solution:
+      'ReportExporter decide qué contiene el reporte y delega la escritura en un ReportFormat (CsvFormat o JsonFormat). Las dos jerarquías crecen por separado; se elige con ?format=json.',
+    files: ['app/patterns/reports/report_exporters.py'],
+    diagram: `classDiagram
+  class ReportExporter {
+    <<abstraction>>
+    +export(format)
+  }
+  class ReportFormat {
+    <<implementor>>
+    +render(columns, rows)*
+  }
+  class UsersReport
+  class ProjectsReport
+  class CsvFormat
+  class JsonFormat
+  ReportExporter <|-- UsersReport
+  ReportExporter <|-- ProjectsReport
+  ReportFormat <|.. CsvFormat
+  ReportFormat <|.. JsonFormat
+  ReportExporter o-- ReportFormat : puente`,
+  },
+  {
     id: 'visitor',
     name: 'Visitor',
     category: 'Comportamiento',
     side: 'Backend',
-    summary: 'Recorre la escena para calcular el presupuesto real.',
+    summary: 'Calcula el presupuesto real recorriendo la escena sin meter esa lógica en los datos.',
     problem:
-      'El presupuesto debe calcularse en el servidor con los precios de la base de datos, recorriendo habitación, grupos y muebles.',
+      'El presupuesto debe calcularse en el servidor con los precios de la base de datos, y la escena tiene tres tipos de nodo: habitación, grupos y muebles.',
     solution:
-      'Cada SceneVisitor define visit_room(), visit_group() y visit_item(). BudgetVisitor suma precios y FurnitureIdCollector reúne los muebles usados.',
+      'Cada nodo (RoomElement, GroupElement, ItemElement) tiene accept(visitor) y llama al método que le toca: doble despacho. BudgetVisitor suma precios y FurnitureIdCollector reúne los muebles usados.',
     files: ['app/patterns/visitors/scene_visitors.py'],
     diagram: `classDiagram
   class SceneVisitor {
@@ -795,14 +851,49 @@ export const PATTERNS: PatternDoc[] = [
     +visit_group(group)*
     +visit_item(item)*
   }
+  class SceneElement {
+    <<abstract>>
+    +accept(visitor)*
+  }
+  class RoomElement
+  class GroupElement
+  class ItemElement
   class BudgetVisitor {
     +total
   }
   class FurnitureIdCollector {
     +ids
   }
+  SceneElement <|-- RoomElement
+  SceneElement <|-- GroupElement
+  SceneElement <|-- ItemElement
   SceneVisitor <|-- BudgetVisitor
-  SceneVisitor <|-- FurnitureIdCollector`,
+  SceneVisitor <|-- FurnitureIdCollector
+  SceneElement ..> SceneVisitor : accept()`,
+  },
+  {
+    id: 'iterator-scene',
+    name: 'Iterator',
+    category: 'Comportamiento',
+    side: 'Backend',
+    summary: 'Recorre habitación, grupos y muebles en orden sin saber cómo se guardan.',
+    problem:
+      'Los grupos pueden tener grupos adentro. Cada cálculo que recorriera la escena tendría que repetir la recursión y conocer cómo se guardan los hijos.',
+    solution:
+      'SceneIterator entrega los nodos uno por uno (primero la habitación, luego en profundidad) con __next__(). walk_scene() solo itera y llama a accept().',
+    files: ['app/patterns/visitors/scene_visitors.py'],
+    diagram: `classDiagram
+  class Iterator~SceneElement~ {
+    <<interface>>
+    +__next__() SceneElement
+  }
+  class SceneIterator {
+    -pending list
+    +__next__() SceneElement
+  }
+  Iterator <|.. SceneIterator
+  walk_scene ..> SceneIterator : for element in
+  walk_scene ..> SceneVisitor : element.accept()`,
   },
   {
     id: 'repository',

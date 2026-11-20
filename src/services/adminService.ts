@@ -8,6 +8,7 @@ import type {
   FurnitureFilters,
   FurnitureInput,
   Page,
+  ReportFormat,
   ReportKind,
   Role,
   UserFilters,
@@ -37,5 +38,5 @@ export const adminService = {
   addons: () => apiClient.get<AdminAddon[]>('/admin/addons'),
   updateAddon: (id: number, data: { name?: string; price?: string; is_active?: boolean }) =>
     apiClient.patch<AdminAddon>(`/admin/addons/${id}`, data),
-  report: (kind: ReportKind) => apiClient.download(`/admin/reports/${kind}`),
+  report: (kind: ReportKind, format: ReportFormat) => apiClient.download(`/admin/reports/${kind}?format=${format}`),
 };
