@@ -1,6 +1,11 @@
 import type { AssistantAction } from '../types/assistant';
 
-type Handler = (action: AssistantAction) => boolean;
+/** done: the action ran. blocked: a screen owns it but refused (for example, a finished project). */
+export type ActionOutcome = 'done' | 'blocked' | 'ignored';
+
+type Handler = (action: AssistantAction) => ActionOutcome;
+
+const RANK: Record<ActionOutcome, number> = { ignored: 0, blocked: 1, done: 2 };
 
 // Observer: Lumi publishes actions and whichever screen can perform them (router, 3D editor) subscribes.
 class AssistantBus {
@@ -13,12 +18,13 @@ class AssistantBus {
     };
   }
 
-  publish(action: AssistantAction): boolean {
-    let handled = false;
+  publish(action: AssistantAction): ActionOutcome {
+    let outcome: ActionOutcome = 'ignored';
     this.#handlers.forEach((handler) => {
-      handled = handler(action) || handled;
+      const result = handler(action);
+      if (RANK[result] > RANK[outcome]) outcome = result;
     });
-    return handled;
+    return outcome;
   }
 }
 

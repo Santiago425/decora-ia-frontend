@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import { config } from '../../config';
 import type { FurnitureCategory, FurnitureItem } from '../../types/catalog';
 import { formatCurrency } from '../../utils/format';
-import { CategoryIcon } from './categoryIcon';
+import { FurnitureThumb } from './FurnitureThumb';
 import { Tabs } from '../ui';
 
 interface CatalogPanelProps {
@@ -60,8 +60,8 @@ export function CatalogPanel({ categories, furniture, roomType, roomName, disabl
               disabled={disabled}
               title={`Agregar ${item.name}`}
             >
-              <span className="catalog-swatch" style={{ background: item.default_color }}>
-                <CategoryIcon name={item.category.icon} size={20} aria-hidden="true" />
+              <span className="catalog-thumb">
+                <FurnitureThumb item={item} />
               </span>
               <span className="catalog-text">
                 <strong>{item.name}</strong>

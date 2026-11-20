@@ -1,6 +1,9 @@
 import { useSyncExternalStore } from 'react';
 import { assistantService } from '../services/assistantService';
-import type { AssistantPageContext, ChatMessage } from '../types/assistant';
+import type { AssistantAction, AssistantPageContext, ChatMessage } from '../types/assistant';
+import { config } from '../config';
+import { notificationCenter } from '../services/notificationCenter';
+import { describeAction, isUndoable } from './actionLabels';
 import { assistantBus } from './assistantBus';
 
 export interface ChatState {
@@ -69,7 +72,7 @@ class ChatStore {
         sending: false,
       });
       this.onReply(reply);
-      reply.actions.forEach((action) => assistantBus.publish(action));
+      this.#perform(reply.actions);
     } catch (error) {
       this.#set({
         messages: this.#state.messages.filter((m) => m.id !== pending.id),
@@ -96,6 +99,17 @@ class ChatStore {
   reset(): void {
     this.#owner = null;
     this.#set({ messages: [], loaded: false, error: '' });
+  }
+
+  /** Runs Lumi's actions and offers to undo the ones that changed the 3D scene. */
+  #perform(actions: AssistantAction[]): void {
+    const undoable = actions.filter((action) => assistantBus.publish(action) === 'done' && isUndoable(action));
+    if (undoable.length === 0) return;
+    const summary = undoable.map(describeAction).join(' · ');
+    notificationCenter.notify(`${config.assistantName}: ${summary}`, 'success', {
+      label: 'Deshacer',
+      run: () => undoable.forEach(() => assistantBus.publish({ type: 'undo', params: {} })),
+    });
   }
 
   #set(patch: Partial<ChatState>): void {

@@ -6,6 +6,7 @@ import { EditorCanvas, type CameraView, type EditorCanvasHandle } from '../compo
 import { EditorToolbar, type SaveState } from '../components/editor/EditorToolbar';
 import { Inspector } from '../components/editor/Inspector';
 import { RoomPanel } from '../components/editor/RoomPanel';
+import { SheetHandle, type SheetState } from '../components/editor/SheetHandle';
 import { ShortcutsDialog } from '../components/editor/ShortcutsDialog';
 import { VersionsPanel } from '../components/editor/VersionsPanel';
 import { assistantBus } from '../assistant/assistantBus';
@@ -17,6 +18,7 @@ import { EditorMediator, type EditorPanel } from '../editor/editorMediator';
 import { buildPricing } from '../editor/furnitureDecorators';
 import { themeFactoryFor } from '../editor/styleTheme';
 import { useAsync } from '../hooks/useAsync';
+import { useMediaQuery } from '../hooks/useMediaQuery';
 import { catalogService } from '../services/catalogService';
 import { notificationCenter } from '../services/notificationCenter';
 import { projectService } from '../services/projectService';
@@ -31,6 +33,8 @@ interface Catalog {
   addons: FurnitureAddon[];
   styles: DesignStyle[];
 }
+
+const COMPACT_QUERY = '(max-width: 900px)';
 
 const NON_TEXT_INPUTS = new Set(['checkbox', 'radio', 'range', 'button', 'color']);
 
@@ -55,6 +59,8 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
   const [retryTick, setRetryTick] = useState(0);
   const [view, setView] = useState<CameraView>('perspective');
   const [tab, setTab] = useState<EditorPanel>('catalog');
+  const [sheet, setSheet] = useState<SheetState>('peek');
+  const compact = useMediaQuery(COMPACT_QUERY);
   const [busy, setBusy] = useState(false);
   const [versions, setVersions] = useState<VersionSummary[] | null>(null);
   const canvas = useRef<EditorCanvasHandle>(null);
@@ -114,9 +120,12 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
         pricing,
         moveStep: config.editor.moveStep,
         rotateStep: config.editor.rotateStep,
-        showPanel: setTab,
+        showPanel: (panel) => {
+          setTab(panel);
+          setSheet((current) => (current === 'peek' ? 'half' : current));
+        },
         notify: (message, kind) => notificationCenter.notify(message, kind),
-        isCompact: () => window.matchMedia('(max-width: 900px)').matches,
+        isCompact: () => window.matchMedia(COMPACT_QUERY).matches,
         openShortcuts: () => setShortcutsOpen(true),
       }),
   );
@@ -131,6 +140,11 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
   }, [mediator]);
 
   useEffect(() => assistantBus.subscribe((action) => mediator.handleAssistant(action)), [mediator]);
+
+  function openTab(panel: EditorPanel) {
+    setTab(panel);
+    if (sheet === 'peek') setSheet('half');
+  }
 
   async function runProjectAction(action: ProjectAction) {
     setBusy(true);
@@ -219,45 +233,6 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
       <ShortcutsDialog open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
 
       <div className={`editor-body tab-${tab}`}>
-        <aside className="editor-panel editor-left">
-          <div className="panel-tabs" role="tablist">
-            <button role="tab" aria-selected={tab !== 'versions'} onClick={() => setTab('catalog')}>
-              <LayoutGrid size={16} /> Catálogo
-            </button>
-            <button
-              role="tab"
-              className="mobile-only"
-              aria-selected={tab === 'settings'}
-              onClick={() => setTab('settings')}
-            >
-              <SlidersHorizontal size={16} /> Ajustes
-            </button>
-            <button role="tab" aria-selected={tab === 'versions'} onClick={() => setTab('versions')}>
-              <History size={16} /> Versiones
-            </button>
-          </div>
-          {tab === 'versions' ? (
-            <VersionsPanel
-              versions={versions}
-              disabled={disabled}
-              busy={busy}
-              onSave={saveVersion}
-              onRestore={restoreVersion}
-            />
-          ) : (
-            <div className="left-content">
-              <CatalogPanel
-                categories={catalog.categories}
-                furniture={catalog.furniture}
-                roomType={project.room_type?.slug ?? null}
-                roomName={project.room_type?.name ?? null}
-                disabled={disabled}
-                onAdd={(item) => mediator.addFurniture(item)}
-              />
-            </div>
-          )}
-        </aside>
-
         <section className="editor-stage" aria-label="Vista 3D de la habitación">
           <EditorCanvas
             ref={canvas}
@@ -277,38 +252,84 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
           <p className="stage-hint">Arrastra los muebles para moverlos · Gira la vista con un dedo o el mouse</p>
         </section>
 
-        <aside className="editor-panel editor-right">
-          {selection.length ? (
-            <Inspector
-              selection={selection}
-              categories={catalog.categories}
-              addons={catalog.addons}
-              finishes={finishes}
-              palette={palette}
-              disabled={disabled}
-              rotateStep={config.editor.rotateStep}
-              onColor={(id, color) => mediator.updateItem(id, { color, finish: null }, 'Cambiar color')}
-              onFinish={(id, finish, color) => mediator.updateItem(id, { finish, color }, 'Cambiar acabado')}
-              onAddons={(id, addons) => mediator.updateItem(id, { addons }, 'Cambiar complementos')}
-              onRotate={(id, degrees) => mediator.rotate(id, degrees)}
-              onDuplicate={(id) => mediator.duplicate(id)}
-              onRemove={(id) => mediator.remove(id)}
-              onRename={(id, name) => mediator.rename(id, name)}
-              onGroup={(ids) => mediator.group(ids, `Grupo ${composite.children.length}`)}
-              onUngroup={(id) => mediator.ungroup(id)}
-            />
-          ) : (
-            <RoomPanel
-              composite={composite}
-              styles={catalog.styles}
-              materials={catalog.materials}
-              disabled={disabled}
-              onStyle={(slug) => mediator.applyStyle(slug)}
-              onRoom={(room: RoomData, label: string) => mediator.setRoom(room, label)}
-              onLighting={(lighting: LightingData) => mediator.setLighting(lighting)}
-            />
-          )}
-        </aside>
+        <div className="editor-sheet" data-sheet={sheet}>
+          <SheetHandle state={sheet} onChange={setSheet} />
+          <aside className="editor-panel editor-left">
+            <div className="panel-tabs" role="tablist">
+              <button
+                role="tab"
+                aria-selected={tab === 'catalog' || (tab === 'settings' && !compact)}
+                onClick={() => openTab('catalog')}
+              >
+                <LayoutGrid size={16} /> Catálogo
+              </button>
+              <button
+                role="tab"
+                className="mobile-only"
+                aria-selected={tab === 'settings'}
+                onClick={() => openTab('settings')}
+              >
+                <SlidersHorizontal size={16} /> Ajustes
+              </button>
+              <button role="tab" aria-selected={tab === 'versions'} onClick={() => openTab('versions')}>
+                <History size={16} /> Versiones
+              </button>
+            </div>
+            {tab === 'versions' ? (
+              <VersionsPanel
+                versions={versions}
+                disabled={disabled}
+                busy={busy}
+                onSave={saveVersion}
+                onRestore={restoreVersion}
+              />
+            ) : (
+              <div className="left-content">
+                <CatalogPanel
+                  categories={catalog.categories}
+                  furniture={catalog.furniture}
+                  roomType={project.room_type?.slug ?? null}
+                  roomName={project.room_type?.name ?? null}
+                  disabled={disabled}
+                  onAdd={(item) => mediator.addFurniture(item)}
+                />
+              </div>
+            )}
+          </aside>
+
+          <aside className="editor-panel editor-right">
+            {selection.length ? (
+              <Inspector
+                selection={selection}
+                categories={catalog.categories}
+                addons={catalog.addons}
+                finishes={finishes}
+                palette={palette}
+                disabled={disabled}
+                rotateStep={config.editor.rotateStep}
+                onColor={(id, color) => mediator.updateItem(id, { color, finish: null }, 'Cambiar color')}
+                onFinish={(id, finish, color) => mediator.updateItem(id, { finish, color }, 'Cambiar acabado')}
+                onAddons={(id, addons) => mediator.updateItem(id, { addons }, 'Cambiar complementos')}
+                onRotate={(id, degrees) => mediator.rotate(id, degrees)}
+                onDuplicate={(id) => mediator.duplicate(id)}
+                onRemove={(id) => mediator.remove(id)}
+                onRename={(id, name) => mediator.rename(id, name)}
+                onGroup={(ids) => mediator.group(ids, `Grupo ${composite.children.length}`)}
+                onUngroup={(id) => mediator.ungroup(id)}
+              />
+            ) : (
+              <RoomPanel
+                composite={composite}
+                styles={catalog.styles}
+                materials={catalog.materials}
+                disabled={disabled}
+                onStyle={(slug) => mediator.applyStyle(slug)}
+                onRoom={(room: RoomData, label: string) => mediator.setRoom(room, label)}
+                onLighting={(lighting: LightingData) => mediator.setLighting(lighting)}
+              />
+            )}
+          </aside>
+        </div>
       </div>
     </div>
   );
