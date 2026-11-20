@@ -9,6 +9,7 @@ import {
   Shuffle,
   SlidersHorizontal,
   Sparkles,
+  Trash2,
   WandSparkles,
   X,
 } from 'lucide-react';
@@ -31,6 +32,7 @@ import { useAsync } from '../hooks/useAsync';
 import { preloadHandlers } from '../routes/pages';
 import { catalogService } from '../services/catalogService';
 import { notificationCenter } from '../services/notificationCenter';
+import { projectService } from '../services/projectService';
 import { redesignService } from '../services/redesignService';
 import type { DesignStyle } from '../types/catalog';
 import type { Redesign as RedesignResult } from '../types/redesign';
@@ -87,6 +89,8 @@ export default function Redesign() {
   const [inspiring, setInspiring] = useState(false);
   const [toDelete, setToDelete] = useState<{ version: RedesignResult; label: string } | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [deletingProject, setDeletingProject] = useState(false);
+  const [projectBusy, setProjectBusy] = useState(false);
   const tuningRef = useRef<HTMLFormElement>(null);
   const isTuning = tuning !== null;
   const loadedProject = versions[0]?.project_id;
@@ -150,6 +154,21 @@ export default function Redesign() {
       notificationCenter.notify((e as Error).message, 'error');
     } finally {
       setDeleting(false);
+    }
+  }
+
+  async function confirmDeleteProject() {
+    if (!result) return;
+    setProjectBusy(true);
+    try {
+      await projectService.remove(result.project_id);
+      notificationCenter.notify(`Eliminaste "${result.project_name}"`, 'success');
+      setDeletingProject(false);
+      startOver();
+    } catch (e) {
+      notificationCenter.notify((e as Error).message, 'error');
+    } finally {
+      setProjectBusy(false);
     }
   }
 
@@ -311,6 +330,9 @@ export default function Redesign() {
               </button>
               <Button variant="ghost" onClick={startOver}>
                 <WandSparkles size={18} /> Nueva foto
+              </Button>
+              <Button variant="ghost" className="button-delete" onClick={() => setDeletingProject(true)}>
+                <Trash2 size={18} /> Eliminar
               </Button>
             </div>
 
@@ -477,6 +499,19 @@ export default function Redesign() {
         busy={deleting}
         onConfirm={confirmDeleteVersion}
         onCancel={() => setToDelete(null)}
+      />
+
+      <ConfirmDialog
+        open={deletingProject}
+        title="¿Eliminar este rediseño?"
+        message={
+          result ? `"${result.project_name}" se borrará junto con todas sus versiones. No se puede deshacer.` : ''
+        }
+        confirmLabel="Eliminar"
+        danger
+        busy={projectBusy}
+        onConfirm={confirmDeleteProject}
+        onCancel={() => setDeletingProject(false)}
       />
     </div>
   );

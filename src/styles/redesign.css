@@ -1356,3 +1356,12 @@
 .recent-redesigns {
   margin-top: 32px;
 }
+
+.result-actions .button-delete {
+  color: var(--danger);
+}
+
+.result-actions .button-delete:hover:not(:disabled) {
+  border-color: var(--danger);
+  background: var(--danger-soft);
+}
