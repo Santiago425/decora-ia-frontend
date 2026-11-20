@@ -13,11 +13,27 @@ export interface AdminUser {
   project_count: number;
 }
 
-export interface AdminUserPage {
-  items: AdminUser[];
+export interface Page<T> {
+  items: T[];
   total: number;
   page: number;
   page_size: number;
+}
+
+export type AdminUserPage = Page<AdminUser>;
+
+export interface UserFilters {
+  search: string;
+  role: Role | '';
+  active: '' | 'true' | 'false';
+  page: number;
+}
+
+export interface FurnitureFilters {
+  search: string;
+  category: string;
+  active: '' | 'true' | 'false';
+  page: number;
 }
 
 export interface DailyPoint {

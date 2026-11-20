@@ -1,11 +1,12 @@
-import { ChevronLeft, ChevronRight, Search } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
+import { Search } from 'lucide-react';
+import { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
+import { usePagedQuery } from '../../hooks/usePagedQuery';
 import { adminService } from '../../services/adminService';
 import { notificationCenter } from '../../services/notificationCenter';
-import type { AdminUser, AdminUserPage, Role } from '../../types/admin';
+import type { AdminUser, Role, UserFilters } from '../../types/admin';
 import { formatRelativeTime } from '../../utils/format';
-import { Panel } from '../ui';
+import { Pager, Panel, SkeletonList } from '../ui';
 
 const initials = (name: string) =>
   name
@@ -15,25 +16,15 @@ const initials = (name: string) =>
     .join('')
     .toUpperCase();
 
+const loadUsers = (filters: UserFilters) => adminService.users(filters);
+const notifyError = (error: unknown) => notificationCenter.notify((error as Error).message, 'error');
+
 export function UsersPanel() {
   const { user: me } = useAuth();
-  const [search, setSearch] = useState('');
-  const [page, setPage] = useState(1);
-  const [data, setData] = useState<AdminUserPage | null>(null);
+  const [filters, setFilters] = useState<UserFilters>({ search: '', role: '', active: '', page: 1 });
+  const { data, setData, loading } = usePagedQuery(filters, loadUsers, notifyError);
   const [saving, setSaving] = useState<string | null>(null);
-
-  const load = useCallback(async (text: string, pageNumber: number) => {
-    try {
-      setData(await adminService.users(text, pageNumber));
-    } catch (e) {
-      notificationCenter.notify((e as Error).message, 'error');
-    }
-  }, []);
-
-  useEffect(() => {
-    const timer = setTimeout(() => load(search, page), 250);
-    return () => clearTimeout(timer);
-  }, [search, page, load]);
+  const filter = (patch: Partial<UserFilters>) => setFilters((current) => ({ ...current, page: 1, ...patch }));
 
   async function change(target: AdminUser, patch: { role?: Role; is_active?: boolean }) {
     setSaving(target.id);
@@ -50,30 +41,47 @@ export function UsersPanel() {
     }
   }
 
-  const pages = data ? Math.max(1, Math.ceil(data.total / data.page_size)) : 1;
-
   return (
     <Panel
       className="admin-panel"
       title="Usuarios"
       description={data ? `${data.total} ${data.total === 1 ? 'cuenta' : 'cuentas'}` : 'Cargando…'}
       actions={
-        <label className="search-box">
-          <Search size={18} />
-          <input
-            type="search"
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
-            placeholder="Buscar por nombre o correo"
-            aria-label="Buscar usuarios"
-          />
-        </label>
+        <div className="admin-filters">
+          <label className="search-box">
+            <Search size={18} />
+            <input
+              type="search"
+              value={filters.search}
+              onChange={(e) => filter({ search: e.target.value })}
+              placeholder="Buscar por nombre o correo"
+              aria-label="Buscar usuarios"
+            />
+          </label>
+          <select
+            className="admin-select"
+            value={filters.role}
+            onChange={(e) => filter({ role: e.target.value as UserFilters['role'] })}
+            aria-label="Filtrar por rol"
+          >
+            <option value="">Todos los roles</option>
+            <option value="user">Usuarios</option>
+            <option value="admin">Administradores</option>
+          </select>
+          <select
+            className="admin-select"
+            value={filters.active}
+            onChange={(e) => filter({ active: e.target.value as UserFilters['active'] })}
+            aria-label="Filtrar por estado"
+          >
+            <option value="">Activos e inactivos</option>
+            <option value="true">Solo activos</option>
+            <option value="false">Solo inactivos</option>
+          </select>
+        </div>
       }
     >
-      <div className="table-wrap">
+      <div className={`table-wrap ${loading && data ? 'is-refreshing' : ''}`}>
         <table className="admin-table">
           <thead>
             <tr>
@@ -133,33 +141,19 @@ export function UsersPanel() {
             })}
           </tbody>
         </table>
+        {!data && <SkeletonList count={4} className="table-row-skeleton" />}
         {data && data.items.length === 0 && (
-          <p className="panel-empty table-empty">No hay usuarios con ese nombre o correo.</p>
+          <p className="panel-empty table-empty">No hay usuarios con esos filtros.</p>
         )}
       </div>
 
-      {pages > 1 && (
-        <nav className="pager" aria-label="Páginas">
-          <button
-            className="icon-button"
-            disabled={page <= 1}
-            onClick={() => setPage(page - 1)}
-            aria-label="Página anterior"
-          >
-            <ChevronLeft size={18} />
-          </button>
-          <span>
-            Página {page} de {pages}
-          </span>
-          <button
-            className="icon-button"
-            disabled={page >= pages}
-            onClick={() => setPage(page + 1)}
-            aria-label="Página siguiente"
-          >
-            <ChevronRight size={18} />
-          </button>
-        </nav>
+      {data && (
+        <Pager
+          page={filters.page}
+          total={data.total}
+          pageSize={data.page_size}
+          onChange={(page) => setFilters((current) => ({ ...current, page }))}
+        />
       )}
     </Panel>
   );

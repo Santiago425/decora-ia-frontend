@@ -260,10 +260,47 @@
 .pager {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   gap: 12px;
   color: var(--text-2);
   font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.pager-range {
+  margin-right: auto;
+  color: var(--text-3);
+}
+
+.admin-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.admin-filters .search-box,
+.catalog-toolbar .search-box {
+  flex: 1 1 220px;
+}
+
+.admin-filters .admin-select {
+  flex: 1 1 140px;
+}
+
+.table-wrap {
+  transition: opacity var(--duration-fast);
+}
+
+.table-wrap.is-refreshing {
+  opacity: 0.55;
+}
+
+.table-row-skeleton.skeleton {
+  display: block;
+  height: 52px;
+  margin-top: 8px;
+  border-radius: var(--radius-sm);
 }
 
 .catalog-toolbar {

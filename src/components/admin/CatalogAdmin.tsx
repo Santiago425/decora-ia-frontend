@@ -1,14 +1,15 @@
-import { Plus, X } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
+import { Plus, Search, X } from 'lucide-react';
+import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import { useAsync } from '../../hooks/useAsync';
+import { usePagedQuery } from '../../hooks/usePagedQuery';
 import { adminService } from '../../services/adminService';
 import { catalogService } from '../../services/catalogService';
 import { notificationCenter } from '../../services/notificationCenter';
-import type { AdminAddon, AdminFurniture, AdminStyle, FurnitureInput } from '../../types/admin';
+import type { AdminAddon, AdminFurniture, AdminStyle, FurnitureFilters, FurnitureInput } from '../../types/admin';
 import type { FurnitureCategory } from '../../types/catalog';
 import { formatCurrency } from '../../utils/format';
 import { cssVar } from '../../styles/theme';
-import { Button, Panel, Tabs } from '../ui';
+import { Button, Pager, Panel, SkeletonList, Tabs } from '../ui';
 
 type Section = 'furniture' | 'styles' | 'addons';
 
@@ -160,25 +161,21 @@ function NewFurnitureForm({
   );
 }
 
+const loadFurniture = (filters: FurnitureFilters) => adminService.furniture(filters);
+
 function FurnitureTable() {
   const { data: categories } = useAsync(useCallback(() => catalogService.categories(), []));
-  const [items, setItems] = useState<AdminFurniture[] | null>(null);
-  const [category, setCategory] = useState('all');
+  const [filters, setFilters] = useState<FurnitureFilters>({ search: '', category: '', active: '', page: 1 });
+  const { data, setData, loading } = usePagedQuery(filters, loadFurniture, notifyError);
   const [creating, setCreating] = useState(false);
-
-  useEffect(() => {
-    adminService.furniture().then(setItems).catch(notifyError);
-  }, []);
-
-  const visible = useMemo(
-    () => (items ?? []).filter((i) => category === 'all' || i.category.slug === category),
-    [items, category],
-  );
+  const filter = (patch: Partial<FurnitureFilters>) => setFilters((current) => ({ ...current, page: 1, ...patch }));
+  const setItems = (update: (items: AdminFurniture[]) => AdminFurniture[]) =>
+    setData((current) => current && { ...current, items: update(current.items) });
 
   async function save(item: AdminFurniture, patch: Parameters<typeof adminService.updateFurniture>[1]) {
     try {
       const updated = await adminService.updateFurniture(item.id, patch);
-      setItems((list) => list?.map((i) => (i.id === updated.id ? updated : i)) ?? null);
+      setItems((list) => list.map((i) => (i.id === updated.id ? updated : i)));
       notificationCenter.notify(`Guardaste ${updated.name}`, 'success');
     } catch (e) {
       notifyError(e);
@@ -188,20 +185,40 @@ function FurnitureTable() {
   return (
     <>
       <div className="catalog-toolbar">
+        <label className="search-box">
+          <Search size={18} />
+          <input
+            type="search"
+            value={filters.search}
+            onChange={(e) => filter({ search: e.target.value })}
+            placeholder="Buscar mueble"
+            aria-label="Buscar muebles"
+          />
+        </label>
         <select
           className="admin-select"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
+          value={filters.category}
+          onChange={(e) => filter({ category: e.target.value })}
           aria-label="Filtrar por categoría"
         >
-          <option value="all">Todas las categorías</option>
+          <option value="">Todas las categorías</option>
           {categories?.map((c) => (
             <option key={c.slug} value={c.slug}>
               {c.name}
             </option>
           ))}
         </select>
-        <span className="muted">{visible.length} muebles</span>
+        <select
+          className="admin-select"
+          value={filters.active}
+          onChange={(e) => filter({ active: e.target.value as FurnitureFilters['active'] })}
+          aria-label="Filtrar por visibilidad"
+        >
+          <option value="">Visibles y ocultos</option>
+          <option value="true">Solo visibles</option>
+          <option value="false">Solo ocultos</option>
+        </select>
+        <span className="muted">{data ? `${data.total} muebles` : 'Cargando…'}</span>
         <Button onClick={() => setCreating(true)} disabled={!categories}>
           <Plus size={18} /> Nuevo mueble
         </Button>
@@ -211,12 +228,12 @@ function FurnitureTable() {
           categories={categories}
           onClose={() => setCreating(false)}
           onCreated={(item) => {
-            setItems((list) => [item, ...(list ?? [])]);
+            setItems((list) => [item, ...list]);
             setCreating(false);
           }}
         />
       )}
-      <div className="table-wrap">
+      <div className={`table-wrap ${loading && data ? 'is-refreshing' : ''}`}>
         <table className="admin-table">
           <thead>
             <tr>
@@ -228,7 +245,7 @@ function FurnitureTable() {
             </tr>
           </thead>
           <tbody>
-            {visible.map((item) => (
+            {data?.items.map((item) => (
               <tr key={item.id} className={item.is_active ? '' : 'inactive'}>
                 <td>
                   <div className="user-cell">
@@ -258,7 +275,17 @@ function FurnitureTable() {
             ))}
           </tbody>
         </table>
+        {!data && <SkeletonList count={5} className="table-row-skeleton" />}
+        {data && data.items.length === 0 && <p className="panel-empty table-empty">No hay muebles con esos filtros.</p>}
       </div>
+      {data && (
+        <Pager
+          page={filters.page}
+          total={data.total}
+          pageSize={data.page_size}
+          onChange={(page) => setFilters((current) => ({ ...current, page }))}
+        />
+      )}
     </>
   );
 }
