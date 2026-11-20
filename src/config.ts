@@ -40,6 +40,9 @@ export const config = Object.freeze({
   currency: read('VITE_CURRENCY'),
   locale: read('VITE_LOCALE'),
   authImageUrls: list('VITE_AUTH_IMAGE_URL'),
+  sidebarPhotoUrls: list('VITE_SIDEBAR_PHOTO_URL').length
+    ? list('VITE_SIDEBAR_PHOTO_URL')
+    : list('VITE_AUTH_IMAGE_URL'),
   dashboardBannerUrl: list('VITE_DASHBOARD_BANNER_URL')[0] ?? '',
   dashboardBackdropUrl: read('VITE_DASHBOARD_BACKDROP_URL'),
   emptyStateImageUrl: read('VITE_EMPTY_STATE_IMAGE_URL'),
