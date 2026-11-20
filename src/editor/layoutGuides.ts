@@ -22,6 +22,19 @@ export function wallGaps(bounds: Bounds, room: Pick<RoomData, 'width' | 'length'
   };
 }
 
+/** Move that pushes a footprint flat against its closest wall, keeping the other axis as it is. */
+export function wallSnapOffset(bounds: Bounds, room: Pick<RoomData, 'width' | 'length'>): [number, number] {
+  const gaps = wallGaps(bounds, room);
+  const moves: [number, number, number][] = [
+    [gaps.left, -gaps.left, 0],
+    [gaps.right, gaps.right, 0],
+    [gaps.back, 0, -gaps.back],
+    [gaps.front, 0, gaps.front],
+  ];
+  const [, dx, dz] = moves.reduce((best, move) => (move[0] < best[0] ? move : best));
+  return [dx + 0, dz + 0];
+}
+
 const footprints = (node: SceneNodeData, minHeight: number) =>
   (node.kind === 'group' ? flattenItems(node.children) : [node])
     .filter((item) => item.size[2] > minHeight)
