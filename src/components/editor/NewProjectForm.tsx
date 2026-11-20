@@ -1,5 +1,5 @@
 import { Box, Sparkles } from 'lucide-react';
-import { useEffect, useId, useState, type FormEvent } from 'react';
+import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
 import type { DesignStyle, RoomType } from '../../types/catalog';
 import type { NewProject } from '../../types/project';
 import { config } from '../../config';
@@ -27,6 +27,7 @@ export function NewProjectForm({ roomTypes, styles, busy, onCreate }: NewProject
   const [height, setHeight] = useState<number | null>(null);
   const sizeLabel = useId();
   const [error, setError] = useState('');
+  const nameInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!roomType && roomTypes.length) setRoomType(roomTypes[0].slug);
@@ -35,7 +36,12 @@ export function NewProjectForm({ roomTypes, styles, busy, onCreate }: NewProject
 
   function submit(event: FormEvent) {
     event.preventDefault();
-    if (name.trim().length < 2) return setError('Ponle un nombre a tu proyecto (mínimo 2 letras)');
+    if (name.trim().length < 2) {
+      setError('Ponle un nombre a tu proyecto (mínimo 2 letras)');
+      // The button sits far below the field, so bring the field back into view.
+      nameInput.current?.focus();
+      return;
+    }
     setError('');
     onCreate({
       name: name.trim(),
@@ -64,6 +70,7 @@ export function NewProjectForm({ roomTypes, styles, busy, onCreate }: NewProject
         Nombre del proyecto
       </label>
       <input
+        ref={nameInput}
         id="project-name"
         className="text-input"
         placeholder="Ej. Sala del apartamento"
@@ -71,8 +78,13 @@ export function NewProjectForm({ roomTypes, styles, busy, onCreate }: NewProject
         maxLength={120}
         onChange={(e) => setName(e.target.value)}
         aria-invalid={Boolean(error)}
+        aria-describedby={error ? 'project-name-error' : undefined}
       />
-      {error && <small className="field-error">{error}</small>}
+      {error && (
+        <small className="field-error" id="project-name-error" role="alert">
+          {error}
+        </small>
+      )}
 
       <span className="field-label" id={roomLabel}>
         Tipo de habitación
