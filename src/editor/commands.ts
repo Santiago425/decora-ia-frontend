@@ -79,6 +79,37 @@ export class RotateNodeCommand implements Command {
   }
 }
 
+/** Moves a door or window to a spot on a wall and turns it to face the room, as one step. */
+export class MountOnWallCommand implements Command {
+  readonly label = 'Mover';
+  #previous: Pick<SceneItemData, 'position' | 'rotation'> | null = null;
+
+  constructor(
+    private readonly id: string,
+    private readonly mount: Pick<SceneItemData, 'position' | 'rotation'>,
+  ) {}
+
+  execute(scene: SceneData): SceneData {
+    return {
+      ...scene,
+      nodes: replaceNode(scene.nodes, this.id, (node) => {
+        if (node.kind !== 'item') return node;
+        this.#previous = { position: node.position, rotation: node.rotation };
+        return { ...node, ...this.mount };
+      }),
+    };
+  }
+
+  undo(scene: SceneData): SceneData {
+    const previous = this.#previous;
+    if (!previous) return scene;
+    return {
+      ...scene,
+      nodes: replaceNode(scene.nodes, this.id, (node) => ({ ...node, ...previous }) as SceneNodeData),
+    };
+  }
+}
+
 export type ItemPatch = Partial<Pick<SceneItemData, 'color' | 'finish' | 'addons'>>;
 
 export class UpdateItemCommand implements Command {
@@ -163,7 +194,7 @@ export class RenameNodeCommand implements Command {
   }
 }
 
-type ScenePatch = Partial<Pick<SceneData, 'room' | 'lighting' | 'style'>>;
+type ScenePatch = Partial<Pick<SceneData, 'room' | 'lighting' | 'style' | 'nodes'>>;
 
 export class UpdateSceneCommand implements Command {
   #previous: ScenePatch = {};

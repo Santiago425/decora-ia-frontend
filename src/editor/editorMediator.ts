@@ -5,6 +5,7 @@ import type { LightingData, RoomData } from '../types/project';
 import {
   AddNodesCommand,
   GroupNodesCommand,
+  MountOnWallCommand,
   MoveNodeCommand,
   RemoveNodeCommand,
   RenameNodeCommand,
@@ -22,6 +23,7 @@ import type { Pricing } from './furnitureDecorators';
 import { furnitureFactoryFor } from './furnitureFactory';
 import { findFreeSpot, findNode, newNodeId, nodeBounds, topLevelIdOf } from './sceneTree';
 import { themeFactoryFor } from './styleTheme';
+import { findWallSpot, isWallOpening, isWallOpeningShape, remountOpenings, wallMount } from './wallOpenings';
 
 export type EditorPanel = 'catalog' | 'settings' | 'versions';
 export type NoticeKind = 'info' | 'success' | 'error';
@@ -77,10 +79,10 @@ export class EditorMediator {
 
   addFurniture(item: FurnitureItem): void {
     const scene = this.store.getState().scene;
-    const node = furnitureFactoryFor(item.category.shape).createItem(
-      item,
-      findFreeSpot(scene, [item.width, item.depth]),
-    );
+    const factory = furnitureFactoryFor(item.category.shape);
+    let node = factory.createItem(item, findFreeSpot(scene, [item.width, item.depth]));
+    if (isWallOpeningShape(item.category.shape))
+      node = { ...node, ...findWallSpot(scene, node.size, item.category.shape) };
     if (this.store.execute(new AddNodesCommand([node], `Agregar ${item.name}`))) this.store.select([node.id]);
   }
 
@@ -96,10 +98,21 @@ export class EditorMediator {
   }
 
   rotate(id: string, degrees: number): void {
+    if (isWallOpening(findNode(this.store.getState().scene.nodes, id))) {
+      this.options.notify('Las puertas y ventanas siempre miran hacia el cuarto. Arrástralas a otra pared', 'info');
+      return;
+    }
     this.store.execute(new RotateNodeCommand(id, degrees));
   }
 
   move(id: string, dx: number, dz: number): void {
+    const { scene } = this.store.getState();
+    const node = findNode(scene.nodes, id);
+    if (isWallOpening(node)) {
+      const [x, z] = node.position;
+      this.store.execute(new MountOnWallCommand(id, wallMount([x + dx, z + dz], node.size, scene.room)));
+      return;
+    }
     this.store.execute(new MoveNodeCommand(id, dx, dz));
   }
 
@@ -168,7 +181,10 @@ export class EditorMediator {
   }
 
   setRoom(room: RoomData, label: string): void {
-    this.store.execute(new UpdateSceneCommand({ room }, label));
+    const { scene } = this.store.getState();
+    const resized = room.width !== scene.room.width || room.length !== scene.room.length;
+    const patch = resized ? { room, nodes: remountOpenings(scene.nodes, room) } : { room };
+    this.store.execute(new UpdateSceneCommand(patch, label));
   }
 
   setLighting(lighting: LightingData): void {

@@ -131,6 +131,8 @@
   --scene-light: #fff1dc;
   --scene-sky: var(--white);
   --scene-ground: #d9c7ab;
+  --scene-glass: #cfe3f1;
+  --scene-handle: #2b2b2b;
   --scene-pot: #cdb89b;
   --scene-sofa: #e4dccf;
   --scene-rug: #d6cab7;
