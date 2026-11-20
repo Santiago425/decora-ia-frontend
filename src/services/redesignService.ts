@@ -27,5 +27,6 @@ export const redesignService = {
     form.append('image', photo, 'inspiration.jpg');
     return apiClient.post<Redesign>(`/redesigns/${id}/inspiration`, form, aiOptions);
   },
+  remove: (id: string) => apiClient.delete<unknown>(`/redesigns/${id}`),
   retry: (id: string) => apiClient.post<Redesign>(`/redesigns/${id}/retry`, undefined, aiOptions),
 };
