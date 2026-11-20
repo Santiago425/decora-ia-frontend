@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { ConfirmDialog } from '../components/ConfirmDialog';
 import { ImageProxy } from '../components/ImageProxy';
 import { BeforeAfter } from '../components/redesign/BeforeAfter';
 import { EditPanel } from '../components/redesign/EditPanel';
@@ -84,6 +85,8 @@ export default function Redesign() {
   const [tuning, setTuning] = useState<RedesignChoices | null>(null);
   const [editing, setEditing] = useState(false);
   const [inspiring, setInspiring] = useState(false);
+  const [toDelete, setToDelete] = useState<{ version: RedesignResult; label: string } | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const tuningRef = useRef<HTMLFormElement>(null);
   const isTuning = tuning !== null;
   const loadedProject = versions[0]?.project_id;
@@ -132,6 +135,25 @@ export default function Redesign() {
 
   const selectedStyle = styles.find((s) => s.slug === choices.style);
   const palette = selectedStyle?.palettes.find((p) => p.id === choices.paletteId);
+
+  async function confirmDeleteVersion() {
+    if (!toDelete) return;
+    setDeleting(true);
+    try {
+      await redesignService.remove(toDelete.version.id);
+      const remaining = versions.filter((v) => v.id !== toDelete.version.id);
+      setVersions(remaining);
+      if (result?.id === toDelete.version.id) setResult(remaining[0] ?? null);
+      notificationCenter.notify(`Eliminaste la ${toDelete.label}`, 'success');
+      setToDelete(null);
+    } catch (e) {
+      notificationCenter.notify((e as Error).message, 'error');
+    } finally {
+      setDeleting(false);
+    }
+  }
+
+  const askDeleteVersion = (version: RedesignResult, label: string) => setToDelete({ version, label });
 
   async function run(action: () => Promise<RedesignResult>) {
     setBusy(true);
@@ -235,7 +257,12 @@ export default function Redesign() {
         <section className="redesign-result">
           <div className="result-visual">
             <BeforeAfter before={before} after={after} />
-            <RedesignVersions versions={versions} current={result.id} onSelect={setResult} />
+            <RedesignVersions
+              versions={versions}
+              current={result.id}
+              onSelect={setResult}
+              onDelete={askDeleteVersion}
+            />
             <div className="result-actions">
               <Button
                 onClick={() => {
@@ -378,7 +405,14 @@ export default function Redesign() {
           <Button onClick={() => run(() => redesignService.retry(result.id))}>
             <RefreshCw size={18} /> Reintentar
           </Button>
-          {versions.length > 1 && <RedesignVersions versions={versions} current={result.id} onSelect={setResult} />}
+          {versions.length > 1 && (
+            <RedesignVersions
+              versions={versions}
+              current={result.id}
+              onSelect={setResult}
+              onDelete={askDeleteVersion}
+            />
+          )}
         </div>
       )}
 
@@ -433,6 +467,17 @@ export default function Redesign() {
       )}
 
       {!busy && !loadingHistory && !result && <RecentRedesigns />}
+
+      <ConfirmDialog
+        open={toDelete !== null}
+        title={toDelete ? `¿Eliminar la ${toDelete.label}?` : ''}
+        message="Esta versión se borrará del proyecto. Las demás versiones se quedan como están. No se puede deshacer."
+        confirmLabel="Eliminar"
+        danger
+        busy={deleting}
+        onConfirm={confirmDeleteVersion}
+        onCancel={() => setToDelete(null)}
+      />
     </div>
   );
 }
