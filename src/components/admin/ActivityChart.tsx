@@ -2,8 +2,8 @@ import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAx
 import type { DailyPoint } from '../../types/admin';
 
 const SERIES = [
-  { key: 'projects', label: 'Proyectos', color: '#2d74a6' },
-  { key: 'redesigns', label: 'Rediseños', color: '#c4704f' },
+  { key: 'projects', label: 'Proyectos', color: 'var(--chart-1)' },
+  { key: 'redesigns', label: 'Rediseños', color: 'var(--chart-2)' },
 ] as const;
 
 const dayLabel = (day: string) =>
@@ -14,31 +14,31 @@ export function ActivityChart({ data }: { data: DailyPoint[] }) {
     <div className="activity-chart" role="img" aria-label="Proyectos y rediseños creados por día">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} barGap={2} barCategoryGap="28%" margin={{ top: 8, right: 4, bottom: 0, left: -24 }}>
-          <CartesianGrid vertical={false} stroke="var(--sand-200)" />
+          <CartesianGrid vertical={false} stroke="var(--chart-grid)" />
           <XAxis
             dataKey="day"
             tickFormatter={dayLabel}
-            tick={{ fill: 'var(--muted)', fontSize: 12 }}
+            tick={{ fill: 'var(--text-3)', fontSize: 12 }}
             axisLine={false}
             tickLine={false}
             minTickGap={16}
           />
           <YAxis
             allowDecimals={false}
-            tick={{ fill: 'var(--muted)', fontSize: 12 }}
+            tick={{ fill: 'var(--text-3)', fontSize: 12 }}
             axisLine={false}
             tickLine={false}
           />
           <Tooltip
-            cursor={{ fill: 'var(--sand-100)' }}
+            cursor={{ fill: 'var(--bg)' }}
             labelFormatter={(day) => dayLabel(String(day))}
-            contentStyle={{ borderRadius: 12, border: 'none', boxShadow: 'var(--shadow-md)', color: 'var(--ink)' }}
+            contentStyle={{ borderRadius: 12, border: 'none', boxShadow: 'var(--shadow-md)', color: 'var(--text)' }}
           />
           <Legend
             iconType="circle"
             iconSize={9}
             wrapperStyle={{ fontSize: 13 }}
-            formatter={(label) => <span style={{ color: 'var(--ink-soft)' }}>{label}</span>}
+            formatter={(label) => <span style={{ color: 'var(--text-2)' }}>{label}</span>}
           />
           {SERIES.map((series) => (
             <Bar

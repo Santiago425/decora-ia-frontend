@@ -20,7 +20,7 @@
   flex-wrap: wrap;
   padding: 14px;
   border-radius: var(--radius-lg);
-  background: var(--white);
+  background: var(--surface);
   box-shadow: var(--shadow-sm);
 }
 
@@ -43,15 +43,15 @@
   gap: 8px;
   min-height: 44px;
   padding: 0 14px;
-  border: 1px solid var(--sand-300);
+  border: 1px solid var(--border-strong);
   border-radius: 999px;
-  background: var(--sand-50);
-  color: var(--muted);
+  background: var(--surface-2);
+  color: var(--text-3);
 }
 
 .search-box:focus-within {
-  border-color: var(--terracotta);
-  outline: 2px solid color-mix(in srgb, var(--terracotta) 35%, transparent);
+  border-color: var(--primary);
+  outline: 2px solid color-mix(in srgb, var(--primary) 35%, transparent);
 }
 
 .search-box input {
@@ -59,7 +59,7 @@
   min-width: 0;
   border: 0;
   background: none;
-  color: var(--ink);
+  color: var(--text);
   font: inherit;
   outline: none;
 }
@@ -74,12 +74,12 @@
 .admin-select {
   min-height: 40px;
   padding: 0 32px 0 12px;
-  border: 1px solid var(--sand-300);
+  border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
-  background: var(--white)
+  background: var(--surface)
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237f857f' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")
     no-repeat right 10px center;
-  color: var(--ink);
+  color: var(--text);
   font: inherit;
   font-size: 14px;
   appearance: none;
@@ -103,7 +103,7 @@
   gap: 4px;
   padding: 4px;
   border-radius: 999px;
-  background: rgba(251, 248, 243, 0.92);
+  background: color-mix(in srgb, var(--surface-2) 92%, transparent);
   backdrop-filter: blur(8px);
   box-shadow: var(--shadow-sm);
   opacity: 0;
@@ -129,14 +129,14 @@
 }
 
 .icon-button.danger:hover {
-  background: var(--danger-bg);
+  background: var(--danger-soft);
 }
 
 .rename-form input {
   width: 200px;
   min-height: 34px;
   padding: 0 12px;
-  border: 1px solid var(--terracotta);
+  border: 1px solid var(--primary);
   border-radius: 999px;
   font: inherit;
   font-size: 14px;
@@ -144,7 +144,7 @@
 
 .project-skeleton {
   min-height: 290px;
-  background: linear-gradient(110deg, var(--sand-200) 30%, var(--sand-50) 50%, var(--sand-200) 70%) 0 0 / 300% 100%;
+  background: linear-gradient(110deg, var(--surface-3) 30%, var(--surface-2) 50%, var(--surface-3) 70%) 0 0 / 300% 100%;
   animation: shimmer 1.4s linear infinite;
 }
 
@@ -153,13 +153,13 @@
   padding: 24px;
   border: 0;
   border-radius: var(--radius-lg);
-  background: var(--white);
-  color: var(--ink);
+  background: var(--surface);
+  color: var(--text);
   box-shadow: var(--shadow-lg);
 }
 
 .confirm-dialog::backdrop {
-  background: rgba(35, 48, 42, 0.4);
+  background: color-mix(in srgb, var(--text) 40%, transparent);
   backdrop-filter: blur(3px);
 }
 
@@ -168,7 +168,7 @@
 }
 
 .confirm-dialog p {
-  color: var(--ink-soft);
+  color: var(--text-2);
 }
 
 .confirm-actions {
@@ -180,11 +180,11 @@
 
 .button-danger {
   background: var(--danger);
-  color: var(--white);
+  color: var(--on-primary);
 }
 
 .button-danger:hover:not(:disabled) {
-  background: #9b3524;
+  background: var(--danger);
 }
 
 @media (hover: none) {

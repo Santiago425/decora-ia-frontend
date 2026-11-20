@@ -1,4 +1,5 @@
 import type { DesignStyle, Material, MaterialSurface } from '../types/catalog';
+import { cssVars } from '../styles/theme';
 import type { LightingData } from '../types/project';
 
 export interface SurfaceFinish {
@@ -39,11 +40,11 @@ export class CatalogStyleTheme implements StyleThemeFactory {
   }
 
   createWallFinish(): SurfaceFinish {
-    return toFinish(firstOf(this.style.materials, 'wall') ?? firstOf(this.catalog, 'wall'), NEUTRAL.wall);
+    return toFinish(firstOf(this.style.materials, 'wall') ?? firstOf(this.catalog, 'wall'), neutralColors().wall);
   }
 
   createFloorFinish(): SurfaceFinish {
-    return toFinish(firstOf(this.style.materials, 'floor') ?? firstOf(this.catalog, 'floor'), NEUTRAL.floor);
+    return toFinish(firstOf(this.style.materials, 'floor') ?? firstOf(this.catalog, 'floor'), neutralColors().floor);
   }
 
   createAccentPalette(): string[] {
@@ -51,7 +52,7 @@ export class CatalogStyleTheme implements StyleThemeFactory {
   }
 }
 
-const NEUTRAL = { wall: '#f2ede4', floor: '#c8a27a', light: '#fff4e0' };
+export const neutralColors = () => cssVars({ wall: '--scene-wall', floor: '--scene-floor', light: '--scene-light' });
 
 export class NeutralStyleTheme implements StyleThemeFactory {
   readonly slug = null;
@@ -59,15 +60,15 @@ export class NeutralStyleTheme implements StyleThemeFactory {
   constructor(private readonly catalog: Material[]) {}
 
   createLighting(): LightingData {
-    return { color: NEUTRAL.light, intensity: 1 };
+    return { color: neutralColors().light, intensity: 1 };
   }
 
   createWallFinish(): SurfaceFinish {
-    return toFinish(firstOf(this.catalog, 'wall'), NEUTRAL.wall);
+    return toFinish(firstOf(this.catalog, 'wall'), neutralColors().wall);
   }
 
   createFloorFinish(): SurfaceFinish {
-    return toFinish(firstOf(this.catalog, 'floor'), NEUTRAL.floor);
+    return toFinish(firstOf(this.catalog, 'floor'), neutralColors().floor);
   }
 
   createAccentPalette(): string[] {
@@ -86,5 +87,3 @@ export function surfaceFinish(
 ): SurfaceFinish {
   return toFinish(slug ? materials.get(slug) : undefined, fallbackColor);
 }
-
-export const NEUTRAL_COLORS = NEUTRAL;

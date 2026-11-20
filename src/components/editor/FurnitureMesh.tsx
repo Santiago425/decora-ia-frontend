@@ -18,7 +18,7 @@ function PartMesh({ part }: { part: Part }) {
         metalness={part.metalness ?? 0}
         transparent={transparent}
         opacity={part.opacity ?? 1}
-        emissive={part.emissive ? part.color : '#000000'}
+        emissive={part.emissive ? part.color : 'black'}
         emissiveIntensity={part.emissive ?? 0}
       />
     </mesh>
