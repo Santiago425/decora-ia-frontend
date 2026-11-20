@@ -113,6 +113,51 @@ function MaterialPicker({
   );
 }
 
+/** Light tones come from each style's lighting color in the catalog, plus a free picker. */
+function LightTones({
+  styles,
+  lighting,
+  disabled,
+  onLighting,
+}: {
+  styles: DesignStyle[];
+  lighting: LightingData;
+  disabled: boolean;
+  onLighting: RoomPanelProps['onLighting'];
+}) {
+  const tones = new Map<string, string>();
+  for (const style of styles) {
+    const color = style.lighting_color.toLowerCase();
+    if (!tones.has(color)) tones.set(color, style.name);
+  }
+  const current = lighting.color.toLowerCase();
+  const pick = (color: string) => color.toLowerCase() !== current && onLighting({ ...lighting, color });
+
+  return (
+    <div className="light-tones">
+      <span>Tono de la luz</span>
+      <div className="swatch-row">
+        {[...tones].map(([color, name]) => (
+          <button
+            key={color}
+            className="swatch"
+            style={{ background: color }}
+            title={`Luz ${name}`}
+            aria-label={`Luz ${name}`}
+            aria-pressed={current === color}
+            disabled={disabled}
+            onClick={() => pick(color)}
+          />
+        ))}
+        <label className="swatch swatch-picker" title="Elegir otro tono">
+          <span className="sr-only">Elegir otro tono de luz</span>
+          <input type="color" value={lighting.color} disabled={disabled} onChange={(e) => pick(e.target.value)} />
+        </label>
+      </div>
+    </div>
+  );
+}
+
 export function RoomPanel({ composite, styles, materials, disabled, onStyle, onRoom, onLighting }: RoomPanelProps) {
   const { room, lighting, style } = composite.scene;
   const surfaces = composite.surfaces();
@@ -194,6 +239,7 @@ export function RoomPanel({ composite, styles, materials, disabled, onStyle, onR
           />
           <span>{Math.round(intensity * 100)}%</span>
         </label>
+        <LightTones styles={styles} lighting={lighting} disabled={disabled} onLighting={onLighting} />
       </section>
 
       <section className="inspector-section budget-breakdown">
