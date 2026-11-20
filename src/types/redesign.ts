@@ -32,6 +32,8 @@ export interface Redesign {
   budget: string | null;
   budget_tier: 'economic' | 'standard' | 'premium';
   keep_structure: boolean;
+  keep_items: string | null;
+  edit_tool: { slug: string; name: string } | null;
   suggestions: DesignSuggestions;
   estimated_total: string;
   error_message: string | null;
@@ -45,6 +47,7 @@ export interface RedesignInput {
   palette: string[];
   budget: number | null;
   keepStructure: boolean;
+  keepItems: string;
 }
 
 export interface VariationOptions {
@@ -52,4 +55,27 @@ export interface VariationOptions {
   palette?: string[];
   budget?: number | null;
   keep_structure?: boolean;
+  keep_items?: string | null;
+}
+
+export interface EditFieldOption {
+  slug: string;
+  name: string;
+  color_hex: string | null;
+  texture_url: string | null;
+}
+
+export interface EditField {
+  key: string;
+  label: string;
+  kind: 'color' | 'text' | 'material';
+  placeholder: string;
+  options: EditFieldOption[];
+}
+
+export interface EditTool {
+  key: string;
+  label: string;
+  description: string;
+  fields: EditField[];
 }

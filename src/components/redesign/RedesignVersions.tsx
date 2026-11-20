@@ -1,4 +1,5 @@
 import type { Redesign } from '../../types/redesign';
+import { versionDetail } from '../../utils/editTools';
 import { resolveMediaUrl } from '../../utils/media';
 
 interface Props {
@@ -22,13 +23,13 @@ export function RedesignVersions({ versions, current, onSelect }: Props) {
             type="button"
             className={`version-thumb ${version.id === current ? 'selected' : ''}`}
             aria-pressed={version.id === current}
-            aria-label={`${label}: ${version.style?.name ?? ''}`}
+            aria-label={`${label}: ${versionDetail(version)}`}
             onClick={() => onSelect(version)}
           >
             {thumb && <img src={thumb} alt="" loading="lazy" />}
             <span>
               <strong>{label}</strong>
-              {version.status === 'error' ? 'Falló' : version.style?.name}
+              {versionDetail(version)}
             </span>
           </button>
         );
