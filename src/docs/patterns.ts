@@ -306,6 +306,44 @@ export const PATTERNS: PatternDoc[] = [
   RedesignFacade --> ImageEditor : edit(prompt)`,
   },
   {
+    id: 'adapter-scene',
+    name: 'Adapter',
+    category: 'Estructural',
+    side: 'Backend',
+    summary: 'Del 3D a foto real: la escena del editor se traduce a la instrucción que entiende FLUX Kontext.',
+    problem:
+      'El editor guarda la escena como JSON (muebles, acabados, hora del día), pero el modelo de imagen solo recibe una foto y una frase en inglés.',
+    solution:
+      'ScenePromptAdapter recibe la escena, el estilo, los materiales y la hora del día de la base de datos y devuelve esa frase. SceneRenderService envía la captura del 3D con ella al mismo ImageEditor de los rediseños y la foto pasa por los estados procesando, lista o error.',
+    files: [
+      'app/patterns/adapters/scene_prompt_adapter.py',
+      'app/services/scene_render_service.py',
+      'app/routers/scene_renders.py',
+    ],
+    diagram: `classDiagram
+  class ScenePromptAdapter {
+    +pieces() list
+    +finish(key) str
+    +light() str
+    +prompt() str
+  }
+  class SceneRenderService {
+    +render(user, project_id, capture) SceneRender
+  }
+  class ImageEditor {
+    <<abstract>>
+    +edit(image, prompt) ImageData
+  }
+  class RedesignProcess {
+    +start_processing()
+    +complete(url)
+    +fail(message)
+  }
+  SceneRenderService --> ScenePromptAdapter : escena a texto
+  SceneRenderService --> ImageEditor : edit(captura, prompt)
+  SceneRenderService --> RedesignProcess : estados`,
+  },
+  {
     id: 'adapter-storage',
     name: 'Adapter',
     category: 'Estructural',

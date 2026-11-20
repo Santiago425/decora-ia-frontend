@@ -1,4 +1,13 @@
-import { History, LayoutGrid, Lock, RefreshCw, ShoppingBag, SlidersHorizontal, TriangleAlert } from 'lucide-react';
+import {
+  History,
+  LayoutGrid,
+  Lock,
+  RefreshCw,
+  ShoppingBag,
+  SlidersHorizontal,
+  Sparkles,
+  TriangleAlert,
+} from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { shoppingPath } from '../shopping/shoppingList';
@@ -6,6 +15,7 @@ import { CatalogPanel } from '../components/editor/CatalogPanel';
 import { EditorCanvas, type CameraView, type EditorCanvasHandle } from '../components/editor/EditorCanvas';
 import { EditorToolbar, type SaveState } from '../components/editor/EditorToolbar';
 import { Inspector } from '../components/editor/Inspector';
+import { PhotoRenderDialog } from '../components/editor/PhotoRenderDialog';
 import { RoomPanel } from '../components/editor/RoomPanel';
 import { SheetHandle, type SheetState } from '../components/editor/SheetHandle';
 import { PatternBadge } from '../components/patterns/PatternBadge';
@@ -138,6 +148,8 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
   }, [saveState]);
 
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  const [photoOpen, setPhotoOpen] = useState(false);
+  const [capturing, setCapturing] = useState(false);
   const [mediator] = useState(
     () =>
       new EditorMediator(store, {
@@ -233,6 +245,18 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
     link.click();
   }
 
+  /** Saves the latest scene, hides the markers for a moment and captures the clean 3D view. */
+  async function prepareCapture(): Promise<Blob | null> {
+    if (saveState !== 'saved') await projectService.saveScene(project.id, store.getState().scene);
+    setCapturing(true);
+    try {
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      return (await canvas.current?.captureJpeg(config.editor.captureQuality)) ?? null;
+    } finally {
+      setCapturing(false);
+    }
+  }
+
   const disabled = state.readOnly;
 
   return (
@@ -262,12 +286,27 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
         onHelp={() => setShortcutsOpen(true)}
       />
       <ShortcutsDialog open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
+      <PhotoRenderDialog
+        open={photoOpen}
+        projectId={project.id}
+        projectName={project.name}
+        prepareCapture={prepareCapture}
+        onClose={() => setPhotoOpen(false)}
+      />
 
       <div className={`editor-body tab-${tab}`}>
         <section className="editor-stage" aria-label="Vista 3D de la habitación">
           <PatternBadge
             className="stage-patterns"
-            ids={['command', 'mediator-editor', 'composite', 'abstract-factory', 'factory-method', 'decorator-addons']}
+            ids={[
+              'command',
+              'mediator-editor',
+              'composite',
+              'abstract-factory',
+              'factory-method',
+              'decorator-addons',
+              'adapter-scene',
+            ]}
           />
           <EditorCanvas
             ref={canvas}
@@ -280,6 +319,7 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
             guides={guides}
             clashing={clashing}
             daylight={daylight}
+            clean={capturing}
             onSelect={(id, additive) => mediator.select(id, additive)}
             onMove={(id, dx, dz) => mediator.move(id, dx, dz)}
           />
@@ -293,6 +333,14 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
               <TriangleAlert size={16} /> {clashing.size} muebles se cruzan. Sepáralos para que quepan de verdad
             </div>
           )}
+          <button
+            type="button"
+            className="stage-photo"
+            onClick={() => setPhotoOpen(true)}
+            title="Convertir esta vista 3D en una foto realista"
+          >
+            <Sparkles size={16} aria-hidden="true" /> Foto real
+          </button>
           <p className="stage-hint">
             {view === 'walk'
               ? 'Gira para mirar alrededor · Toca Recorrido otra vez para cambiar de esquina'

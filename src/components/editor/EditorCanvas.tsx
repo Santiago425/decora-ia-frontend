@@ -20,6 +20,8 @@ export type CameraView = 'perspective' | 'top' | 'walk';
 
 export interface EditorCanvasHandle {
   capture(): string | null;
+  /** The current view as a JPEG, ready to send to the photo model. */
+  captureJpeg(quality: number): Promise<Blob | null>;
 }
 
 interface EditorCanvasProps {
@@ -33,6 +35,8 @@ interface EditorCanvasProps {
   clashing: Set<string>;
   /** Time of day picked in the room panel; without one the room keeps the plain studio light. */
   daylight?: DaylightPreset;
+  /** Hides selection and clash markers so a capture shows only the room. */
+  clean?: boolean;
   onSelect: (id: string | null, additive: boolean) => void;
   onMove: (id: string, dx: number, dz: number) => void;
 }
@@ -208,7 +212,7 @@ function WindowGlow({ light, color, intensity }: { light: WindowLight; color: st
 }
 
 export const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(function EditorCanvas(
-  { scene, pricing, selection, readOnly, view, corner, guides, clashing, daylight, onSelect, onMove },
+  { scene, pricing, selection, readOnly, view, corner, guides, clashing, daylight, clean = false, onSelect, onMove },
   ref,
 ) {
   const controls = useRef<OrbitControlsImpl>(null);
@@ -236,7 +240,19 @@ export const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(fu
     [daylight, scene.nodes],
   );
 
-  useImperativeHandle(ref, () => ({ capture: () => canvas.current?.toDataURL('image/png') ?? null }), []);
+  useImperativeHandle(
+    ref,
+    () => ({
+      capture: () => canvas.current?.toDataURL('image/png') ?? null,
+      captureJpeg: (quality) =>
+        new Promise((resolve) => {
+          const element = canvas.current;
+          if (!element) resolve(null);
+          else element.toBlob(resolve, 'image/jpeg', quality);
+        }),
+    }),
+    [],
+  );
 
   const startDrag = useCallback(
     (node: SceneNodeData, event: ThreeEvent<PointerEvent>) => {
@@ -360,7 +376,7 @@ export const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(fu
       })}
 
       {scene.nodes
-        .filter((node) => clashing.has(node.id) && !selection.includes(node.id))
+        .filter((node) => !clean && clashing.has(node.id) && !selection.includes(node.id))
         .map((node) => (
           <SelectionMarker
             key={node.id}
@@ -369,7 +385,7 @@ export const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(fu
             tone="--danger"
           />
         ))}
-      {selectedNodes.map((node) => (
+      {(clean ? [] : selectedNodes).map((node) => (
         <SelectionMarker
           key={node.id}
           node={node}
@@ -378,7 +394,7 @@ export const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(fu
         />
       ))}
 
-      {(guides || drag) && (
+      {!clean && (guides || drag) && (
         <MeasureGuides
           room={room}
           node={selectedNodes.length === 1 ? selectedNodes[0] : undefined}
