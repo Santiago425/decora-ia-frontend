@@ -5,6 +5,13 @@ function read(name: string, fallback = ''): string {
   return typeof value === 'string' && value.trim() !== '' ? value.trim() : fallback;
 }
 
+function list(name: string): string[] {
+  return read(name)
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
 export const config = Object.freeze({
   appName: read('VITE_APP_NAME'),
   assistantName: read('VITE_ASSISTANT_NAME'),
@@ -23,7 +30,8 @@ export const config = Object.freeze({
   },
   currency: read('VITE_CURRENCY'),
   locale: read('VITE_LOCALE'),
-  authImageUrl: read('VITE_AUTH_IMAGE_URL'),
-  dashboardBannerUrl: read('VITE_DASHBOARD_BANNER_URL'),
+  authImageUrls: list('VITE_AUTH_IMAGE_URL'),
+  dashboardBannerUrl: list('VITE_DASHBOARD_BANNER_URL')[0] ?? '',
+  photoIntervalMs: Number(read('VITE_PHOTO_INTERVAL_MS')) || 6000,
   photoCredits: { name: read('VITE_PHOTO_CREDITS_NAME'), url: read('VITE_PHOTO_CREDITS_URL') },
 });
