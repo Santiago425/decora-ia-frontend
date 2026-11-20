@@ -439,6 +439,11 @@
     display: none;
   }
 
+  /* The "Más" sheet sits below the launcher's layer; hide the launcher while the sheet is open. */
+  body:has(.more-sheet.open) .lumi-launcher {
+    visibility: hidden;
+  }
+
   .lumi-drawer {
     inset: 0;
     width: auto;
