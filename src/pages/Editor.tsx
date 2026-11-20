@@ -44,6 +44,7 @@ import type {
   FurnitureCategory,
   FurnitureItem,
   Material,
+  RoomType,
 } from '../types/catalog';
 import type { LightingData, ProjectAction, ProjectDetail, RoomData, VersionSummary } from '../types/project';
 import { Button, ButtonLink, Skeleton } from '../components/ui';
@@ -55,6 +56,7 @@ interface Catalog {
   addons: FurnitureAddon[];
   styles: DesignStyle[];
   daylight: DaylightPreset[];
+  roomTypes: RoomType[];
 }
 
 const COMPACT_QUERY = '(max-width: 900px)';
@@ -389,10 +391,12 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
                 <CatalogPanel
                   categories={catalog.categories}
                   furniture={catalog.furniture}
+                  roomTypes={catalog.roomTypes}
+                  finishes={finishes}
                   roomType={project.room_type?.slug ?? null}
                   roomName={project.room_type?.name ?? null}
                   disabled={disabled}
-                  onAdd={(item) => mediator.addFurniture(item)}
+                  onAdd={(item, variant) => mediator.addFurniture(item, variant)}
                 />
               </div>
             )}
@@ -453,6 +457,7 @@ export default function Editor() {
         catalogService.styles(),
         // The editor still opens with the studio light if the times of day cannot load.
         catalogService.daylight().catch(() => []),
+        catalogService.roomTypes().catch(() => []),
       ]),
     [projectId],
   );
@@ -484,12 +489,12 @@ export default function Editor() {
     );
   }
 
-  const [project, furniture, categories, materials, addons, styles, daylight] = data;
+  const [project, furniture, categories, materials, addons, styles, daylight, roomTypes] = data;
   return (
     <Workspace
       key={project.id}
       initial={project}
-      catalog={{ furniture, categories, materials, addons, styles, daylight }}
+      catalog={{ furniture, categories, materials, addons, styles, daylight, roomTypes }}
     />
   );
 }
