@@ -389,6 +389,35 @@
   backdrop-filter: blur(6px);
 }
 
+.stage-photo {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--primary);
+  color: var(--on-primary);
+  font-size: 13px;
+  font-weight: 650;
+  box-shadow: var(--shadow-md);
+}
+
+.stage-photo:hover {
+  filter: brightness(1.08);
+}
+
+@media (min-width: 901px) {
+  /* Notices drop below the photo button so both stay readable on narrow stages. */
+  .stage-banner {
+    top: 60px;
+  }
+}
+
 /* Catalog */
 
 .catalog-panel,
@@ -1159,6 +1188,20 @@
   .lumi-launcher.in-editor {
     bottom: calc(var(--editor-sheet-bottom) + var(--editor-sheet-peek) + 12px);
   }
+
+  .stage-photo {
+    position: fixed;
+    z-index: 5;
+    top: auto;
+    right: auto;
+    left: 16px;
+    bottom: calc(var(--editor-sheet-bottom) + var(--editor-sheet-peek) + 12px);
+  }
+
+  body:has(.editor-sheet:not([data-sheet='peek'])) .stage-photo {
+    opacity: 0;
+    pointer-events: none;
+  }
 }
 
 @media (max-width: 760px) {
@@ -1352,4 +1395,105 @@ kbd {
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
+}
+
+.photo-dialog {
+  width: min(760px, calc(100% - 32px));
+}
+
+.photo-dialog .modal-body {
+  display: grid;
+  gap: 14px;
+}
+
+.photo-intro {
+  margin: 0;
+}
+
+.photo-stage {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: var(--bg);
+  aspect-ratio: 16 / 10;
+}
+
+.photo-stage > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-stage .before-after {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.photo-working {
+  position: absolute;
+  inset: auto 12px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.photo-working svg {
+  animation: spin 1s linear infinite;
+}
+
+.photo-error {
+  margin: 0;
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.photo-history {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.photo-history button {
+  flex: none;
+  width: 84px;
+  height: 56px;
+  overflow: hidden;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  background: var(--bg);
+}
+
+.photo-history button[aria-pressed='true'] {
+  border-color: var(--primary);
+}
+
+.photo-history img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-dialog .modal-footer {
+  flex-wrap: wrap;
+}
+
+.photo-dialog .modal-footer > * {
+  white-space: nowrap;
+}
+
+@media (max-width: 520px) {
+  .photo-dialog .modal-footer > :last-child {
+    flex: 1 0 100%;
+    justify-content: center;
+  }
 }

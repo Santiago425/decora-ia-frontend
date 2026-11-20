@@ -203,6 +203,7 @@ Todas están documentadas en [`.env.example`](.env.example) y se leen en un úni
 | `VITE_EDITOR_SNAP`, `VITE_EDITOR_MOVE_STEP`, `VITE_EDITOR_ROTATE_STEP`                   | Cuadrícula, paso al mover con flechas y grados al rotar en el editor 3D                |
 | `VITE_EDITOR_HISTORY_LIMIT`, `VITE_EDITOR_AUTOSAVE_MS`, `VITE_EDITOR_DUPLICATE_OFFSET`   | Pasos que se pueden deshacer, espera del guardado automático y separación de una copia |
 | `VITE_EDITOR_OVERLAP_TOLERANCE`, `VITE_EDITOR_EYE_HEIGHT`                                | Margen para avisar que dos muebles se cruzan y altura de la cámara en el recorrido     |
+| `VITE_EDITOR_CAPTURE_QUALITY`                                                            | Calidad JPEG de la vista 3D que se envía para crear la foto real                       |
 | `VITE_EDITOR_MAX_SCENE_LIGHTS`                                                           | Cuántas ventanas y lámparas dan luz propia a la vez en el editor 3D                    |
 | `VITE_EDITOR_WINDOW_SILL`                                                                | Altura desde el piso a la que empiezan las ventanas en el editor 3D                    |
 | `VITE_ROOM_SIZE_PRESETS`                                                                 | Tamaños rápidos del cuarto al crear un proyecto 3D                                     |

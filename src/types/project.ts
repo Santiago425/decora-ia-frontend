@@ -93,3 +93,17 @@ export interface NewProject {
   length?: number;
   height?: number;
 }
+
+export type SceneRenderStatus = 'uploading' | 'processing' | 'ready' | 'error';
+
+/** A photorealistic picture made from a capture of the 3D editor. */
+export interface SceneRender {
+  id: string;
+  project_id: string;
+  status: SceneRenderStatus;
+  capture_image_url: string;
+  result_image_url: string | null;
+  time_of_day: string | null;
+  error_message: string | null;
+  created_at: string;
+}
