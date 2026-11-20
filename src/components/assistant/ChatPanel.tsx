@@ -127,7 +127,7 @@ export function ChatPanel({ compact = false, onClose }: { compact?: boolean; onC
   return (
     <section className={`chat-panel ${compact ? 'compact' : ''}`} aria-label={`Chat con ${config.assistantName}`}>
       <header className="chat-head">
-        <LumiOrb size={compact ? 34 : 42} active={chat.sending || listening} />
+        <LumiOrb size={compact ? 34 : 42} active={chat.sending} listening={listening} depth />
         <div>
           <h2>{config.assistantName}</h2>
           <small className="chat-status">
@@ -168,7 +168,7 @@ export function ChatPanel({ compact = false, onClose }: { compact?: boolean; onC
       <ul className="chat-list" ref={list} aria-live="polite">
         {chat.loaded && chat.messages.length === 0 && (
           <li className="chat-intro">
-            <LumiOrb size={56} />
+            <LumiOrb size={72} depth />
             <h3>
               Hola{firstName && `, ${firstName}`}. Soy {config.assistantName}.
             </h3>

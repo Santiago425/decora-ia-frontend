@@ -2,6 +2,8 @@ import { config } from '../../config';
 import type { DesignStyle } from '../../types/catalog';
 import { formatCurrency } from '../../utils/format';
 import { ImageProxy } from '../ImageProxy';
+import { FlipCard } from '../motion';
+import { MaterialSwatch } from './MaterialSwatch';
 
 export interface RedesignChoices {
   style: string;
@@ -29,18 +31,47 @@ export function RedesignOptions({ styles, value, onChange }: Props) {
       <fieldset>
         <legend>Estilo</legend>
         <div className="style-options">
-          {styles.map((item) => (
-            <button
-              key={item.slug}
-              type="button"
-              className={`style-option ${value.style === item.slug ? 'selected' : ''}`}
-              aria-pressed={value.style === item.slug}
-              onClick={() => selectStyle(item.slug)}
-            >
-              <ImageProxy src={item.image_url} alt="" />
-              <span>{item.name}</span>
-            </button>
-          ))}
+          {styles.map((item) => {
+            const selected = value.style === item.slug;
+            return (
+              <FlipCard
+                key={item.slug}
+                className={`style-option ${selected ? 'selected' : ''}`}
+                flipLabel={`Ver paleta y materiales del estilo ${item.name}`}
+                front={
+                  <button
+                    type="button"
+                    className="style-face"
+                    aria-pressed={selected}
+                    onClick={() => selectStyle(item.slug)}
+                  >
+                    <ImageProxy src={item.image_url} alt={`Ambiente de estilo ${item.name}`} />
+                    <span className="style-face-name">{item.name}</span>
+                  </button>
+                }
+                back={
+                  <button
+                    type="button"
+                    className="style-face style-face-back"
+                    tabIndex={-1}
+                    onClick={() => selectStyle(item.slug)}
+                  >
+                    <strong>{item.name}</strong>
+                    <span className="style-back-palette">
+                      {item.palettes[0]?.colors.map((color) => (
+                        <i key={color} style={{ background: color }} />
+                      ))}
+                    </span>
+                    <span className="style-back-materials">
+                      {item.materials.slice(0, 3).map((material) => (
+                        <MaterialSwatch key={material.slug} material={material} />
+                      ))}
+                    </span>
+                  </button>
+                }
+              />
+            );
+          })}
         </div>
       </fieldset>
 

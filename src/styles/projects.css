@@ -50,7 +50,7 @@
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
   background: var(--surface)
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237f857f' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236f675c' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")
     no-repeat right 10px center;
   color: var(--text);
   font: inherit;
@@ -146,4 +146,24 @@
     flex: 1;
     min-width: 0;
   }
+}
+
+.projects-page .project-grid {
+  display: block;
+  columns: 3 260px;
+  column-gap: 18px;
+}
+
+.projects-page .project-item,
+.projects-page .project-skeleton {
+  margin-bottom: 18px;
+  break-inside: avoid;
+}
+
+.projects-page .project-item:nth-child(3n + 1) .project-thumb {
+  aspect-ratio: 4 / 5;
+}
+
+.projects-page .project-item:nth-child(3n) .project-thumb {
+  aspect-ratio: 1;
 }

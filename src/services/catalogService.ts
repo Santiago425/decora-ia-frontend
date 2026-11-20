@@ -3,6 +3,7 @@ import type {
   FurnitureAddon,
   FurnitureCategory,
   FurnitureItem,
+  InspirationPhoto,
   Material,
   Palette,
   RoomType,
@@ -17,4 +18,5 @@ export const catalogService = {
   furniture: () => apiClient.get<FurnitureItem[]>('/catalog/furniture'),
   materials: () => apiClient.get<Material[]>('/catalog/materials'),
   addons: () => apiClient.get<FurnitureAddon[]>('/catalog/addons'),
+  inspiration: () => apiClient.get<InspirationPhoto[]>('/catalog/inspiration'),
 };

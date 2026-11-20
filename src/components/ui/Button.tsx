@@ -1,5 +1,6 @@
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import type { ButtonHTMLAttributes, PointerEvent, ReactNode } from 'react';
 import { Link, type LinkProps } from 'react-router-dom';
+import { ripple } from '../motion/ripple';
 import { buttonClass, type ButtonStyleProps } from './buttonClass';
 
 type ButtonProps = ButtonStyleProps &
@@ -18,6 +19,7 @@ export function Button({
   disabled,
   children,
   type = 'button',
+  onPointerDown,
   ...rest
 }: ButtonProps) {
   return (
@@ -26,6 +28,10 @@ export function Button({
       className={buttonClass({ variant, size, block }, className)}
       disabled={disabled || loading}
       aria-busy={loading || undefined}
+      onPointerDown={(event: PointerEvent<HTMLButtonElement>) => {
+        ripple(event);
+        onPointerDown?.(event);
+      }}
       {...rest}
     >
       {loading ? (
@@ -39,6 +45,15 @@ export function Button({
   );
 }
 
-export function ButtonLink({ variant, size, block, className, ...rest }: ButtonStyleProps & LinkProps) {
-  return <Link className={buttonClass({ variant, size, block }, className)} {...rest} />;
+export function ButtonLink({ variant, size, block, className, onPointerDown, ...rest }: ButtonStyleProps & LinkProps) {
+  return (
+    <Link
+      className={buttonClass({ variant, size, block }, className)}
+      onPointerDown={(event) => {
+        ripple(event);
+        onPointerDown?.(event);
+      }}
+      {...rest}
+    />
+  );
 }

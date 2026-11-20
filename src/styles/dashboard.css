@@ -10,6 +10,16 @@
   animation: rise 0.6s var(--ease-out) both;
 }
 
+.hero-photo {
+  --depth: 0.7;
+  position: absolute;
+  inset: -24px;
+}
+
+.hero-content.parallax-layer {
+  --depth: -0.15;
+}
+
 .hero-image {
   position: absolute !important;
   inset: 0;
@@ -26,15 +36,16 @@
   inset: 0;
   background: linear-gradient(
     90deg,
-    color-mix(in srgb, var(--scrim) 78%, transparent) 0%,
-    color-mix(in srgb, var(--scrim) 45%, transparent) 55%,
-    color-mix(in srgb, var(--scrim) 10%, transparent) 100%
+    color-mix(in srgb, var(--scrim) 82%, transparent) 0%,
+    color-mix(in srgb, var(--scrim) 50%, transparent) 55%,
+    color-mix(in srgb, var(--scrim) 12%, transparent) 100%
   );
 }
 
 .hero-content {
   position: relative;
   z-index: 1;
+  isolation: isolate;
   display: grid;
   gap: 10px;
   width: 100%;
@@ -148,9 +159,11 @@
   gap: 4px;
   min-height: 132px;
   padding: 20px;
+  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   background: var(--surface);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow);
+  transition: box-shadow var(--duration) var(--ease-out);
   animation: rise 0.6s var(--ease-out) both;
 }
 
@@ -311,18 +324,18 @@
 
 .project-card {
   overflow: hidden;
+  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   background: var(--surface);
-  box-shadow: var(--shadow-sm);
-  transition:
-    transform 0.3s var(--ease-out),
-    box-shadow 0.3s;
+  box-shadow: var(--shadow);
+  transition: box-shadow var(--duration) var(--ease-out);
   animation: rise 0.6s var(--ease-out) both;
 }
 
-.project-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-md);
+.tilt-card:hover > .project-card,
+.tilt-card:hover > .stat-card,
+.tilt-card:hover > .style-tile {
+  box-shadow: var(--shadow-lg);
 }
 
 .project-thumb {
@@ -422,8 +435,18 @@
   grid-auto-columns: minmax(180px, 1fr);
   gap: 14px;
   overflow-x: auto;
-  padding-bottom: 8px;
+  padding: 6px 4px 12px;
   scroll-snap-type: x mandatory;
+}
+
+.stat-tilt,
+.project-tilt,
+.style-tilt {
+  border-radius: var(--radius-lg);
+}
+
+.style-tilt {
+  scroll-snap-align: start;
 }
 
 .style-tile {
@@ -692,4 +715,14 @@
   .getting-started {
     grid-template-columns: minmax(0, 1fr);
   }
+}
+
+.section-subtitle {
+  margin: 4px 0 0;
+  color: var(--text-2);
+}
+
+.hero-content h1 {
+  font-size: clamp(32px, 4vw, 52px);
+  font-weight: 500;
 }

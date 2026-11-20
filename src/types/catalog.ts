@@ -16,6 +16,7 @@ export interface Material {
   roughness: number;
   metalness: number;
   price_per_unit: string;
+  texture_url?: string | null;
 }
 
 export interface DesignStyle {
@@ -35,6 +36,7 @@ export interface RoomType {
   slug: string;
   name: string;
   icon: string;
+  cover_image_url?: string | null;
 }
 
 export interface FurnitureCategory {
@@ -70,4 +72,19 @@ export interface FurnitureAddon {
   visual: AddonVisual;
   color_hex: string | null;
   categories: string[];
+}
+
+export interface CatalogRef {
+  slug: string;
+  name: string;
+}
+
+export interface InspirationPhoto {
+  id: number;
+  title: string;
+  image_url: string;
+  author_name: string;
+  source_url: string | null;
+  style: CatalogRef | null;
+  room_type: CatalogRef | null;
 }

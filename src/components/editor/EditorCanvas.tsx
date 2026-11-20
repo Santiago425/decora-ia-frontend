@@ -1,7 +1,7 @@
-import { ContactShadows, Environment, Lightformer, OrbitControls } from '@react-three/drei';
-import { Canvas, useThree, type ThreeEvent } from '@react-three/fiber';
+import { ContactShadows, Environment, Lightformer, OrbitControls, SoftShadows } from '@react-three/drei';
+import { Canvas, useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { Plane, Vector2, Vector3, type PerspectiveCamera } from 'three';
+import { Plane, Vector2, Vector3 } from 'three';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import { config } from '../../config';
 import type { Pricing } from '../../editor/furnitureDecorators';
@@ -10,6 +10,7 @@ import type { SceneData, SceneNodeData } from '../../types/project';
 import { FurnitureMesh } from './FurnitureMesh';
 import { RoomMesh } from './RoomMesh';
 import { cssVar } from '../../styles/theme';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
 
 export type CameraView = 'perspective' | 'top';
 
@@ -36,6 +37,7 @@ interface Drag {
 
 const FLOOR = new Plane(new Vector3(0, 1, 0), 0);
 const FOV = 45;
+const LOOK_AT = new Vector3(0, 0.3, 0);
 const snap = (value: number) => Math.round(value / config.editor.snap) * config.editor.snap;
 
 const HALF_FOV = Math.tan(((FOV / 2) * Math.PI) / 180);
@@ -60,14 +62,24 @@ function CameraRig({
   room: SceneData['room'];
   controls: React.RefObject<OrbitControlsImpl>;
 }) {
-  const camera = useThree((state) => state.camera) as PerspectiveCamera;
   const aspect = useThree((state) => state.size.width / Math.max(1, state.size.height));
+  const goal = useRef<Vector3 | null>(null);
+  const still = useReducedMotion();
   const { width, length, height } = room;
+
   useEffect(() => {
-    camera.position.set(...cameraPosition(view, { width, length, height } as SceneData['room'], aspect));
-    controls.current?.target.set(0, 0.3, 0);
+    goal.current = new Vector3(...cameraPosition(view, { width, length, height } as SceneData['room'], aspect));
+  }, [view, width, length, height, aspect]);
+
+  useFrame(({ camera }, delta) => {
+    const target = goal.current;
+    if (!target) return;
+    const blend = still ? 1 : 1 - Math.exp(-delta * 5);
+    camera.position.lerp(target, blend);
+    controls.current?.target.lerp(LOOK_AT, blend);
     controls.current?.update();
-  }, [view, width, length, height, aspect, camera, controls]);
+    if (camera.position.distanceTo(target) < 0.005) goal.current = null;
+  });
   return null;
 }
 
@@ -204,6 +216,7 @@ export const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(fu
       onPointerMissed={(event) => onSelect(null, event.shiftKey)}
     >
       <color attach="background" args={[background]} />
+      <SoftShadows size={22} samples={12} focus={0.5} />
       <hemisphereLight args={[cssVar('--scene-sky'), cssVar('--scene-ground'), 0.8 * lighting.intensity]} />
       <ambientLight intensity={0.25 * lighting.intensity} color={lighting.color} />
       <directionalLight
@@ -226,7 +239,7 @@ export const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(fu
         distance={size * 2}
       />
 
-      <Environment resolution={128} environmentIntensity={0.35 * lighting.intensity}>
+      <Environment resolution={128} environmentIntensity={0.5 * lighting.intensity}>
         <Lightformer
           form="rect"
           intensity={2}
@@ -236,10 +249,18 @@ export const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(fu
           rotation-x={Math.PI / 2}
         />
         <Lightformer form="rect" intensity={0.8} position={[-5, 2, 3]} scale={[6, 3, 1]} rotation-y={Math.PI / 2} />
+        <Lightformer
+          form="rect"
+          intensity={1.6}
+          color={cssVar('--scene-light')}
+          position={[4, 2.2, -3]}
+          scale={[3, 2.2, 1]}
+          rotation-y={-Math.PI / 3}
+        />
       </Environment>
 
       <RoomMesh room={room} materials={pricing.materials} />
-      <ContactShadows position={[0, 0.005, 0]} scale={size * 1.4} opacity={0.35} blur={2.4} far={2} resolution={512} />
+      <ContactShadows position={[0, 0.005, 0]} scale={size * 1.4} opacity={0.45} blur={2.6} far={2} resolution={512} />
 
       {scene.nodes.map((node) => {
         const offset: [number, number] = drag?.id === node.id ? drag.delta : [0, 0];

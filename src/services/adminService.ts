@@ -2,6 +2,7 @@ import type {
   AdminAddon,
   AdminFurniture,
   AdminStats,
+  AdminRoomType,
   AdminStyle,
   AdminUser,
   AdminUserPage,
@@ -32,6 +33,9 @@ export const adminService = {
   createFurniture: (data: FurnitureInput) => apiClient.post<AdminFurniture>('/admin/furniture', data),
   updateFurniture: (id: number, data: Partial<FurnitureInput> & { is_active?: boolean }) =>
     apiClient.patch<AdminFurniture>(`/admin/furniture/${id}`, data),
+  roomTypes: () => apiClient.get<AdminRoomType[]>('/admin/room-types'),
+  updateRoomType: (id: number, data: Partial<Pick<AdminRoomType, 'name' | 'cover_image_url' | 'is_active'>>) =>
+    apiClient.patch<AdminRoomType>(`/admin/room-types/${id}`, data),
   styles: () => apiClient.get<AdminStyle[]>('/admin/styles'),
   updateStyle: (id: number, data: Partial<Omit<AdminStyle, 'id' | 'slug' | 'project_count'>>) =>
     apiClient.patch<AdminStyle>(`/admin/styles/${id}`, data),

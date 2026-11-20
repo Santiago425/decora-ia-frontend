@@ -99,6 +99,15 @@ export interface AdminStyle {
   project_count: number;
 }
 
+export interface AdminRoomType {
+  id: number;
+  slug: string;
+  name: string;
+  icon: string;
+  cover_image_url: string | null;
+  is_active: boolean;
+}
+
 export interface AdminAddon {
   id: number;
   slug: string;

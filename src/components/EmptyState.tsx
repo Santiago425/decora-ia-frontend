@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { config } from '../config';
 
 export function EmptyIllustration() {
   return (
@@ -32,8 +33,19 @@ export function EmptyIllustration() {
 
 export function EmptyState({ title, description, action }: { title: string; description: string; action?: ReactNode }) {
   return (
-    <div className="empty-state">
-      <EmptyIllustration />
+    <div className={`empty-state ${config.emptyStateImageUrl ? 'with-photo' : ''}`}>
+      {config.emptyStateImageUrl ? (
+        <img
+          className="empty-photo"
+          src={config.emptyStateImageUrl}
+          alt="Rincón de una casa con luz suave y sombras de hojas"
+          loading="lazy"
+          decoding="async"
+          referrerPolicy="no-referrer"
+        />
+      ) : (
+        <EmptyIllustration />
+      )}
       <h3>{title}</h3>
       <p>{description}</p>
       {action}
