@@ -15,10 +15,11 @@ import {
   type ItemPatch,
 } from './commands';
 import { RoomComposite } from './composite';
+import { wallSnapOffset } from './layoutGuides';
 import type { EditorStore } from './editorStore';
 import type { Pricing } from './furnitureDecorators';
 import { furnitureFactoryFor } from './furnitureFactory';
-import { findFreeSpot, newNodeId, topLevelIdOf } from './sceneTree';
+import { findFreeSpot, findNode, newNodeId, nodeBounds, topLevelIdOf } from './sceneTree';
 import { themeFactoryFor } from './styleTheme';
 
 export type EditorPanel = 'catalog' | 'settings' | 'versions';
@@ -56,6 +57,7 @@ export const SHORTCUTS: Shortcut[] = [
   { keys: ['Supr'], label: 'Eliminar lo seleccionado' },
   { keys: ['R'], label: 'Girar (Shift + R gira al otro lado)' },
   { keys: ['←', '↑', '→', '↓'], label: 'Mover lo seleccionado' },
+  { keys: ['P'], label: 'Pegar lo seleccionado a la pared más cercana' },
   { keys: ['Shift', 'Clic'], label: 'Seleccionar varios muebles' },
   { keys: ['M'], label: 'Mostrar u ocultar las medidas' },
   { keys: ['Esc'], label: 'Quitar la selección' },
@@ -98,6 +100,14 @@ export class EditorMediator {
 
   move(id: string, dx: number, dz: number): void {
     this.store.execute(new MoveNodeCommand(id, dx, dz));
+  }
+
+  snapToWall(id: string): void {
+    const { scene } = this.store.getState();
+    const node = findNode(scene.nodes, id);
+    if (!node) return;
+    const [dx, dz] = wallSnapOffset(nodeBounds(node), scene.room);
+    if (dx !== 0 || dz !== 0) this.move(id, dx, dz);
   }
 
   rename(id: string, name: string): void {
@@ -181,6 +191,7 @@ export class EditorMediator {
     else if (key === 'r' && !mod && selected)
       this.rotate(selected, event.shiftKey ? -this.options.rotateStep : this.options.rotateStep);
     else if (key in arrows && selected) this.move(selected, ...arrows[key]);
+    else if (key === 'p' && !mod && selected) this.snapToWall(selected);
     else if (key === 'escape') this.store.select([]);
     else if (key === '?' && this.options.openShortcuts) this.options.openShortcuts();
     else if (key === 'm' && !mod && this.options.toggleGuides) this.options.toggleGuides();

@@ -18,6 +18,7 @@ import { EditorStore, useEditorState } from '../editor/editorStore';
 import { EditorMediator, type EditorPanel } from '../editor/editorMediator';
 import { buildPricing } from '../editor/furnitureDecorators';
 import { overlappingIds } from '../editor/layoutGuides';
+import { WALK_CORNERS } from '../editor/walkView';
 import { themeFactoryFor } from '../editor/styleTheme';
 import { useAsync } from '../hooks/useAsync';
 import { useMediaQuery } from '../hooks/useMediaQuery';
@@ -61,6 +62,7 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
   const [retryTick, setRetryTick] = useState(0);
   const [view, setView] = useState<CameraView>('perspective');
   const [guides, setGuides] = useState(false);
+  const [corner, setCorner] = useState(0);
   const [tab, setTab] = useState<EditorPanel>('catalog');
   const [sheet, setSheet] = useState<SheetState>('peek');
   const compact = useMediaQuery(COMPACT_QUERY);
@@ -232,7 +234,10 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
         busy={busy}
         onUndo={() => store.undo()}
         onRedo={() => store.redo()}
-        onView={setView}
+        onView={(next) => {
+          if (next === 'walk' && view === 'walk') setCorner((current) => (current + 1) % WALK_CORNERS);
+          setView(next);
+        }}
         onGuides={() => setGuides((current) => !current)}
         onCapture={capture}
         onRename={rename}
@@ -255,6 +260,7 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
             selection={state.selection}
             readOnly={disabled}
             view={view}
+            corner={corner}
             guides={guides}
             clashing={clashing}
             onSelect={(id, additive) => mediator.select(id, additive)}
@@ -270,7 +276,11 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
               <TriangleAlert size={16} /> {clashing.size} muebles se cruzan. Sepáralos para que quepan de verdad
             </div>
           )}
-          <p className="stage-hint">Arrastra los muebles para moverlos · Gira la vista con un dedo o el mouse</p>
+          <p className="stage-hint">
+            {view === 'walk'
+              ? 'Gira para mirar alrededor · Toca Recorrido otra vez para cambiar de esquina'
+              : 'Arrastra los muebles para moverlos · Gira la vista con un dedo o el mouse'}
+          </p>
         </section>
 
         <div className="editor-sheet" data-sheet={sheet}>
@@ -333,6 +343,7 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
                 onAddons={(id, addons) => mediator.updateItem(id, { addons }, 'Cambiar complementos')}
                 onRotate={(id, degrees) => mediator.rotate(id, degrees)}
                 onDuplicate={(id) => mediator.duplicate(id)}
+                onSnapToWall={(id) => mediator.snapToWall(id)}
                 onRemove={(id) => mediator.remove(id)}
                 onRename={(id, name) => mediator.rename(id, name)}
                 onGroup={(ids) => mediator.group(ids, `Grupo ${composite.children.length}`)}

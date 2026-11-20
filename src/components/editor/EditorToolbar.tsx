@@ -4,6 +4,7 @@ import {
   Camera,
   CheckCircle2,
   CloudOff,
+  Footprints,
   Keyboard,
   Loader2,
   Redo2,
@@ -126,6 +127,14 @@ export function EditorToolbar(props: EditorToolbarProps) {
             title="Vista desde arriba"
           >
             <Square size={18} /> <span>Planta</span>
+          </button>
+          <button
+            className="tool-button"
+            aria-pressed={props.view === 'walk'}
+            onClick={() => props.onView('walk')}
+            title="Mirar desde una esquina a la altura de los ojos. Tócalo otra vez para cambiar de esquina"
+          >
+            <Footprints size={18} /> <span>Recorrido</span>
           </button>
           <button
             className="tool-button"

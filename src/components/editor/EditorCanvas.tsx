@@ -1,11 +1,12 @@
 import { ContactShadows, Environment, Lightformer, OrbitControls, SoftShadows } from '@react-three/drei';
 import { Canvas, useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { Plane, Vector2, Vector3 } from 'three';
+import { PerspectiveCamera, Plane, Vector2, Vector3 } from 'three';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import { config } from '../../config';
 import type { Pricing } from '../../editor/furnitureDecorators';
 import { flattenItems, nodeBounds, type Bounds } from '../../editor/sceneTree';
+import { LOOK_AHEAD, walkPose } from '../../editor/walkView';
 import type { SceneData, SceneNodeData } from '../../types/project';
 import { FurnitureMesh } from './FurnitureMesh';
 import { MeasureGuides } from './MeasureGuides';
@@ -13,7 +14,7 @@ import { RoomMesh } from './RoomMesh';
 import { cssVar } from '../../styles/theme';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 
-export type CameraView = 'perspective' | 'top';
+export type CameraView = 'perspective' | 'top' | 'walk';
 
 export interface EditorCanvasHandle {
   capture(): string | null;
@@ -25,6 +26,7 @@ interface EditorCanvasProps {
   selection: string[];
   readOnly: boolean;
   view: CameraView;
+  corner: number;
   guides: boolean;
   clashing: Set<string>;
   onSelect: (id: string | null, additive: boolean) => void;
@@ -45,7 +47,9 @@ const snap = (value: number) => Math.round(value / config.editor.snap) * config.
 
 const HALF_FOV = Math.tan(((FOV / 2) * Math.PI) / 180);
 
-function cameraPosition(view: CameraView, room: SceneData['room'], aspect = 1.4): [number, number, number] {
+const WALK_FOV = 70;
+function cameraPosition(view: CameraView, room: SceneData['room'], aspect = 1.4, corner = 0): [number, number, number] {
+  if (view === 'walk') return walkPose(room, corner).eye.toArray();
   if (view === 'top') {
     const distance = Math.max(room.length / 2 / HALF_FOV, room.width / 2 / (HALF_FOV * aspect)) * 1.12;
     return [0, distance + room.height, 0.01];
@@ -58,28 +62,38 @@ function cameraPosition(view: CameraView, room: SceneData['room'], aspect = 1.4)
 
 function CameraRig({
   view,
+  corner,
   room,
   controls,
 }: {
   view: CameraView;
+  corner: number;
   room: SceneData['room'];
   controls: React.RefObject<OrbitControlsImpl>;
 }) {
   const aspect = useThree((state) => state.size.width / Math.max(1, state.size.height));
   const goal = useRef<Vector3 | null>(null);
+  const focus = useRef<Vector3>(LOOK_AT);
   const still = useReducedMotion();
   const { width, length, height } = room;
 
   useEffect(() => {
-    goal.current = new Vector3(...cameraPosition(view, { width, length, height } as SceneData['room'], aspect));
-  }, [view, width, length, height, aspect]);
+    const shape = { width, length, height } as SceneData['room'];
+    goal.current = new Vector3(...cameraPosition(view, shape, aspect, corner));
+    focus.current = view === 'walk' ? walkPose(shape, corner).focus : LOOK_AT;
+  }, [view, corner, width, length, height, aspect]);
 
   useFrame(({ camera }, delta) => {
+    const fov = view === 'walk' ? WALK_FOV : FOV;
+    if (camera instanceof PerspectiveCamera && camera.fov !== fov) {
+      camera.fov = fov;
+      camera.updateProjectionMatrix();
+    }
     const target = goal.current;
     if (!target) return;
     const blend = still ? 1 : 1 - Math.exp(-delta * 5);
     camera.position.lerp(target, blend);
-    controls.current?.target.lerp(LOOK_AT, blend);
+    controls.current?.target.lerp(focus.current, blend);
     controls.current?.update();
     if (camera.position.distanceTo(target) < 0.005) goal.current = null;
   });
@@ -172,7 +186,7 @@ function SelectionMarker({
 }
 
 export const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(function EditorCanvas(
-  { scene, pricing, selection, readOnly, view, guides, clashing, onSelect, onMove },
+  { scene, pricing, selection, readOnly, view, corner, guides, clashing, onSelect, onMove },
   ref,
 ) {
   const controls = useRef<OrbitControlsImpl>(null);
@@ -319,12 +333,15 @@ export const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(fu
         ref={controls}
         makeDefault
         target={[0, 0.4, 0]}
-        maxPolarAngle={Math.PI / 2.15}
-        minDistance={1.5}
-        maxDistance={size * 4}
+        maxPolarAngle={view === 'walk' ? Math.PI * 0.8 : Math.PI / 2.15}
+        minDistance={view === 'walk' ? LOOK_AHEAD * 0.5 : 1.5}
+        maxDistance={view === 'walk' ? LOOK_AHEAD : size * 4}
+        enableZoom={view !== 'walk'}
+        enablePan={view !== 'walk'}
+        rotateSpeed={view === 'walk' ? -0.4 : 1}
         enableDamping
       />
-      <CameraRig view={view} room={room} controls={controls} />
+      <CameraRig view={view} corner={corner} room={room} controls={controls} />
     </Canvas>
   );
 });

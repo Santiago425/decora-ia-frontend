@@ -1,4 +1,4 @@
-import { Copy, Group, RotateCcw, RotateCw, Trash2, Ungroup } from 'lucide-react';
+import { ArrowUpToLine, Copy, Group, RotateCcw, RotateCw, Trash2, Ungroup } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { FurnitureGroup, FurnitureLeaf, type SceneComponent } from '../../editor/composite';
 import type { FurnitureAddon, FurnitureCategory, Material } from '../../types/catalog';
@@ -18,6 +18,7 @@ interface InspectorProps {
   onAddons: (id: string, addons: string[]) => void;
   onRotate: (id: string, degrees: number) => void;
   onDuplicate: (id: string) => void;
+  onSnapToWall: (id: string) => void;
   onRemove: (id: string) => void;
   onRename: (id: string, name: string) => void;
   onGroup: (ids: string[]) => void;
@@ -51,6 +52,14 @@ function Actions({ id, disabled, props }: { id: string; disabled: boolean; props
         title="Duplicar (Ctrl + D)"
       >
         <Copy size={17} /> <span>Duplicar</span>
+      </button>
+      <button
+        className="tool-button"
+        onClick={() => props.onSnapToWall(id)}
+        disabled={disabled}
+        title="Pegar a la pared más cercana (P)"
+      >
+        <ArrowUpToLine size={17} /> <span>Pegar</span>
       </button>
       <button
         className="tool-button danger"

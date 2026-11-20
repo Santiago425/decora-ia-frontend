@@ -55,6 +55,15 @@ function setup({ compact = false, readOnly = false } = {}) {
 }
 
 describe('editor mediator', () => {
+  it('snaps the selection to the closest wall with P', () => {
+    const { store, mediator } = setup();
+    mediator.addFurniture(sofa);
+    mediator.handleKey(key('p'));
+    const [node] = store.getState().scene.nodes;
+    expect(node.kind === 'item' && node.position).toEqual([-1.5, 0]);
+    expect(store.getState().undoLabel).toBe('Mover');
+  });
+
   it('toggles the measure guides with M', () => {
     const { mediator, toggleGuides } = setup();
     expect(mediator.handleKey(key('m'))).toBe(true);
