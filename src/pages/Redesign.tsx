@@ -5,6 +5,7 @@ import { ImageProxy } from '../components/ImageProxy';
 import { BeforeAfter } from '../components/redesign/BeforeAfter';
 import { PhotoPicker } from '../components/redesign/PhotoPicker';
 import { RedesignProgress } from '../components/redesign/RedesignProgress';
+import { RedesignSummary } from '../components/redesign/RedesignSummary';
 import { SuggestionsPanel } from '../components/redesign/SuggestionsPanel';
 import { config } from '../config';
 import { useAsync } from '../hooks/useAsync';
@@ -159,6 +160,13 @@ export default function Redesign() {
         <form className="redesign-form" onSubmit={handleSubmit} noValidate>
           <div className="redesign-photo">
             <PhotoPicker file={photo} onChange={setPhoto} onInvalid={setError} />
+            <RedesignSummary
+              hasPhoto={Boolean(photo)}
+              roomName={roomTypes.find((room) => room.slug === roomType)?.name}
+              styleName={selectedStyle?.name}
+              paletteName={palette?.name}
+              budget={budget.trim() ? formatCurrency(Number(budget.replace(/\D/g, ''))) : ''}
+            />
           </div>
 
           <div className="redesign-options">
@@ -238,9 +246,12 @@ export default function Redesign() {
               </p>
             )}
 
-            <Button size="lg" block type="submit" disabled={!photo || catalog.loading}>
-              <WandSparkles size={20} /> Rediseñar mi espacio
-            </Button>
+            <div className="redesign-submit">
+              <Button size="lg" block type="submit" disabled={!photo || catalog.loading}>
+                <WandSparkles size={20} /> Rediseñar mi espacio
+              </Button>
+              {!photo && <small className="submit-hint">Sube una foto para continuar</small>}
+            </div>
           </div>
         </form>
       )}
