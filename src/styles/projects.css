@@ -39,8 +39,31 @@
 
 .toolbar-selects {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   margin-left: auto;
+}
+
+.toolbar-summary {
+  display: flex;
+  flex: 1 1 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  color: var(--text-2);
+  font-size: 14px;
+}
+
+.toolbar-summary > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toolbar-summary svg {
+  color: var(--primary);
 }
 
 .toolbar-selects select,
@@ -143,8 +166,14 @@
   }
 
   .toolbar-selects select {
-    flex: 1;
+    flex: 1 1 calc(50% - 4px);
     min-width: 0;
+  }
+
+  .toolbar-summary .button {
+    flex: none;
+    padding: 0 10px;
+    white-space: nowrap;
   }
 }
 
