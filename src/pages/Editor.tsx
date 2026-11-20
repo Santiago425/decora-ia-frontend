@@ -27,7 +27,14 @@ import { useMediaQuery } from '../hooks/useMediaQuery';
 import { catalogService } from '../services/catalogService';
 import { notificationCenter } from '../services/notificationCenter';
 import { projectService } from '../services/projectService';
-import type { DesignStyle, FurnitureAddon, FurnitureCategory, FurnitureItem, Material } from '../types/catalog';
+import type {
+  DaylightPreset,
+  DesignStyle,
+  FurnitureAddon,
+  FurnitureCategory,
+  FurnitureItem,
+  Material,
+} from '../types/catalog';
 import type { LightingData, ProjectAction, ProjectDetail, RoomData, VersionSummary } from '../types/project';
 import { Button, ButtonLink, Skeleton } from '../components/ui';
 
@@ -37,6 +44,7 @@ interface Catalog {
   materials: Material[];
   addons: FurnitureAddon[];
   styles: DesignStyle[];
+  daylight: DaylightPreset[];
 }
 
 const COMPACT_QUERY = '(max-width: 900px)';
@@ -78,6 +86,7 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
   const composite = useMemo(() => new RoomComposite(state.scene, pricing), [state.scene, pricing]);
   const selection = state.selection.map((id) => composite.find(id)).filter((c) => c !== undefined);
   const style = catalog.styles.find((s) => s.slug === state.scene.style);
+  const daylight = catalog.daylight.find((preset) => preset.slug === state.scene.lighting.time_of_day);
   const palette = themeFactoryFor(style, catalog.materials).createAccentPalette();
   const finishes = catalog.materials.filter((m) => m.surface === 'furniture');
   const total = composite.price();
@@ -270,6 +279,7 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
             corner={corner}
             guides={guides}
             clashing={clashing}
+            daylight={daylight}
             onSelect={(id, additive) => mediator.select(id, additive)}
             onMove={(id, dx, dz) => mediator.move(id, dx, dz)}
           />
@@ -366,6 +376,7 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
                 composite={composite}
                 styles={catalog.styles}
                 materials={catalog.materials}
+                daylight={catalog.daylight}
                 disabled={disabled}
                 onStyle={(slug) => mediator.applyStyle(slug)}
                 onRoom={(room: RoomData, label: string) => mediator.setRoom(room, label)}
@@ -390,6 +401,8 @@ export default function Editor() {
         catalogService.materials(),
         catalogService.addons(),
         catalogService.styles(),
+        // The editor still opens with the studio light if the times of day cannot load.
+        catalogService.daylight().catch(() => []),
       ]),
     [projectId],
   );
@@ -421,8 +434,12 @@ export default function Editor() {
     );
   }
 
-  const [project, furniture, categories, materials, addons, styles] = data;
+  const [project, furniture, categories, materials, addons, styles, daylight] = data;
   return (
-    <Workspace key={project.id} initial={project} catalog={{ furniture, categories, materials, addons, styles }} />
+    <Workspace
+      key={project.id}
+      initial={project}
+      catalog={{ furniture, categories, materials, addons, styles, daylight }}
+    />
   );
 }

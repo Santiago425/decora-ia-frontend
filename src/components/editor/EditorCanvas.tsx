@@ -1,12 +1,14 @@
 import { ContactShadows, Environment, Lightformer, OrbitControls, SoftShadows } from '@react-three/drei';
 import { Canvas, useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { PerspectiveCamera, Plane, Vector2, Vector3 } from 'three';
+import { Object3D, PerspectiveCamera, Plane, Vector2, Vector3 } from 'three';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import { config } from '../../config';
+import { lampLights, sunPosition, windowLights, type WindowLight } from '../../editor/daylight';
 import type { Pricing } from '../../editor/furnitureDecorators';
 import { flattenItems, nodeBounds, type Bounds } from '../../editor/sceneTree';
 import { LOOK_AHEAD, walkPose } from '../../editor/walkView';
+import type { DaylightPreset } from '../../types/catalog';
 import type { SceneData, SceneNodeData } from '../../types/project';
 import { FurnitureMesh } from './FurnitureMesh';
 import { MeasureGuides } from './MeasureGuides';
@@ -29,6 +31,8 @@ interface EditorCanvasProps {
   corner: number;
   guides: boolean;
   clashing: Set<string>;
+  /** Time of day picked in the room panel; without one the room keeps the plain studio light. */
+  daylight?: DaylightPreset;
   onSelect: (id: string | null, additive: boolean) => void;
   onMove: (id: string, dx: number, dz: number) => void;
 }
@@ -185,8 +189,26 @@ function SelectionMarker({
   );
 }
 
+function WindowGlow({ light, color, intensity }: { light: WindowLight; color: string; intensity: number }) {
+  const target = useMemo(() => new Object3D(), []);
+  return (
+    <>
+      <primitive object={target} position={light.target} />
+      <spotLight
+        position={light.position}
+        target={target}
+        color={color}
+        intensity={intensity}
+        angle={0.85}
+        penumbra={0.9}
+        distance={6}
+      />
+    </>
+  );
+}
+
 export const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(function EditorCanvas(
-  { scene, pricing, selection, readOnly, view, corner, guides, clashing, onSelect, onMove },
+  { scene, pricing, selection, readOnly, view, corner, guides, clashing, daylight, onSelect, onMove },
   ref,
 ) {
   const controls = useRef<OrbitControlsImpl>(null);
@@ -196,6 +218,23 @@ export const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(fu
   const { room, lighting } = scene;
   const size = Math.max(room.width, room.length);
   const background = useMemo(() => cssVar('--bg'), []);
+  const glow = lighting.intensity;
+  const ambient = daylight ? daylight.ambient_intensity : 1;
+  const sunColor = daylight?.sun_color ?? lighting.color;
+  const sun: [number, number, number] = daylight
+    ? sunPosition(daylight, size * 3)
+    : [room.width * 0.25, room.height * 3.2, room.length * 0.35];
+  const windows = useMemo(
+    () =>
+      daylight?.window_intensity
+        ? windowLights(scene.nodes, config.editor.windowSill, config.editor.maxSceneLights)
+        : [],
+    [daylight, scene.nodes],
+  );
+  const lamps = useMemo(
+    () => (daylight?.lamp_intensity ? lampLights(scene.nodes, config.editor.maxSceneLights) : []),
+    [daylight, scene.nodes],
+  );
 
   useImperativeHandle(ref, () => ({ capture: () => canvas.current?.toDataURL('image/png') ?? null }), []);
 
@@ -242,12 +281,14 @@ export const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(fu
     >
       <color attach="background" args={[background]} />
       <SoftShadows size={22} samples={12} focus={0.5} />
-      <hemisphereLight args={[cssVar('--scene-sky'), cssVar('--scene-ground'), 0.8 * lighting.intensity]} />
-      <ambientLight intensity={0.25 * lighting.intensity} color={lighting.color} />
+      <hemisphereLight
+        args={[daylight?.sky_color ?? cssVar('--scene-sky'), cssVar('--scene-ground'), 0.8 * glow * ambient]}
+      />
+      <ambientLight intensity={0.25 * glow * ambient} color={daylight?.ambient_color ?? lighting.color} />
       <directionalLight
-        position={[room.width * 0.25, room.height * 3.2, room.length * 0.35]}
-        intensity={1.5 * lighting.intensity}
-        color={lighting.color}
+        position={sun}
+        intensity={1.5 * glow * (daylight ? daylight.sun_intensity : 1)}
+        color={sunColor}
         castShadow
         shadow-mapSize={[2048, 2048]}
         shadow-camera-left={-size}
@@ -259,12 +300,29 @@ export const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(fu
       />
       <pointLight
         position={[0, room.height - 0.3, 0]}
-        intensity={0.6 * lighting.intensity}
+        intensity={0.6 * glow * ambient}
         color={lighting.color}
         distance={size * 2}
       />
+      {windows.map((light) => (
+        <WindowGlow
+          key={light.id}
+          light={light}
+          color={sunColor}
+          intensity={(daylight?.window_intensity ?? 0) * glow}
+        />
+      ))}
+      {lamps.map((lamp) => (
+        <pointLight
+          key={lamp.id}
+          position={lamp.position}
+          color={lighting.color}
+          intensity={(daylight?.lamp_intensity ?? 0) * glow}
+          distance={5}
+        />
+      ))}
 
-      <Environment resolution={128} environmentIntensity={0.5 * lighting.intensity}>
+      <Environment resolution={128} environmentIntensity={0.5 * glow * ambient}>
         <Lightformer
           form="rect"
           intensity={2}
@@ -295,6 +353,7 @@ export const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(fu
             item={item}
             pricing={pricing}
             offset={offset}
+            sky={daylight?.sky_color}
             onPointerDown={(event) => startDrag(node, event)}
           />
         ));

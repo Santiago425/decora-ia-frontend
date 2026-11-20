@@ -23,6 +23,7 @@ const catalog = vi.hoisted(() => ({
   materials: vi.fn(),
   addons: vi.fn(),
   styles: vi.fn(),
+  daylight: vi.fn(),
 }));
 vi.mock('../services/projectService', () => ({ projectService: projects }));
 vi.mock('../services/catalogService', () => ({ catalogService: catalog }));
@@ -118,6 +119,7 @@ describe('3D editor page', () => {
     catalog.materials.mockResolvedValue([]);
     catalog.addons.mockResolvedValue([]);
     catalog.styles.mockResolvedValue([]);
+    catalog.daylight.mockResolvedValue([]);
   });
 
   it('suggests the furniture that fits the room type', async () => {

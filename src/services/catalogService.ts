@@ -1,4 +1,5 @@
 import type {
+  DaylightPreset,
   DesignStyle,
   FurnitureAddon,
   FurnitureCategory,
@@ -18,5 +19,6 @@ export const catalogService = {
   furniture: () => apiClient.get<FurnitureItem[]>('/catalog/furniture'),
   materials: () => apiClient.get<Material[]>('/catalog/materials'),
   addons: () => apiClient.get<FurnitureAddon[]>('/catalog/addons'),
+  daylight: () => apiClient.get<DaylightPreset[]>('/catalog/daylight'),
   inspiration: () => apiClient.get<InspirationPhoto[]>('/catalog/inspiration'),
 };

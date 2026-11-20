@@ -1,7 +1,7 @@
-import { Sun } from 'lucide-react';
+import { Lightbulb, Moon, Sun, Sunrise, Sunset, type LucideIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import type { RoomComposite } from '../../editor/composite';
-import type { DesignStyle, Material } from '../../types/catalog';
+import type { DaylightPreset, DesignStyle, Material } from '../../types/catalog';
 import type { LightingData, RoomData } from '../../types/project';
 import { config } from '../../config';
 import { formatCurrency } from '../../utils/format';
@@ -13,6 +13,7 @@ interface RoomPanelProps {
   composite: RoomComposite;
   styles: DesignStyle[];
   materials: Material[];
+  daylight?: DaylightPreset[];
   disabled: boolean;
   onStyle: (slug: string) => void;
   onRoom: (room: RoomData, label: string) => void;
@@ -74,6 +75,53 @@ function MaterialPicker({
   );
 }
 
+const TIME_ICONS: Record<string, LucideIcon> = { morning: Sunrise, afternoon: Sunset, night: Moon };
+
+/** Times of day come from the catalog; "Estudio" keeps the even light the editor had before. */
+function TimeOfDay({
+  presets,
+  lighting,
+  disabled,
+  onLighting,
+}: {
+  presets: DaylightPreset[];
+  lighting: LightingData;
+  disabled: boolean;
+  onLighting: RoomPanelProps['onLighting'];
+}) {
+  const current = lighting.time_of_day ?? null;
+  const pick = (slug: string | null) => slug !== current && onLighting({ ...lighting, time_of_day: slug });
+  const options = [
+    { slug: null, name: 'Estudio', description: 'Luz pareja, sin sol', Icon: Lightbulb },
+    ...presets.map((preset) => ({
+      slug: preset.slug,
+      name: preset.name,
+      description: preset.description,
+      Icon: TIME_ICONS[preset.slug] ?? Sun,
+    })),
+  ];
+  return (
+    <div className="time-of-day">
+      <span>Hora del día</span>
+      <div className="time-grid">
+        {options.map(({ slug, name, description, Icon }) => (
+          <button
+            key={slug ?? 'studio'}
+            className="time-option"
+            aria-pressed={current === slug}
+            disabled={disabled}
+            title={description}
+            onClick={() => pick(slug)}
+          >
+            <Icon size={16} aria-hidden="true" />
+            {name}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /** Light tones come from each style's lighting color in the catalog, plus a free picker. */
 function LightTones({
   styles,
@@ -119,7 +167,16 @@ function LightTones({
   );
 }
 
-export function RoomPanel({ composite, styles, materials, disabled, onStyle, onRoom, onLighting }: RoomPanelProps) {
+export function RoomPanel({
+  composite,
+  styles,
+  materials,
+  daylight = [],
+  disabled,
+  onStyle,
+  onRoom,
+  onLighting,
+}: RoomPanelProps) {
   const { room, lighting, style } = composite.scene;
   const surfaces = composite.surfaces();
   const [intensity, setIntensity] = useState(lighting.intensity);
@@ -197,6 +254,9 @@ export function RoomPanel({ composite, styles, materials, disabled, onStyle, onR
 
       <section className="inspector-section">
         <h4>Iluminación</h4>
+        {daylight.length > 0 && (
+          <TimeOfDay presets={daylight} lighting={lighting} disabled={disabled} onLighting={onLighting} />
+        )}
         <label className="light-slider">
           <Sun size={16} aria-hidden="true" />
           <input
