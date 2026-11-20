@@ -15,6 +15,12 @@ export const metaService = {
   },
 };
 
+/** The configured welcome line when the email belongs to a demo account, or an empty string. */
+export function demoGreeting(meta: Pick<PublicMeta, 'demo_accounts'> | null, email: string): string {
+  const account = meta?.demo_accounts.find((demo) => demo.email.toLowerCase() === email.toLowerCase());
+  return account?.greeting ?? '';
+}
+
 export function providerLabel(meta: Pick<PublicMeta, 'available_providers'> | null, key: string): string {
   return meta?.available_providers.find((provider) => provider.key === key)?.label ?? key;
 }

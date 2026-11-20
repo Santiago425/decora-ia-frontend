@@ -5,6 +5,8 @@ export interface DemoAccount {
   name: string;
   email: string;
   password: string;
+  /** Welcome line for whoever signs in with this account; empty keeps the usual greeting. */
+  greeting?: string;
 }
 
 export type ProviderCapability = 'text' | 'image' | 'storage';
