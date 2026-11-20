@@ -94,8 +94,8 @@
 }
 
 .admin-facts dd.provider-mock {
-  background: var(--accent-soft);
-  color: var(--accent-text);
+  background: var(--primary-soft);
+  color: var(--primary);
 }
 
 .provider-fallback {
@@ -168,7 +168,7 @@
 }
 
 .user-cell em {
-  color: var(--accent-text);
+  color: var(--primary);
   font-style: normal;
   font-weight: 600;
 }

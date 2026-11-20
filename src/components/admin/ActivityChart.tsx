@@ -32,7 +32,12 @@ export function ActivityChart({ data }: { data: DailyPoint[] }) {
           <Tooltip
             cursor={{ fill: 'var(--bg)' }}
             labelFormatter={(day) => dayLabel(String(day))}
-            contentStyle={{ borderRadius: 12, border: 'none', boxShadow: 'var(--shadow-md)', color: 'var(--text)' }}
+            contentStyle={{
+              borderRadius: 'var(--radius-s)',
+              border: 'none',
+              boxShadow: 'var(--shadow-md)',
+              color: 'var(--text)',
+            }}
           />
           <Legend
             iconType="circle"

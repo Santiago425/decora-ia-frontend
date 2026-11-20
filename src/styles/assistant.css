@@ -26,12 +26,12 @@
   100% {
     box-shadow:
       0 0 0 1px var(--surface-3),
-      0 0 0 0 color-mix(in srgb, var(--accent) 35%, transparent);
+      0 0 0 0 color-mix(in srgb, var(--primary) 35%, transparent);
   }
   50% {
     box-shadow:
       0 0 0 1px var(--surface-3),
-      0 0 0 8px color-mix(in srgb, var(--accent) 0%, transparent);
+      0 0 0 8px color-mix(in srgb, var(--primary) 0%, transparent);
   }
 }
 
@@ -289,7 +289,7 @@
 }
 
 .mic-button.listening {
-  background: var(--accent);
+  background: var(--primary);
   color: var(--on-primary);
   animation: lumi-pulse 1.2s infinite;
 }
@@ -424,7 +424,7 @@
   width: 3px;
   height: 100%;
   border-radius: 2px;
-  background: var(--accent);
+  background: var(--primary);
   transform: scaleY(0.3);
   transform-origin: center;
   animation: voice-idle 0.9s ease-in-out infinite;
