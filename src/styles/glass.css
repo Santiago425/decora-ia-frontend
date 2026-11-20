@@ -5,9 +5,94 @@ body {
   background-attachment: fixed;
 }
 
-/* The page photo runs under the sidebar too, so the menu reads as frosted glass. */
-.page-backdrop {
+/* Animated backdrop behind every page: interior photos that drift and cross-fade, soft light
+   and a fine floor-plan grid. It runs under the sidebar too, so the menu reads as frosted glass. */
+.app-backdrop {
+  position: fixed;
   inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--bg);
+}
+
+.app-backdrop-photos img {
+  transition:
+    opacity 2.4s var(--ease-out),
+    transform 24s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.app-backdrop-photos img.active.loaded {
+  transform: scale(1.12) translate3d(-1.5%, -1%, 0);
+}
+
+.app-backdrop-veil {
+  position: absolute;
+  inset: 0;
+  background: var(--page-veil);
+}
+
+.app-backdrop-grid {
+  position: absolute;
+  inset: -64px;
+  background-image:
+    linear-gradient(var(--plan-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--plan-line) 1px, transparent 1px),
+    linear-gradient(var(--plan-line-fine) 1px, transparent 1px),
+    linear-gradient(90deg, var(--plan-line-fine) 1px, transparent 1px);
+  background-size:
+    128px 128px,
+    128px 128px,
+    32px 32px,
+    32px 32px;
+  mask-image: radial-gradient(80% 70% at 70% 30%, #000 0%, transparent 75%);
+  animation: plan-drift 60s linear infinite;
+}
+
+.app-backdrop-lights span {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  animation: aurora-drift 22s ease-in-out infinite alternate;
+}
+
+.app-backdrop-lights span:nth-child(1) {
+  top: -12%;
+  right: -8%;
+  width: 46vw;
+  height: 46vw;
+  background: rgb(157 188 177 / 0.45);
+}
+
+.app-backdrop-lights span:nth-child(2) {
+  bottom: -18%;
+  left: 10%;
+  width: 40vw;
+  height: 40vw;
+  background: rgb(176 137 104 / 0.22);
+  animation-delay: -8s;
+}
+
+.app-backdrop-lights span:nth-child(3) {
+  top: 30%;
+  left: 40%;
+  width: 28vw;
+  height: 28vw;
+  background: rgb(255 255 255 / 0.55);
+  animation-delay: -15s;
+}
+
+@keyframes plan-drift {
+  to {
+    transform: translate3d(64px, 64px, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-backdrop-grid,
+  .app-backdrop-lights span {
+    animation: none;
+  }
 }
 
 /* Sidebar */

@@ -43,6 +43,9 @@ export const config = Object.freeze({
   sidebarPhotoUrls: list('VITE_SIDEBAR_PHOTO_URL').length
     ? list('VITE_SIDEBAR_PHOTO_URL')
     : list('VITE_AUTH_IMAGE_URL'),
+  pageBackdropUrls: list('VITE_PAGE_BACKDROP_URL').length
+    ? list('VITE_PAGE_BACKDROP_URL')
+    : [read('VITE_DASHBOARD_BACKDROP_URL'), ...list('VITE_AUTH_IMAGE_URL')].filter(Boolean),
   dashboardBannerUrl: list('VITE_DASHBOARD_BANNER_URL')[0] ?? '',
   dashboardBackdropUrl: read('VITE_DASHBOARD_BACKDROP_URL'),
   emptyStateImageUrl: read('VITE_EMPTY_STATE_IMAGE_URL'),
