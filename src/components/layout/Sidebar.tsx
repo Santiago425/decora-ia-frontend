@@ -5,6 +5,7 @@ import { navFor } from '../../navigation';
 import { preloadHandlers } from '../../routes/pages';
 import { Logo } from '../Logo';
 import { PatternModeToggle } from '../patterns/PatternModeToggle';
+import { SidebarSpotlight } from './SidebarSpotlight';
 import { Avatar } from './UserBadge';
 
 export function Sidebar() {
@@ -23,6 +24,7 @@ export function Sidebar() {
           </NavLink>
         ))}
       </nav>
+      <SidebarSpotlight />
       <PatternModeToggle />
       <div className="sidebar-user">
         <Avatar user={user} />
