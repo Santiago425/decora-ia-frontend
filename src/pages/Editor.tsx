@@ -307,7 +307,7 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
                 <History size={16} /> Versiones
               </button>
               <Link className="panel-tab-link" to={shoppingPath(project.id)} title="Lista de compras y presupuesto">
-                <ShoppingBag size={16} /> Compras
+                <ShoppingBag size={16} /> <span className="panel-tab-text">Compras</span>
               </Link>
             </div>
             {tab === 'versions' ? (

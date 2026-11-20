@@ -12,6 +12,22 @@
   text-decoration: none;
 }
 
+/* The side column is narrow on desktop: the shopping link shows only its icon there. */
+@media (min-width: 901px) {
+  .panel-tabs .panel-tab-link {
+    flex: 0 0 42px;
+  }
+
+  .panel-tab-link .panel-tab-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+}
+
 .panel-tabs .panel-tab-link:hover,
 .panel-tabs .panel-tab-link:focus-visible {
   background: var(--primary-soft);
