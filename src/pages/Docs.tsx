@@ -1,5 +1,5 @@
-import { ChevronDown, Copy, Database, Layers, Puzzle, Search, ShieldCheck, User, Wrench } from 'lucide-react';
-import { useCallback, useMemo, useState } from 'react';
+import { ChevronDown, Copy, Database, Layers, Puzzle, Scale, Search, ShieldCheck, User, Wrench } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { MermaidDiagram } from '../components/docs/MermaidDiagram';
 import { config } from '../config';
 import {
@@ -10,7 +10,9 @@ import {
   type PatternDoc,
   type Side,
 } from '../docs/patterns';
+import { SOLID } from '../docs/solid';
 import { useAsync } from '../hooks/useAsync';
+import { useAuth } from '../hooks/useAuth';
 import { metaService, providerLabel } from '../services/metaService';
 import { notificationCenter } from '../services/notificationCenter';
 import type { AppInfo, ProviderCapability } from '../types/meta';
@@ -24,6 +26,7 @@ const SECTIONS = [
   { id: 'cuentas', label: 'Cuentas de prueba', icon: User },
   { id: 'base-de-datos', label: 'Base de datos', icon: Database },
   { id: 'patrones', label: 'Patrones', icon: Puzzle },
+  { id: 'solid', label: 'SOLID', icon: Scale },
   { id: 'tecnologias', label: 'Tecnologías', icon: Wrench },
 ];
 
@@ -77,11 +80,31 @@ function copy(text: string) {
     .catch(() => undefined);
 }
 
-function PatternCard({ pattern }: { pattern: PatternDoc }) {
-  const [open, setOpen] = useState(false);
+const PATTERN_NAMES = new Map(PATTERNS.map((p) => [p.id, `${p.name} (${p.side.toLowerCase()})`]));
+
+function FileList({ files }: { files: string[] }) {
   return (
-    <article className={`pattern-card ${open ? 'open' : ''}`}>
-      <button className="pattern-head" onClick={() => setOpen(!open)} aria-expanded={open}>
+    <ul className="file-list">
+      {files.map((file) => (
+        <li key={file}>
+          <code>{file}</code>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+interface PatternCardProps {
+  pattern: PatternDoc;
+  open: boolean;
+  showFiles: boolean;
+  onToggle: () => void;
+}
+
+function PatternCard({ pattern, open, showFiles, onToggle }: PatternCardProps) {
+  return (
+    <article id={`patron-${pattern.id}`} className={`pattern-card ${open ? 'open' : ''}`}>
+      <button className="pattern-head" onClick={onToggle} aria-expanded={open}>
         <div>
           <div className="pattern-tags">
             <span className={`tag tag-${pattern.category.toLowerCase()}`}>{pattern.category}</span>
@@ -99,14 +122,12 @@ function PatternCard({ pattern }: { pattern: PatternDoc }) {
             <p>{pattern.problem}</p>
             <h4>Solución</h4>
             <p>{pattern.solution}</p>
-            <h4>Dónde está</h4>
-            <ul className="file-list">
-              {pattern.files.map((file) => (
-                <li key={file}>
-                  <code>{file}</code>
-                </li>
-              ))}
-            </ul>
+            {showFiles && (
+              <>
+                <h4>Dónde está</h4>
+                <FileList files={pattern.files} />
+              </>
+            )}
           </div>
           <MermaidDiagram code={pattern.diagram} label={`Diagrama UML de ${pattern.name}`} />
         </div>
@@ -120,6 +141,31 @@ export default function Docs() {
   const [category, setCategory] = useState<PatternCategory | 'all'>('all');
   const [side, setSide] = useState<Side | 'all'>('all');
   const [text, setText] = useState('');
+  const [openIds, setOpenIds] = useState<Set<string>>(() => new Set());
+  const [focusId, setFocusId] = useState<string | null>(null);
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
+
+  const toggle = (id: string) =>
+    setOpenIds((current) => {
+      const next = new Set(current);
+      if (!next.delete(id)) next.add(id);
+      return next;
+    });
+
+  const showPattern = (id: string) => {
+    setCategory('all');
+    setSide('all');
+    setText('');
+    setOpenIds((current) => new Set(current).add(id));
+    setFocusId(id);
+  };
+
+  useEffect(() => {
+    if (!focusId) return;
+    document.getElementById(`patron-${focusId}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setFocusId(null);
+  }, [focusId]);
 
   const patterns = useMemo(() => {
     const query = text.trim().toLowerCase();
@@ -127,9 +173,9 @@ export default function Docs() {
       (p) =>
         (category === 'all' || p.category === category) &&
         (side === 'all' || p.side === side) &&
-        (!query || `${p.name} ${p.summary} ${p.files.join(' ')}`.toLowerCase().includes(query)),
+        (!query || `${p.name} ${p.summary} ${isAdmin ? p.files.join(' ') : ''}`.toLowerCase().includes(query)),
     );
-  }, [category, side, text]);
+  }, [category, side, text, isAdmin]);
 
   const distinct = new Set(PATTERNS.map((p) => p.name.replace(/ \+.*| de protección/, ''))).size;
 
@@ -253,7 +299,7 @@ export default function Docs() {
               type="search"
               value={text}
               onChange={(e) => setText(e.target.value)}
-              placeholder="Buscar patrón o archivo"
+              placeholder={isAdmin ? 'Buscar patrón o archivo' : 'Buscar patrón'}
               aria-label="Buscar patrón"
             />
           </label>
@@ -277,7 +323,40 @@ export default function Docs() {
         </p>
         <div className="pattern-list">
           {patterns.map((pattern) => (
-            <PatternCard key={pattern.id} pattern={pattern} />
+            <PatternCard
+              key={pattern.id}
+              pattern={pattern}
+              open={openIds.has(pattern.id)}
+              showFiles={isAdmin}
+              onToggle={() => toggle(pattern.id)}
+            />
+          ))}
+        </div>
+      </section>
+
+      <section id="solid" className="docs-section">
+        <h2>Principios SOLID</h2>
+        <p>
+          Los patrones no están sueltos: cada uno ayuda a cumplir algún principio. Toca un patrón para ir a su ficha.
+        </p>
+        <div className="solid-grid">
+          {SOLID.map((principle) => (
+            <article key={principle.letter} className="solid-card">
+              <span className="solid-letter" aria-hidden="true">
+                {principle.letter}
+              </span>
+              <h3>{principle.name}</h3>
+              <p className="solid-idea">{principle.idea}</p>
+              <p>{principle.example}</p>
+              {isAdmin && <FileList files={principle.files} />}
+              <div className="solid-patterns">
+                {principle.patterns.map((id) => (
+                  <button key={id} className="chip chip-sm" onClick={() => showPattern(id)}>
+                    {PATTERN_NAMES.get(id) ?? id}
+                  </button>
+                ))}
+              </div>
+            </article>
           ))}
         </div>
       </section>

@@ -219,6 +219,7 @@
 }
 
 .pattern-card {
+  scroll-margin-top: 24px;
   overflow: hidden;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
@@ -370,6 +371,57 @@
   color: var(--text-2);
   font-size: 14px;
   line-height: 1.7;
+}
+
+.solid-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.solid-card {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  padding: 18px;
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+}
+
+.solid-letter {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.solid-card h3 {
+  font-size: 17px;
+}
+
+.solid-card p {
+  margin: 0;
+  color: var(--text-2);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.solid-card .solid-idea {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.solid-patterns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
 }
 
 @media (max-width: 760px) {
