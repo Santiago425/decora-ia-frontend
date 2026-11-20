@@ -28,36 +28,39 @@ Proyecto final de **Patrones de Diseño**
 
 Tomadas de la app desplegada en Vercel con la cuenta de prueba.
 
-| Login con acceso de prueba                           | Inicio                                                                                                                |
-| ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| ![Login](docs/screenshots/login.jpg)                 | ![Inicio](docs/screenshots/dashboard.jpg)                                                                             |
-| **Rediseño con foto (antes / después)**              | **Ediciones puntuales sobre el rediseño**                                                                             |
-| ![Rediseño](docs/screenshots/rediseno.jpg)           | ![Ediciones](docs/screenshots/ediciones-puntuales.jpg)                                                                |
-| **Editor 3D**                                        | **Mis proyectos con su foto**                                                                                         |
-| ![Editor 3D](docs/screenshots/editor-3d.jpg)         | ![Mis proyectos](docs/screenshots/mis-proyectos.jpg)                                                                  |
-| **Modo patrones en el editor**                       | **Ficha de un patrón con demo y UML**                                                                                 |
-| ![Modo patrones](docs/screenshots/modo-patrones.jpg) | ![Ficha de patrón](docs/screenshots/ficha-patron.jpg)                                                                 |
-| **Lumi**                                             | **Lumi ejecutando órdenes en el editor**                                                                              |
-| ![Lumi](docs/screenshots/lumi.jpg)                   | ![Lumi en el editor](docs/screenshots/lumi-editor.jpg)                                                                |
-| **Documentación**                                    | **Principios SOLID**                                                                                                  |
-| ![Documentación](docs/screenshots/documentacion.jpg) | ![SOLID](docs/screenshots/solid.jpg)                                                                                  |
-| **Panel de administración**                          | **En el celular**                                                                                                     |
-| ![Administración](docs/screenshots/admin.jpg)        | ![Inicio en el celular](docs/screenshots/inicio-celular.jpg) ![Lumi en el celular](docs/screenshots/lumi-celular.jpg) |
+| Login con acceso de prueba                                   | Inicio                                                   |
+| ------------------------------------------------------------ | -------------------------------------------------------- |
+| ![Login](docs/screenshots/login.jpg)                         | ![Inicio](docs/screenshots/dashboard.jpg)                |
+| **Rediseño con foto (antes / después)**                      | **Ediciones puntuales sobre el rediseño**                |
+| ![Rediseño](docs/screenshots/rediseno.jpg)                   | ![Ediciones](docs/screenshots/ediciones-puntuales.jpg)   |
+| **Editor 3D**                                                | **Mis proyectos con su foto**                            |
+| ![Editor 3D](docs/screenshots/editor-3d.jpg)                 | ![Mis proyectos](docs/screenshots/mis-proyectos.jpg)     |
+| **Estilo desde una foto de inspiración**                     | **Panel de administración**                              |
+| ![Inspiración](docs/screenshots/inspiracion.jpg)             | ![Administración](docs/screenshots/admin.jpg)            |
+| **Modo patrones en el editor**                               | **Ficha de un patrón con demo y UML**                    |
+| ![Modo patrones](docs/screenshots/modo-patrones.jpg)         | ![Ficha de patrón](docs/screenshots/ficha-patron.jpg)    |
+| **Lumi**                                                     | **Lumi ejecutando órdenes en el editor**                 |
+| ![Lumi](docs/screenshots/lumi.jpg)                           | ![Lumi en el editor](docs/screenshots/lumi-editor.jpg)   |
+| **Documentación**                                            | **Principios SOLID**                                     |
+| ![Documentación](docs/screenshots/documentacion.jpg)         | ![SOLID](docs/screenshots/solid.jpg)                     |
+| **Inicio en el celular**                                     | **Lumi en el celular**                                   |
+| ![Inicio en el celular](docs/screenshots/inicio-celular.jpg) | ![Lumi en el celular](docs/screenshots/lumi-celular.jpg) |
 
 ## Funcionalidades
 
-| Sección                 | Qué hace                                                                                                                                                                                                                     |
-| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Login y registro**    | Login con selector Usuario / Administrador, validaciones en vivo, sesión con JWT y **acceso de prueba** con un clic (las cuentas salen del backend).                                                                         |
-| **Inicio**              | Resumen de proyectos, rediseños, estilo favorito y presupuesto, con gráfica de estilos y actividad reciente.                                                                                                                 |
-| **Rediseño con foto**   | Sube o toma una foto con la cámara del celular, elige habitación, estilo, paleta y presupuesto; la IA devuelve la imagen rediseñada, colores, muebles y materiales con precio. Comparador antes / después y variaciones.     |
-| **Ediciones puntuales** | Sobre un rediseño: pintar paredes, cambiar el piso, borrar un objeto o cambiar un mueble sin tocar el resto de la foto. Opción para respetar el cuarto real (paredes, ventanas y puertas) y elegir muebles que se conservan. |
-| **Editor 3D**           | Arma la habitación con muebles del catálogo: mover, rotar, duplicar, agrupar, colores, acabados y complementos, deshacer y rehacer, vista de planta, captura, versiones y guardado automático.                               |
-| **Lumi**                | Asistente por voz o texto. Entiende lo que pides y lo hace: crea proyectos, te lleva al rediseño, agrega muebles, pinta paredes, cambia la luz o deshace cambios. Puede leer sus respuestas en voz alta.                     |
-| **Mis proyectos**       | Buscar, filtrar por estado o tipo, ordenar, renombrar, duplicar y eliminar. Cada proyecto con foto muestra su antes / después y lo abre al tocarlo.                                                                          |
-| **Administración**      | Solo para administradores: métricas de la plataforma, usuarios (rol y activación), catálogo (precios, muebles nuevos, estilos y complementos visibles) y reportes CSV.                                                       |
-| **Modo patrones**       | Interruptor del menú: cada pantalla muestra qué patrones usa; al tocar uno se abre su ficha con problema, solución, una demo interactiva y el diagrama UML.                                                                  |
-| **Documentación**       | Arquitectura, cuentas de prueba, diagrama entidad relación, cada patrón con su problema, solución, archivos y diagrama UML (Mermaid), y los principios SOLID con los patrones que los cumplen.                               |
+| Sección                   | Qué hace                                                                                                                                                                                                                     |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Login y registro**      | Login con selector Usuario / Administrador, validaciones en vivo, sesión con JWT y **acceso de prueba** con un clic (las cuentas salen del backend).                                                                         |
+| **Inicio**                | Resumen de proyectos, rediseños, estilo favorito y presupuesto, con gráfica de estilos y actividad reciente.                                                                                                                 |
+| **Rediseño con foto**     | Sube o toma una foto con la cámara del celular, elige habitación, estilo, paleta y presupuesto; la IA devuelve la imagen rediseñada, colores, muebles y materiales con precio. Comparador antes / después y variaciones.     |
+| **Estilo desde una foto** | Sobre un rediseño: subir una foto de un espacio que guste; la IA describe su estilo, colores y materiales y ese texto se aplica a la foto como una versión nueva, marcada «Inspirado en tu foto».                            |
+| **Ediciones puntuales**   | Sobre un rediseño: pintar paredes, cambiar el piso, borrar un objeto o cambiar un mueble sin tocar el resto de la foto. Opción para respetar el cuarto real (paredes, ventanas y puertas) y elegir muebles que se conservan. |
+| **Editor 3D**             | Arma la habitación con muebles del catálogo: mover, rotar, duplicar, agrupar, colores, acabados y complementos, deshacer y rehacer, vista de planta, captura, versiones y guardado automático.                               |
+| **Lumi**                  | Asistente por voz o texto. Entiende lo que pides y lo hace: crea proyectos, te lleva al rediseño, agrega muebles, pinta paredes, cambia la luz o deshace cambios. Puede leer sus respuestas en voz alta.                     |
+| **Mis proyectos**         | Buscar, filtrar por estado o tipo, ordenar, renombrar, duplicar y eliminar. Cada proyecto con foto muestra su antes / después y lo abre al tocarlo.                                                                          |
+| **Administración**        | Solo para administradores: métricas de la plataforma, usuarios (rol y activación), catálogo (precios, muebles nuevos, estilos y complementos visibles) y reportes CSV.                                                       |
+| **Modo patrones**         | Interruptor del menú: cada pantalla muestra qué patrones usa; al tocar uno se abre su ficha con problema, solución, una demo interactiva y el diagrama UML.                                                                  |
+| **Documentación**         | Arquitectura, cuentas de prueba, diagrama entidad relación, cada patrón con su problema, solución, archivos y diagrama UML (Mermaid), y los principios SOLID con los patrones que los cumplen.                               |
 
 ## Guía rápida para la evaluación
 
@@ -66,10 +69,11 @@ Tomadas de la app desplegada en Vercel con la cuenta de prueba.
 3. **Rediseño:** subir una foto de una sala, elegir _Japandi_ y ver el antes / después con su presupuesto.
 4. **Editor 3D:** abrir un proyecto, mover un mueble, agregarle cojines y probar _Deshacer_ (Ctrl + Z).
 5. **Lumi:** tocar el botón flotante y decir o escribir _"agrega una planta"_ y _"pinta las paredes verde salvia"_.
-6. **Ediciones puntuales:** en el rediseño, tocar _Editar una parte_ y pintar las paredes de otro color.
-7. **Modo patrones:** activar el interruptor del menú y tocar un patrón para ver su ficha, su demo y su UML.
-8. **Documentación:** mostrar los patrones con sus diagramas UML, los principios SOLID y el diagrama de la base de datos.
-9. Cerrar sesión y entrar como **Administrador** con `admin@habita.app` / `Habita2026` para ver métricas, usuarios, catálogo y reportes.
+6. **Estilo desde una foto:** en el rediseño, tocar _Usar inspiración_, subir una foto que guste y _Aplicar este estilo_.
+7. **Ediciones puntuales:** en el rediseño, tocar _Editar una parte_ y pintar las paredes de otro color.
+8. **Modo patrones:** activar el interruptor del menú y tocar un patrón para ver su ficha, su demo y su UML.
+9. **Documentación:** mostrar los patrones con sus diagramas UML, los principios SOLID y el diagrama de la base de datos.
+10. Cerrar sesión y entrar como **Administrador** con `admin@habita.app` / `Habita2026` para ver métricas, usuarios, catálogo y reportes.
 
 ## Patrones aplicados en el frontend
 
@@ -120,7 +124,7 @@ docker run -p 8080:80 habita-frontend      # http://localhost:8080
 
 ## Calidad
 
-- **104 pruebas** con Vitest:
+- **107 pruebas** con Vitest:
   - **Lógica:** comandos de deshacer / rehacer, fábricas de muebles, composite, mediador del editor, filtros y orden de proyectos, bus de Lumi, conversación, adaptador de voz, modo patrones, formatos y validaciones.
   - **Interfaz** (Testing Library + jsdom): botones, pestañas con teclado, paginador, campos de formulario, diálogo de confirmación, acceso de prueba, rutas protegidas y el flujo completo del login.
 - **ESLint** (typescript-eslint, react-hooks, jsx-a11y) y **Prettier** sin advertencias.
