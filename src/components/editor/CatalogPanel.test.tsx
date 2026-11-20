@@ -138,6 +138,24 @@ describe('catalog panel', () => {
     expect(onAdd).toHaveBeenCalledWith(furniture[0], { color: '#3f5a46', finish: 'velvet_forest' });
   });
 
+  it('goes back to the list from the detail sheet with the back button, the X or the backdrop', async () => {
+    const user = userEvent.setup();
+    setup();
+    const title = () => screen.queryByRole('heading', { name: 'Sofá Oslo' });
+
+    await user.click(screen.getByTitle('Ver Sofá Oslo'));
+    await user.click(within(screen.getByRole('dialog')).getByRole('button', { name: /Regresar/ }));
+    expect(title()).toBeNull();
+
+    await user.click(screen.getByTitle('Ver Sofá Oslo'));
+    await user.click(screen.getByRole('button', { name: 'Cerrar y volver al catálogo' }));
+    expect(title()).toBeNull();
+
+    await user.click(screen.getByTitle('Ver Sofá Oslo'));
+    await user.click(screen.getByRole('dialog'));
+    expect(title()).toBeNull();
+  });
+
   it('adds a piece in its default color from the plus button', async () => {
     const user = userEvent.setup();
     const onAdd = setup();

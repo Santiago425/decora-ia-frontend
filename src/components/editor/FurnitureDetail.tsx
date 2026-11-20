@@ -1,4 +1,4 @@
-import { Heart, Plus } from 'lucide-react';
+import { ArrowLeft, Heart, Plus, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { config } from '../../config';
 import type { FurnitureVariant } from '../../editor/editorMediator';
@@ -49,8 +49,12 @@ export function FurnitureDetail({ item, ...props }: FurnitureDetailProps) {
       title={item.name}
       onClose={props.onClose}
       className="furniture-detail"
+      closeOnBackdrop
       footer={
         <>
+          <Button variant="ghost" className="detail-back" onClick={props.onClose}>
+            <ArrowLeft size={16} /> Regresar
+          </Button>
           {props.favorite !== null && (
             <Button
               variant="ghost"
@@ -74,6 +78,9 @@ export function FurnitureDetail({ item, ...props }: FurnitureDetailProps) {
         </>
       }
     >
+      <button type="button" className="detail-close" aria-label="Cerrar y volver al catálogo" onClick={props.onClose}>
+        <X size={18} aria-hidden="true" />
+      </button>
       <div className="detail-layout">
         <div className="detail-stage">
           <FurnitureThumb item={item} color={shown} finish={material} size={520} />

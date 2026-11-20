@@ -776,6 +776,39 @@ img.furniture-render {
   gap: 12px;
 }
 
+.furniture-detail .modal-body h2 {
+  padding-right: 44px;
+}
+
+.detail-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text-2);
+  cursor: pointer;
+}
+
+.detail-close:hover {
+  background: var(--surface-3);
+  color: var(--text);
+}
+
+.detail-close:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.furniture-detail .detail-back {
+  margin-right: auto;
+}
+
 .detail-layout {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
@@ -899,9 +932,22 @@ img.furniture-render {
     height: 100%;
   }
 
-  .furniture-detail .modal-footer > :last-child {
+  /* On a phone the add button gets its own full row, with Regresar and Guardar side by side above it. */
+  .furniture-detail .modal-footer {
+    flex-wrap: wrap;
+  }
+
+  .furniture-detail .modal-footer > * {
     flex: 1;
     justify-content: center;
+  }
+
+  .furniture-detail .modal-footer > :last-child {
+    flex-basis: 100%;
+  }
+
+  .furniture-detail .detail-back {
+    margin-right: 0;
   }
 }
 
