@@ -1,4 +1,5 @@
-import { Box, Copy, Pencil, Plus, RefreshCw, Search, Trash2, WandSparkles } from 'lucide-react';
+import { Box, Copy, Pencil, Plus, RefreshCw, Search, ShoppingBag, Trash2, WandSparkles } from 'lucide-react';
+import { shoppingPath } from '../shopping/shoppingList';
 import { preloadHandlers } from '../routes/pages';
 import { projectLabel, projectPath } from '../projects/projectRoute';
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
@@ -234,6 +235,15 @@ export default function Projects() {
                     >
                       <Pencil size={16} />
                     </button>
+                    <Link
+                      className="icon-button"
+                      to={shoppingPath(project.id)}
+                      {...preloadHandlers(shoppingPath(project.id))}
+                      title="Lista de compras"
+                      aria-label={`Lista de compras de ${project.name}`}
+                    >
+                      <ShoppingBag size={16} />
+                    </Link>
                     <button
                       className="icon-button"
                       onClick={() => duplicate(project)}

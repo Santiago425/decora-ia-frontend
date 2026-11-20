@@ -1,6 +1,7 @@
-import { History, LayoutGrid, Lock, RefreshCw, SlidersHorizontal } from 'lucide-react';
+import { History, LayoutGrid, Lock, RefreshCw, ShoppingBag, SlidersHorizontal } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import { shoppingPath } from '../shopping/shoppingList';
 import { CatalogPanel } from '../components/editor/CatalogPanel';
 import { EditorCanvas, type CameraView, type EditorCanvasHandle } from '../components/editor/EditorCanvas';
 import { EditorToolbar, type SaveState } from '../components/editor/EditorToolbar';
@@ -279,6 +280,9 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
               <button role="tab" aria-selected={tab === 'versions'} onClick={() => openTab('versions')}>
                 <History size={16} /> Versiones
               </button>
+              <Link className="panel-tab-link" to={shoppingPath(project.id)} title="Lista de compras y presupuesto">
+                <ShoppingBag size={16} /> Compras
+              </Link>
             </div>
             {tab === 'versions' ? (
               <VersionsPanel
