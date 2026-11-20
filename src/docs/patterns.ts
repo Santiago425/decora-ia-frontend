@@ -534,6 +534,35 @@ export const PATTERNS: PatternDoc[] = [
   RedesignFacade --> BudgetStrategy`,
   },
   {
+    id: 'strategy-edits',
+    name: 'Strategy',
+    category: 'Comportamiento',
+    side: 'Backend',
+    summary: 'Ediciones puntuales: pintar paredes, cambiar piso, borrar o cambiar un mueble.',
+    problem:
+      'Cada edición necesita campos distintos y una instrucción precisa para que la IA cambie solo esa parte de la foto.',
+    solution:
+      'Cada EditStrategy declara sus campos, los valida y redacta su instrucción. El front pide la lista al backend y la facade aplica la elegida sobre la última versión.',
+    files: ['app/patterns/strategies/edit_strategies.py', 'app/patterns/facades/redesign_facade.py'],
+    diagram: `classDiagram
+  class EditStrategy {
+    <<abstract>>
+    +fields
+    +clean(raw) values
+    +prompt(values, keep_items) str
+    +instruction(values)*
+  }
+  class WallPaintEdit
+  class FloorSwapEdit
+  class RemoveObjectEdit
+  class ReplaceFurnitureEdit
+  EditStrategy <|-- WallPaintEdit
+  EditStrategy <|-- FloorSwapEdit
+  EditStrategy <|-- RemoveObjectEdit
+  EditStrategy <|-- ReplaceFurnitureEdit
+  RedesignFacade --> EditStrategy : apply_edit`,
+  },
+  {
     id: 'strategy-assistant',
     name: 'Strategy',
     category: 'Comportamiento',

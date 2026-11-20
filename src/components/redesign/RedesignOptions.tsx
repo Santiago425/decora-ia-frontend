@@ -10,6 +10,7 @@ export interface RedesignChoices {
   paletteId: number | null;
   budget: string;
   keepStructure: boolean;
+  keepItems: string;
 }
 
 interface Props {
@@ -116,9 +117,20 @@ export function RedesignOptions({ styles, value, onChange }: Props) {
             onChange={(e) => onChange({ keepStructure: e.target.checked })}
           />
           <span className="switch-track" />
-          <span>Conservar paredes, ventanas y piso</span>
+          <span>Respetar el cuarto real: paredes, ventanas y puertas</span>
         </label>
       </div>
+      {value.keepStructure && (
+        <label className="budget-field keep-items-field">
+          <span>Muebles que quieres conservar</span>
+          <input
+            placeholder="Opcional. Ej.: el sillón verde y la chimenea"
+            maxLength={200}
+            value={value.keepItems}
+            onChange={(e) => onChange({ keepItems: e.target.value })}
+          />
+        </label>
+      )}
     </>
   );
 }

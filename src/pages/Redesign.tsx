@@ -1,6 +1,7 @@
 import {
   AlertTriangle,
   Box,
+  Brush,
   Download,
   FolderHeart,
   RefreshCw,
@@ -14,6 +15,7 @@ import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
 import { Link, useSearchParams } from 'react-router-dom';
 import { ImageProxy } from '../components/ImageProxy';
 import { BeforeAfter } from '../components/redesign/BeforeAfter';
+import { EditPanel } from '../components/redesign/EditPanel';
 import { PhotoPicker } from '../components/redesign/PhotoPicker';
 import { RedesignOptions, type RedesignChoices } from '../components/redesign/RedesignOptions';
 import { RedesignProgress } from '../components/redesign/RedesignProgress';
@@ -51,6 +53,7 @@ function choicesFrom(redesign: RedesignResult, styles: DesignStyle[]): RedesignC
     paletteId: palette?.id ?? null,
     budget: redesign.budget ? String(Math.round(Number(redesign.budget))) : '',
     keepStructure: redesign.keep_structure,
+    keepItems: redesign.keep_items ?? '',
   };
 }
 
@@ -68,6 +71,7 @@ export default function Redesign() {
     paletteId: null,
     budget: (params.get('budget') ?? '').replace(/\D/g, ''),
     keepStructure: true,
+    keepItems: '',
   });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -75,6 +79,7 @@ export default function Redesign() {
   const [versions, setVersions] = useState<RedesignResult[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [tuning, setTuning] = useState<RedesignChoices | null>(null);
+  const [editing, setEditing] = useState(false);
   const tuningRef = useRef<HTMLFormElement>(null);
   const isTuning = tuning !== null;
   const loadedProject = versions[0]?.project_id;
@@ -131,6 +136,7 @@ export default function Redesign() {
       const redesign = await action();
       setResult(redesign);
       setTuning(null);
+      setEditing(false);
       setVersions((items) =>
         items.some((item) => item.id === redesign.id)
           ? items.map((item) => (item.id === redesign.id ? redesign : item))
@@ -156,6 +162,7 @@ export default function Redesign() {
         palette: palette?.colors ?? [],
         budget: toAmount(choices.budget),
         keepStructure: choices.keepStructure,
+        keepItems: choices.keepItems,
       }),
     );
   }
@@ -167,6 +174,7 @@ export default function Redesign() {
         palette: paletteColors(styles, options),
         budget: toAmount(options.budget),
         keep_structure: options.keepStructure,
+        keep_items: options.keepStructure ? options.keepItems.trim() || null : null,
       }),
     );
   }
@@ -175,6 +183,7 @@ export default function Redesign() {
     setResult(null);
     setVersions([]);
     setTuning(null);
+    setEditing(false);
     setPhoto(null);
     setError('');
     setParams({}, { replace: true });
@@ -192,7 +201,7 @@ export default function Redesign() {
     <div className="page redesign-page">
       <PageHeader
         title={result ? result.project_name : 'Rediseño con foto'}
-        patterns={['facade', 'builder-redesign', 'chain-images', 'strategy-budget']}
+        patterns={['facade', 'builder-redesign', 'chain-images', 'strategy-budget', 'strategy-edits']}
         actions={
           <Link to="/assistant" className="lumi-hint">
             <Sparkles size={16} /> O cuéntaselo a {config.assistantName}
@@ -214,8 +223,24 @@ export default function Redesign() {
             <BeforeAfter before={before} after={after} />
             <RedesignVersions versions={versions} current={result.id} onSelect={setResult} />
             <div className="result-actions">
-              <Button onClick={() => setTuning(tuning ? null : choicesFrom(result, styles))} aria-expanded={!!tuning}>
+              <Button
+                onClick={() => {
+                  setEditing(false);
+                  setTuning(tuning ? null : choicesFrom(result, styles));
+                }}
+                aria-expanded={!!tuning}
+              >
                 <SlidersHorizontal size={18} /> Probar con otras opciones
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setTuning(null);
+                  setEditing(!editing);
+                }}
+                aria-expanded={editing}
+              >
+                <Brush size={18} /> Editar una parte
               </Button>
               <Button variant="ghost" onClick={() => run(() => redesignService.variation(result.id))}>
                 <Shuffle size={18} /> Otra versión igual
@@ -264,7 +289,15 @@ export default function Redesign() {
                 </Button>
               </form>
             )}
-            {!tuning && alert}
+            {editing && (
+              <EditPanel
+                colors={result.suggestions.colors ?? []}
+                alert={alert}
+                onApply={(tool, values) => run(() => redesignService.applyEdit(result.id, tool, values))}
+                onClose={() => setEditing(false)}
+              />
+            )}
+            {!tuning && !editing && alert}
           </div>
           <aside className="result-side">
             <div className="result-meta">
