@@ -32,6 +32,7 @@ export const config = Object.freeze({
   locale: read('VITE_LOCALE'),
   authImageUrls: list('VITE_AUTH_IMAGE_URL'),
   dashboardBannerUrl: list('VITE_DASHBOARD_BANNER_URL')[0] ?? '',
+  emptyStateImageUrl: read('VITE_EMPTY_STATE_IMAGE_URL'),
   photoIntervalMs: Number(read('VITE_PHOTO_INTERVAL_MS')) || 6000,
   photoCredits: { name: read('VITE_PHOTO_CREDITS_NAME'), url: read('VITE_PHOTO_CREDITS_URL') },
 });

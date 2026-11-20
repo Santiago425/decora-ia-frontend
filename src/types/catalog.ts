@@ -73,3 +73,18 @@ export interface FurnitureAddon {
   color_hex: string | null;
   categories: string[];
 }
+
+export interface CatalogRef {
+  slug: string;
+  name: string;
+}
+
+export interface InspirationPhoto {
+  id: number;
+  title: string;
+  image_url: string;
+  author_name: string;
+  source_url: string | null;
+  style: CatalogRef | null;
+  room_type: CatalogRef | null;
+}

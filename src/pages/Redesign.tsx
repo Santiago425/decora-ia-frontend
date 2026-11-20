@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { ImageProxy } from '../components/ImageProxy';
 import { BeforeAfter } from '../components/redesign/BeforeAfter';
 import { PhotoPicker } from '../components/redesign/PhotoPicker';
 import { RedesignOptions, type RedesignChoices } from '../components/redesign/RedesignOptions';
@@ -30,7 +31,7 @@ import type { Redesign as RedesignResult } from '../types/redesign';
 import { formatCurrency } from '../utils/format';
 import { shrinkImage } from '../utils/image';
 import { downloadImage, resolveMediaUrl } from '../utils/media';
-import { Badge, Button, Chip, PageHeader, Skeleton } from '../components/ui';
+import { Badge, Button, PageHeader, Skeleton } from '../components/ui';
 
 const TIER_LABELS = { economic: 'Económico', standard: 'Gama media', premium: 'Premium' };
 
@@ -316,11 +317,18 @@ export default function Redesign() {
           <div className="redesign-options">
             <fieldset>
               <legend>Habitación</legend>
-              <div className="chips">
+              <div className="room-options">
                 {roomTypes.map((room) => (
-                  <Chip key={room.slug} selected={roomType === room.slug} onClick={() => setRoomType(room.slug)}>
-                    {room.name}
-                  </Chip>
+                  <button
+                    key={room.slug}
+                    type="button"
+                    className={`room-option ${roomType === room.slug ? 'selected' : ''}`}
+                    aria-pressed={roomType === room.slug}
+                    onClick={() => setRoomType(room.slug)}
+                  >
+                    {room.cover_image_url && <ImageProxy src={room.cover_image_url} alt="" />}
+                    <span>{room.name}</span>
+                  </button>
                 ))}
               </div>
             </fieldset>
