@@ -22,7 +22,10 @@ export function ProjectCard({ project, delay }: { project: ProjectSummary; delay
         onPointerLeave={() => setSplit(50)}
       >
         {project.after_image_url || project.before_image_url ? (
-          <ImageProxy src={resolveMediaUrl(project.after_image_url ?? project.before_image_url)} alt={`Diseño de ${project.name}`} />
+          <ImageProxy
+            src={resolveMediaUrl(project.after_image_url ?? project.before_image_url)}
+            alt={`Diseño de ${project.name}`}
+          />
         ) : (
           <div className="thumb-scene" aria-hidden="true">
             <Box size={34} strokeWidth={1.5} />

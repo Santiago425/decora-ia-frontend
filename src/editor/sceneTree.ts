@@ -147,10 +147,20 @@ export function findFreeSpot(scene: SceneData, [width, depth]: [number, number],
   const rings = Math.ceil(Math.max(scene.room.width, scene.room.length) / step);
   for (let ring = 0; ring <= rings; ring++) {
     for (let i = -ring; i <= ring; i++) {
-      for (const [x, z] of [[i, -ring], [i, ring], [-ring, i], [ring, i]]) {
+      for (const [x, z] of [
+        [i, -ring],
+        [i, ring],
+        [-ring, i],
+        [ring, i],
+      ]) {
         const spot: Vec2 = [round(x * step), round(z * step)];
         if (Math.abs(spot[0]) > halfW || Math.abs(spot[1]) > halfL) continue;
-        const bounds = { minX: spot[0] - width / 2, maxX: spot[0] + width / 2, minZ: spot[1] - depth / 2, maxZ: spot[1] + depth / 2 };
+        const bounds = {
+          minX: spot[0] - width / 2,
+          maxX: spot[0] + width / 2,
+          minZ: spot[1] - depth / 2,
+          maxZ: spot[1] + depth / 2,
+        };
         if (!occupied.some((other) => overlaps(bounds, other))) return spot;
       }
     }

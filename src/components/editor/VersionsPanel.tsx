@@ -35,7 +35,9 @@ export function VersionsPanel({ versions, disabled, busy, onSave, onRestore }: V
           <Save size={16} /> Guardar
         </button>
       </form>
-      <p className="panel-hint">Guarda una versión antes de probar cambios grandes. Puedes volver a ella cuando quieras.</p>
+      <p className="panel-hint">
+        Guarda una versión antes de probar cambios grandes. Puedes volver a ella cuando quieras.
+      </p>
       <ul className="version-list">
         {versions?.map((version) => (
           <li key={version.id}>
@@ -43,10 +45,16 @@ export function VersionsPanel({ versions, disabled, busy, onSave, onRestore }: V
             <span>
               <strong>{version.label}</strong>
               <small>
-                {formatRelativeTime(version.created_at)} · {version.items} muebles · {formatCurrency(version.estimated_budget)}
+                {formatRelativeTime(version.created_at)} · {version.items} muebles ·{' '}
+                {formatCurrency(version.estimated_budget)}
               </small>
             </span>
-            <button className="tool-button" disabled={disabled} onClick={() => onRestore(version)} title="Volver a esta versión">
+            <button
+              className="tool-button"
+              disabled={disabled}
+              onClick={() => onRestore(version)}
+              title="Volver a esta versión"
+            >
               <RotateCcw size={16} /> <span>Usar</span>
             </button>
           </li>

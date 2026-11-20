@@ -6,14 +6,39 @@ import { buildPricing, decorateFurniture } from './furnitureDecorators';
 import { themeFactoryFor } from './styleTheme';
 
 const addon = (slug: string, visual: FurnitureAddon['visual'], price: number): FurnitureAddon => ({
-  id: 1, slug, name: slug, description: '', price: String(price), visual, color_hex: '#ffffff', categories: ['sofa'],
+  id: 1,
+  slug,
+  name: slug,
+  description: '',
+  price: String(price),
+  visual,
+  color_hex: '#ffffff',
+  categories: ['sofa'],
 });
 const material = (slug: string, surface: Material['surface'], price: number): Material => ({
-  id: 1, slug, name: slug, surface, color_hex: '#eeeeee', roughness: 0.9, metalness: 0, price_per_unit: String(price),
+  id: 1,
+  slug,
+  name: slug,
+  surface,
+  color_hex: '#eeeeee',
+  roughness: 0.9,
+  metalness: 0,
+  price_per_unit: String(price),
 });
 const item = (id: string, price: number, addons: string[] = []): SceneItemData => ({
-  kind: 'item', id, furniture_id: 1, name: id, category: 'sofa', shape: 'sofa', position: [0, 0], rotation: 0,
-  size: [2, 0.9, 0.8], color: '#aaaaaa', price, finish: null, addons,
+  kind: 'item',
+  id,
+  furniture_id: 1,
+  name: id,
+  category: 'sofa',
+  shape: 'sofa',
+  position: [0, 0],
+  rotation: 0,
+  size: [2, 0.9, 0.8],
+  color: '#aaaaaa',
+  price,
+  finish: null,
+  addons,
 });
 
 const pricing = buildPricing(
@@ -37,7 +62,10 @@ describe('scene composite', () => {
     style: null,
     room: { width: 2, length: 3, height: 2, wall_material: 'paint', floor_material: 'oak' },
     lighting: { color: '#ffffff', intensity: 1 },
-    nodes: [item('a', 1000, ['cushions']), { kind: 'group', id: 'g', name: 'Zona', children: [item('b', 200), item('c', 300)] }],
+    nodes: [
+      item('a', 1000, ['cushions']),
+      { kind: 'group', id: 'g', name: 'Zona', children: [item('b', 200), item('c', 300)] },
+    ],
   };
 
   it('prices items, groups and surfaces the same way', () => {
@@ -62,8 +90,15 @@ describe('style theme abstract factory', () => {
   it('produces a matching lighting and surfaces family for a style', () => {
     const catalog = [material('paint', 'wall', 10), material('oak', 'floor', 100)];
     const style = {
-      id: 1, slug: 'nordic', name: 'Nórdico', description: '', image_url: null, lighting_color: '#fff6e8',
-      lighting_intensity: 1.2, palettes: [{ id: 1, name: 'p', colors: ['#111111'] }], materials: [material('oak', 'floor', 100)],
+      id: 1,
+      slug: 'nordic',
+      name: 'Nórdico',
+      description: '',
+      image_url: null,
+      lighting_color: '#fff6e8',
+      lighting_intensity: 1.2,
+      palettes: [{ id: 1, name: 'p', colors: ['#111111'] }],
+      materials: [material('oak', 'floor', 100)],
     };
     const theme = themeFactoryFor(style, catalog);
     expect(theme.createLighting()).toEqual({ color: '#fff6e8', intensity: 1.2 });

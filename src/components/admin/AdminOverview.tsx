@@ -53,7 +53,10 @@ export function AdminOverview() {
       </div>
     );
 
-  const statusItems = Object.entries(STATUS_LABELS).map(([key, label]) => ({ label, value: data.projects_by_status[key] ?? 0 }));
+  const statusItems = Object.entries(STATUS_LABELS).map(([key, label]) => ({
+    label,
+    value: data.projects_by_status[key] ?? 0,
+  }));
   const styleTotal = data.top_styles.reduce((sum, s) => sum + s.count, 0);
 
   return (
@@ -120,13 +123,17 @@ export function AdminOverview() {
               <dt>
                 <Bot size={15} /> IA de texto
               </dt>
-              <dd className={`provider provider-${data.providers.text}`}>{PROVIDER_LABELS[data.providers.text] ?? data.providers.text}</dd>
+              <dd className={`provider provider-${data.providers.text}`}>
+                {PROVIDER_LABELS[data.providers.text] ?? data.providers.text}
+              </dd>
             </div>
             <div>
               <dt>
                 <Image size={15} /> IA de imágenes
               </dt>
-              <dd className={`provider provider-${data.providers.image}`}>{PROVIDER_LABELS[data.providers.image] ?? data.providers.image}</dd>
+              <dd className={`provider provider-${data.providers.image}`}>
+                {PROVIDER_LABELS[data.providers.image] ?? data.providers.image}
+              </dd>
             </div>
             <div>
               <dt>

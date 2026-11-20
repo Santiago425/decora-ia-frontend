@@ -6,14 +6,25 @@ import { ProjectCard } from '../components/dashboard/ProjectCard';
 import { STATUS_LABELS } from '../projects/projectStatus';
 import { EmptyState } from '../components/EmptyState';
 import { useAsync } from '../hooks/useAsync';
-import { applyQuery, DEFAULT_QUERY, SORT_STRATEGIES, type KindFilter, type ProjectQuery, type SortKey } from '../projects/projectQuery';
+import {
+  applyQuery,
+  DEFAULT_QUERY,
+  SORT_STRATEGIES,
+  type KindFilter,
+  type ProjectQuery,
+  type SortKey,
+} from '../projects/projectQuery';
 import { notificationCenter } from '../services/notificationCenter';
 import { projectService } from '../services/projectService';
 import type { ProjectStatus, ProjectSummary } from '../types/dashboard';
 import { formatCurrency } from '../utils/format';
 
 const STATUS_FILTERS: (ProjectStatus | 'all')[] = ['all', 'draft', 'in_design', 'finished'];
-const KIND_LABELS: Record<KindFilter, string> = { all: 'Todos', redesign: 'Con rediseño de foto', scene: 'Solo editor 3D' };
+const KIND_LABELS: Record<KindFilter, string> = {
+  all: 'Todos',
+  redesign: 'Con rediseño de foto',
+  scene: 'Solo editor 3D',
+};
 
 function RenameForm({ project, onDone }: { project: ProjectSummary; onDone: (name?: string) => void }) {
   const [name, setName] = useState(project.name);
@@ -23,7 +34,14 @@ function RenameForm({ project, onDone }: { project: ProjectSummary; onDone: (nam
   }
   return (
     <form className="rename-form" onSubmit={submit}>
-      <input value={name} onChange={(e) => setName(e.target.value)} maxLength={120} autoFocus aria-label="Nuevo nombre" onBlur={submit} />
+      <input
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        maxLength={120}
+        autoFocus
+        aria-label="Nuevo nombre"
+        onBlur={submit}
+      />
     </form>
   );
 }
@@ -129,7 +147,11 @@ export default function Projects() {
           ))}
         </div>
         <div className="toolbar-selects">
-          <select value={query.kind} onChange={(e) => update({ kind: e.target.value as KindFilter })} aria-label="Tipo de proyecto">
+          <select
+            value={query.kind}
+            onChange={(e) => update({ kind: e.target.value as KindFilter })}
+            aria-label="Tipo de proyecto"
+          >
             {Object.entries(KIND_LABELS).map(([value, label]) => (
               <option key={value} value={value}>
                 {label}
@@ -191,7 +213,11 @@ export default function Projects() {
         <section className="project-grid" aria-label="Proyectos">
           {visible.map((project, index) => (
             <div key={project.id} className="project-item">
-              <Link to={`/editor/${project.id}`} className="project-link" aria-label={`Abrir ${project.name} en el editor 3D`}>
+              <Link
+                to={`/editor/${project.id}`}
+                className="project-link"
+                aria-label={`Abrir ${project.name} en el editor 3D`}
+              >
                 <ProjectCard project={project} delay={Math.min(index, 8) * 50} />
               </Link>
               <div className="project-actions">
@@ -199,7 +225,12 @@ export default function Projects() {
                   <RenameForm project={project} onDone={(name) => rename(project, name)} />
                 ) : (
                   <>
-                    <button className="icon-button" onClick={() => setRenaming(project.id)} title="Cambiar nombre" aria-label={`Cambiar nombre de ${project.name}`}>
+                    <button
+                      className="icon-button"
+                      onClick={() => setRenaming(project.id)}
+                      title="Cambiar nombre"
+                      aria-label={`Cambiar nombre de ${project.name}`}
+                    >
                       <Pencil size={16} />
                     </button>
                     <button
@@ -230,7 +261,9 @@ export default function Projects() {
       <ConfirmDialog
         open={toDelete !== null}
         title="¿Eliminar este proyecto?"
-        message={toDelete ? `"${toDelete.name}" se borrará junto con sus rediseños y versiones. No se puede deshacer.` : ''}
+        message={
+          toDelete ? `"${toDelete.name}" se borrará junto con sus rediseños y versiones. No se puede deshacer.` : ''
+        }
         confirmLabel="Eliminar"
         danger
         busy={busy === toDelete?.id}

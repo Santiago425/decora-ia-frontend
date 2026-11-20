@@ -20,9 +20,7 @@ const TIER_LABELS = { economic: 'Económico', standard: 'Gama media', premium: '
 
 export default function Redesign() {
   const [params] = useSearchParams();
-  const catalog = useAsync(
-    useCallback(() => Promise.all([catalogService.roomTypes(), catalogService.styles()]), []),
-  );
+  const catalog = useAsync(useCallback(() => Promise.all([catalogService.roomTypes(), catalogService.styles()]), []));
   const [roomTypes, styles] = catalog.data ?? [[], []];
 
   const [photo, setPhoto] = useState<File | null>(null);
@@ -114,7 +112,11 @@ export default function Redesign() {
               </button>
               <button
                 className="button button-ghost"
-                onClick={() => downloadImage(after, `${result.project_name}.jpg`).catch((e) => notificationCenter.notify(e.message, 'error'))}
+                onClick={() =>
+                  downloadImage(after, `${result.project_name}.jpg`).catch((e) =>
+                    notificationCenter.notify(e.message, 'error'),
+                  )
+                }
               >
                 <Download size={18} /> Descargar
               </button>

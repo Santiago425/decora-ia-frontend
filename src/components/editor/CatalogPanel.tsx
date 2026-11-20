@@ -61,20 +61,25 @@ export function CatalogPanel({ categories, furniture, roomType, roomName, disabl
       </div>
       <ul className="catalog-list">
         {visible.map((item) => (
-            <li key={item.id}>
-              <button className="catalog-item" onClick={() => onAdd(item)} disabled={disabled} title={`Agregar ${item.name}`}>
-                <span className="catalog-swatch" style={{ background: item.default_color }}>
-                  <CategoryIcon name={item.category.icon} size={20} aria-hidden="true" />
-                </span>
-                <span className="catalog-text">
-                  <strong>{item.name}</strong>
-                  <small>
-                    {meters(item.width)} × {meters(item.depth)} m · {formatCurrency(item.price)}
-                  </small>
-                </span>
-                <Plus size={18} className="catalog-add" aria-hidden="true" />
-              </button>
-            </li>
+          <li key={item.id}>
+            <button
+              className="catalog-item"
+              onClick={() => onAdd(item)}
+              disabled={disabled}
+              title={`Agregar ${item.name}`}
+            >
+              <span className="catalog-swatch" style={{ background: item.default_color }}>
+                <CategoryIcon name={item.category.icon} size={20} aria-hidden="true" />
+              </span>
+              <span className="catalog-text">
+                <strong>{item.name}</strong>
+                <small>
+                  {meters(item.width)} × {meters(item.depth)} m · {formatCurrency(item.price)}
+                </small>
+              </span>
+              <Plus size={18} className="catalog-add" aria-hidden="true" />
+            </button>
+          </li>
         ))}
         {!visible.length && <li className="panel-empty">No hay muebles con ese filtro.</li>}
       </ul>

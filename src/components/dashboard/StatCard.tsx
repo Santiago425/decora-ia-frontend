@@ -11,7 +11,15 @@ interface StatCardProps {
   delay: number;
 }
 
-export function StatCard({ icon: Icon, label, value, format = (v) => Math.round(v).toString(), text, tone, delay }: StatCardProps) {
+export function StatCard({
+  icon: Icon,
+  label,
+  value,
+  format = (v) => Math.round(v).toString(),
+  text,
+  tone,
+  delay,
+}: StatCardProps) {
   const animated = useCountUp(value);
   return (
     <article className={`stat-card tone-${tone}`} style={{ animationDelay: `${delay}ms` }}>

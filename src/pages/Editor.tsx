@@ -54,7 +54,11 @@ const isTyping = (target: EventTarget | null) =>
 
 function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Catalog }) {
   const [store] = useState(
-    () => new EditorStore(initial.scene, { historyLimit: config.editor.historyLimit, readOnly: initial.status === 'finished' }),
+    () =>
+      new EditorStore(initial.scene, {
+        historyLimit: config.editor.historyLimit,
+        readOnly: initial.status === 'finished',
+      }),
   );
   const state = useEditorState(store);
   const [project, setProject] = useState(initial);
@@ -78,7 +82,10 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
   const total = composite.price();
 
   useEffect(() => {
-    projectService.versions(project.id).then(setVersions).catch(() => setVersions([]));
+    projectService
+      .versions(project.id)
+      .then(setVersions)
+      .catch(() => setVersions([]));
   }, [project.id]);
 
   useEffect(() => {
@@ -114,7 +121,10 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
   const addFurniture = useCallback(
     (item: FurnitureItem) => {
       const scene = store.getState().scene;
-      const node = furnitureFactoryFor(item.category.shape).createItem(item, findFreeSpot(scene, [item.width, item.depth]));
+      const node = furnitureFactoryFor(item.category.shape).createItem(
+        item,
+        findFreeSpot(scene, [item.width, item.depth]),
+      );
       if (store.execute(new AddNodesCommand([node], `Agregar ${item.name}`))) store.select([node.id]);
     },
     [store],
@@ -131,8 +141,14 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
   );
 
   const remove = useCallback((id: string) => store.execute(new RemoveNodeCommand(id)), [store]);
-  const rotate = useCallback((id: string, degrees: number) => store.execute(new RotateNodeCommand(id, degrees)), [store]);
-  const move = useCallback((id: string, dx: number, dz: number) => store.execute(new MoveNodeCommand(id, dx, dz)), [store]);
+  const rotate = useCallback(
+    (id: string, degrees: number) => store.execute(new RotateNodeCommand(id, degrees)),
+    [store],
+  );
+  const move = useCallback(
+    (id: string, dx: number, dz: number) => store.execute(new MoveNodeCommand(id, dx, dz)),
+    [store],
+  );
 
   const select = useCallback(
     (id: string | null, additive: boolean) => {
@@ -147,14 +163,21 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
 
   const applyStyle = useCallback(
     (slug: string) => {
-      const theme = themeFactoryFor(catalog.styles.find((s) => s.slug === slug), catalog.materials);
+      const theme = themeFactoryFor(
+        catalog.styles.find((s) => s.slug === slug),
+        catalog.materials,
+      );
       const room = store.getState().scene.room;
       store.execute(
         new UpdateSceneCommand(
           {
             style: slug,
             lighting: theme.createLighting(),
-            room: { ...room, wall_material: theme.createWallFinish().slug, floor_material: theme.createFloorFinish().slug },
+            room: {
+              ...room,
+              wall_material: theme.createWallFinish().slug,
+              floor_material: theme.createFloorFinish().slug,
+            },
           },
           'Cambiar estilo',
         ),
@@ -170,13 +193,19 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
       const key = event.key.toLowerCase();
       const [selected] = store.getState().selection;
       const step = config.editor.moveStep;
-      const arrows: Record<string, [number, number]> = { arrowleft: [-step, 0], arrowright: [step, 0], arrowup: [0, -step], arrowdown: [0, step] };
+      const arrows: Record<string, [number, number]> = {
+        arrowleft: [-step, 0],
+        arrowright: [step, 0],
+        arrowup: [0, -step],
+        arrowdown: [0, step],
+      };
 
       if (mod && key === 'z') store[event.shiftKey ? 'redo' : 'undo']();
       else if (mod && key === 'y') store.redo();
       else if (mod && key === 'd' && selected) duplicate(selected);
       else if ((key === 'delete' || key === 'backspace') && selected) store.getState().selection.forEach(remove);
-      else if (key === 'r' && !mod && selected) rotate(selected, event.shiftKey ? -config.editor.rotateStep : config.editor.rotateStep);
+      else if (key === 'r' && !mod && selected)
+        rotate(selected, event.shiftKey ? -config.editor.rotateStep : config.editor.rotateStep);
       else if (key in arrows && selected) move(selected, ...arrows[key]);
       else if (key === 'escape') store.select([]);
       else return;
@@ -214,13 +243,20 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
           case 'change_floor': {
             const key = action.type === 'change_wall' ? 'wall_material' : 'floor_material';
             const label = action.type === 'change_wall' ? 'Cambiar paredes' : 'Cambiar piso';
-            store.execute(new UpdateSceneCommand({ room: { ...editor.scene.room, [key]: String(params.material) } }, label));
+            store.execute(
+              new UpdateSceneCommand({ room: { ...editor.scene.room, [key]: String(params.material) } }, label),
+            );
             return true;
           }
           case 'set_lighting': {
             const { lighting } = editor.scene;
             const intensity = Math.min(2, Math.max(0.3, lighting.intensity + Number(params.delta) * 0.4));
-            store.execute(new UpdateSceneCommand({ lighting: { ...lighting, intensity: Number(intensity.toFixed(2)) } }, 'Cambiar luz'));
+            store.execute(
+              new UpdateSceneCommand(
+                { lighting: { ...lighting, intensity: Number(intensity.toFixed(2)) } },
+                'Cambiar luz',
+              ),
+            );
             return true;
           }
           case 'undo':
@@ -335,7 +371,12 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
             <button role="tab" aria-selected={tab !== 'versions'} onClick={() => setTab('catalog')}>
               <LayoutGrid size={16} /> Catálogo
             </button>
-            <button role="tab" className="mobile-only" aria-selected={tab === 'settings'} onClick={() => setTab('settings')}>
+            <button
+              role="tab"
+              className="mobile-only"
+              aria-selected={tab === 'settings'}
+              onClick={() => setTab('settings')}
+            >
               <SlidersHorizontal size={16} /> Ajustes
             </button>
             <button role="tab" aria-selected={tab === 'versions'} onClick={() => setTab('versions')}>
@@ -343,16 +384,22 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
             </button>
           </div>
           {tab === 'versions' ? (
-            <VersionsPanel versions={versions} disabled={disabled} busy={busy} onSave={saveVersion} onRestore={restoreVersion} />
+            <VersionsPanel
+              versions={versions}
+              disabled={disabled}
+              busy={busy}
+              onSave={saveVersion}
+              onRestore={restoreVersion}
+            />
           ) : (
             <div className="left-content">
               <CatalogPanel
-              categories={catalog.categories}
-              furniture={catalog.furniture}
-              roomType={project.room_type?.slug ?? null}
-              roomName={project.room_type?.name ?? null}
-              disabled={disabled}
-              onAdd={addFurniture}
+                categories={catalog.categories}
+                furniture={catalog.furniture}
+                roomType={project.room_type?.slug ?? null}
+                roomName={project.room_type?.name ?? null}
+                disabled={disabled}
+                onAdd={addFurniture}
               />
             </div>
           )}
@@ -387,8 +434,12 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
               palette={palette}
               disabled={disabled}
               rotateStep={config.editor.rotateStep}
-              onColor={(id, color) => store.execute(new UpdateItemCommand(id, { color, finish: null }, 'Cambiar color'))}
-              onFinish={(id, finish, color) => store.execute(new UpdateItemCommand(id, { finish, color }, 'Cambiar acabado'))}
+              onColor={(id, color) =>
+                store.execute(new UpdateItemCommand(id, { color, finish: null }, 'Cambiar color'))
+              }
+              onFinish={(id, finish, color) =>
+                store.execute(new UpdateItemCommand(id, { finish, color }, 'Cambiar acabado'))
+              }
               onAddons={(id, addons) => store.execute(new UpdateItemCommand(id, { addons }, 'Cambiar complementos'))}
               onRotate={rotate}
               onDuplicate={duplicate}
@@ -396,7 +447,8 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
               onRename={(id, name) => store.execute(new RenameNodeCommand(id, name))}
               onGroup={(ids) => {
                 const id = newNodeId('g');
-                if (store.execute(new GroupNodesCommand(ids, { id, name: `Grupo ${composite.children.length}` }))) store.select([id]);
+                if (store.execute(new GroupNodesCommand(ids, { id, name: `Grupo ${composite.children.length}` })))
+                  store.select([id]);
               }}
               onUngroup={(id) => store.execute(new UngroupCommand(id))}
             />
@@ -408,7 +460,9 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
               disabled={disabled}
               onStyle={applyStyle}
               onRoom={(room: RoomData, label: string) => store.execute(new UpdateSceneCommand({ room }, label))}
-              onLighting={(lighting: LightingData) => store.execute(new UpdateSceneCommand({ lighting }, 'Cambiar luz'))}
+              onLighting={(lighting: LightingData) =>
+                store.execute(new UpdateSceneCommand({ lighting }, 'Cambiar luz'))
+              }
             />
           )}
         </aside>
@@ -460,5 +514,7 @@ export default function Editor() {
   }
 
   const [project, furniture, categories, materials, addons, styles] = data;
-  return <Workspace key={project.id} initial={project} catalog={{ furniture, categories, materials, addons, styles }} />;
+  return (
+    <Workspace key={project.id} initial={project} catalog={{ furniture, categories, materials, addons, styles }} />
+  );
 }

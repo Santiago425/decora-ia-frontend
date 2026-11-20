@@ -26,7 +26,11 @@ export function LumiLauncher() {
         </div>
       )}
       {!open && (
-        <button className={`lumi-launcher ${inEditor ? 'in-editor' : ''}`} onClick={() => setOpen(true)} aria-label={`Hablar con ${config.assistantName}`}>
+        <button
+          className={`lumi-launcher ${inEditor ? 'in-editor' : ''}`}
+          onClick={() => setOpen(true)}
+          aria-label={`Hablar con ${config.assistantName}`}
+        >
           <LumiOrb size={30} active={chat.sending} />
           <span className="lumi-launcher-label">{config.assistantName}</span>
         </button>

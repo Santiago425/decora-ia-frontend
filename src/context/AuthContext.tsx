@@ -6,7 +6,6 @@ import { sessionStore } from '../services/sessionStore';
 import { AuthContext, type AuthContextValue } from './authContext';
 import type { Session, User } from '../types/auth';
 
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [ready, setReady] = useState(false);

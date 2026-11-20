@@ -31,7 +31,12 @@ export default function Admin() {
         {(Object.keys(TABS) as Tab[]).map((key) => {
           const { label, icon: Icon } = TABS[key];
           return (
-            <button key={key} role="tab" aria-selected={tab === key} onClick={() => setParams(key === 'overview' ? {} : { tab: key })}>
+            <button
+              key={key}
+              role="tab"
+              aria-selected={tab === key}
+              onClick={() => setParams(key === 'overview' ? {} : { tab: key })}
+            >
               <Icon size={17} /> {label}
             </button>
           );

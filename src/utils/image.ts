@@ -15,6 +15,10 @@ export async function shrinkImage(file: Blob, maxSide: number, quality = 0.9): P
   context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
   bitmap.close();
   return new Promise((resolve, reject) =>
-    canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('No pudimos leer la foto'))), 'image/jpeg', quality),
+    canvas.toBlob(
+      (blob) => (blob ? resolve(blob) : reject(new Error('No pudimos leer la foto'))),
+      'image/jpeg',
+      quality,
+    ),
   );
 }

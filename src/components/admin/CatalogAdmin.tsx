@@ -38,7 +38,15 @@ function PriceInput({ value, onSave, label }: { value: string; onSave: (price: s
   );
 }
 
-function ActiveSwitch({ checked, onChange, label }: { checked: boolean; onChange: (value: boolean) => void; label: string }) {
+function ActiveSwitch({
+  checked,
+  onChange,
+  label,
+}: {
+  checked: boolean;
+  onChange: (value: boolean) => void;
+  label: string;
+}) {
   return (
     <label className="toggle">
       <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} aria-label={label} />
@@ -58,10 +66,19 @@ const EMPTY_FURNITURE: FurnitureInput = {
   default_color: '#a47551',
 };
 
-function NewFurnitureForm({ categories, onCreated, onClose }: { categories: FurnitureCategory[]; onCreated: (item: AdminFurniture) => void; onClose: () => void }) {
+function NewFurnitureForm({
+  categories,
+  onCreated,
+  onClose,
+}: {
+  categories: FurnitureCategory[];
+  onCreated: (item: AdminFurniture) => void;
+  onClose: () => void;
+}) {
   const [form, setForm] = useState<FurnitureInput>({ ...EMPTY_FURNITURE, category: categories[0]?.slug ?? '' });
   const [saving, setSaving] = useState(false);
-  const set = <K extends keyof FurnitureInput>(key: K, value: FurnitureInput[K]) => setForm((f) => ({ ...f, [key]: value }));
+  const set = <K extends keyof FurnitureInput>(key: K, value: FurnitureInput[K]) =>
+    setForm((f) => ({ ...f, [key]: value }));
 
   async function submit(event: FormEvent) {
     event.preventDefault();
@@ -101,13 +118,28 @@ function NewFurnitureForm({ categories, onCreated, onClose }: { categories: Furn
       </label>
       <label>
         Precio
-        <input required type="number" min={1} step={1000} value={form.price} onChange={(e) => set('price', e.target.value)} />
+        <input
+          required
+          type="number"
+          min={1}
+          step={1000}
+          value={form.price}
+          onChange={(e) => set('price', e.target.value)}
+        />
       </label>
       <div className="dims">
         {(['width', 'depth', 'height'] as const).map((key) => (
           <label key={key}>
             {{ width: 'Ancho (m)', depth: 'Fondo (m)', height: 'Alto (m)' }[key]}
-            <input required type="number" min={0.05} max={key === 'height' ? 5 : 10} step={0.05} value={form[key]} onChange={(e) => set(key, Number(e.target.value))} />
+            <input
+              required
+              type="number"
+              min={0.05}
+              max={key === 'height' ? 5 : 10}
+              step={0.05}
+              value={form[key]}
+              onChange={(e) => set(key, Number(e.target.value))}
+            />
           </label>
         ))}
       </div>
@@ -136,7 +168,10 @@ function FurnitureTable() {
     adminService.furniture().then(setItems).catch(notifyError);
   }, []);
 
-  const visible = useMemo(() => (items ?? []).filter((i) => category === 'all' || i.category.slug === category), [items, category]);
+  const visible = useMemo(
+    () => (items ?? []).filter((i) => category === 'all' || i.category.slug === category),
+    [items, category],
+  );
 
   async function save(item: AdminFurniture, patch: Parameters<typeof adminService.updateFurniture>[1]) {
     try {
@@ -151,7 +186,12 @@ function FurnitureTable() {
   return (
     <>
       <div className="catalog-toolbar">
-        <select className="admin-select" value={category} onChange={(e) => setCategory(e.target.value)} aria-label="Filtrar por categoría">
+        <select
+          className="admin-select"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          aria-label="Filtrar por categoría"
+        >
           <option value="all">Todas las categorías</option>
           {categories?.map((c) => (
             <option key={c.slug} value={c.slug}>
@@ -199,10 +239,18 @@ function FurnitureTable() {
                   {item.width} × {item.depth} × {item.height} m
                 </td>
                 <td data-label="Precio">
-                  <PriceInput value={item.price} onSave={(price) => save(item, { price })} label={`Precio de ${item.name}`} />
+                  <PriceInput
+                    value={item.price}
+                    onSave={(price) => save(item, { price })}
+                    label={`Precio de ${item.name}`}
+                  />
                 </td>
                 <td data-label="Visible">
-                  <ActiveSwitch checked={item.is_active} onChange={(is_active) => save(item, { is_active })} label={`Mostrar ${item.name} en el catálogo`} />
+                  <ActiveSwitch
+                    checked={item.is_active}
+                    onChange={(is_active) => save(item, { is_active })}
+                    label={`Mostrar ${item.name} en el catálogo`}
+                  />
                 </td>
               </tr>
             ))}
@@ -222,7 +270,9 @@ function StylesTable() {
   async function save(style: AdminStyle, patch: Parameters<typeof adminService.updateStyle>[1]) {
     try {
       const updated = await adminService.updateStyle(style.id, patch);
-      setStyles((list) => list?.map((s) => (s.id === updated.id ? { ...updated, project_count: s.project_count } : s)) ?? null);
+      setStyles(
+        (list) => list?.map((s) => (s.id === updated.id ? { ...updated, project_count: s.project_count } : s)) ?? null,
+      );
       notificationCenter.notify(`Guardaste el estilo ${updated.name}`, 'success');
     } catch (e) {
       notifyError(e);
@@ -233,11 +283,18 @@ function StylesTable() {
     <div className="style-admin-grid">
       {styles?.map((style) => (
         <article key={style.id} className={`style-admin-card ${style.is_active ? '' : 'inactive'}`}>
-          <div className="style-admin-image" style={{ backgroundImage: style.image_url ? `url(${style.image_url})` : undefined }} />
+          <div
+            className="style-admin-image"
+            style={{ backgroundImage: style.image_url ? `url(${style.image_url})` : undefined }}
+          />
           <div className="style-admin-body">
             <header>
               <h3>{style.name}</h3>
-              <ActiveSwitch checked={style.is_active} onChange={(is_active) => save(style, { is_active })} label={`Mostrar el estilo ${style.name}`} />
+              <ActiveSwitch
+                checked={style.is_active}
+                onChange={(is_active) => save(style, { is_active })}
+                label={`Mostrar el estilo ${style.name}`}
+              />
             </header>
             <p>{style.description}</p>
             <div className="style-admin-meta">
@@ -245,7 +302,12 @@ function StylesTable() {
                 {style.project_count} {style.project_count === 1 ? 'proyecto' : 'proyectos'}
               </span>
               <label title="Color de la luz en el editor 3D">
-                <input type="color" value={style.lighting_color} onChange={(e) => save(style, { lighting_color: e.target.value })} aria-label={`Color de luz de ${style.name}`} />
+                <input
+                  type="color"
+                  value={style.lighting_color}
+                  onChange={(e) => save(style, { lighting_color: e.target.value })}
+                  aria-label={`Color de luz de ${style.name}`}
+                />
                 Luz
               </label>
               <label>
@@ -305,13 +367,23 @@ function AddonsTable() {
                 <strong>{addon.name}</strong>
                 <small className="cell-note">{addon.description}</small>
               </td>
-              <td data-label="Se aplica a">{addon.categories.length ? addon.categories.map(categoryName).join(', ') : 'Todos los muebles'}</td>
+              <td data-label="Se aplica a">
+                {addon.categories.length ? addon.categories.map(categoryName).join(', ') : 'Todos los muebles'}
+              </td>
               <td data-label="Precio">
-                <PriceInput value={addon.price} onSave={(price) => save(addon, { price })} label={`Precio de ${addon.name}`} />
+                <PriceInput
+                  value={addon.price}
+                  onSave={(price) => save(addon, { price })}
+                  label={`Precio de ${addon.name}`}
+                />
                 <small className="cell-note">{formatCurrency(addon.price)}</small>
               </td>
               <td data-label="Visible">
-                <ActiveSwitch checked={addon.is_active} onChange={(is_active) => save(addon, { is_active })} label={`Mostrar ${addon.name}`} />
+                <ActiveSwitch
+                  checked={addon.is_active}
+                  onChange={(is_active) => save(addon, { is_active })}
+                  label={`Mostrar ${addon.name}`}
+                />
               </td>
             </tr>
           ))}
@@ -332,7 +404,13 @@ export function CatalogAdmin() {
         </div>
         <div className="chips" role="tablist">
           {(Object.keys(SECTIONS) as Section[]).map((key) => (
-            <button key={key} role="tab" aria-selected={section === key} className={`chip ${section === key ? 'selected' : ''}`} onClick={() => setSection(key)}>
+            <button
+              key={key}
+              role="tab"
+              aria-selected={section === key}
+              className={`chip ${section === key ? 'selected' : ''}`}
+              onClick={() => setSection(key)}
+            >
               {SECTIONS[key]}
             </button>
           ))}

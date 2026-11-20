@@ -4,7 +4,13 @@ function channels(hex: string): [number, number, number] {
 }
 
 function toHex([r, g, b]: [number, number, number]): string {
-  return `#${[r, g, b].map((c) => Math.round(Math.min(255, Math.max(0, c))).toString(16).padStart(2, '0')).join('')}`;
+  return `#${[r, g, b]
+    .map((c) =>
+      Math.round(Math.min(255, Math.max(0, c)))
+        .toString(16)
+        .padStart(2, '0'),
+    )
+    .join('')}`;
 }
 
 export function mixColors(from: string, to: string, amount: number): string {

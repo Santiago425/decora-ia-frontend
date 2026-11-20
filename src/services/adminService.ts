@@ -15,7 +15,8 @@ export const adminService = {
   stats: () => apiClient.get<AdminStats>('/admin/stats'),
   users: (search: string, page: number) =>
     apiClient.get<AdminUserPage>(`/admin/users?${new URLSearchParams({ search, page: String(page) })}`),
-  updateUser: (id: string, data: { role?: Role; is_active?: boolean }) => apiClient.patch<AdminUser>(`/admin/users/${id}`, data),
+  updateUser: (id: string, data: { role?: Role; is_active?: boolean }) =>
+    apiClient.patch<AdminUser>(`/admin/users/${id}`, data),
   furniture: () => apiClient.get<AdminFurniture[]>('/admin/furniture'),
   createFurniture: (data: FurnitureInput) => apiClient.post<AdminFurniture>('/admin/furniture', data),
   updateFurniture: (id: number, data: Partial<FurnitureInput> & { is_active?: boolean }) =>

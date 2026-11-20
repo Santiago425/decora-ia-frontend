@@ -38,7 +38,9 @@ export function MermaidDiagram({ code, label }: { code: string; label: string })
   useEffect(() => {
     const element = container.current;
     if (!element) return;
-    const observer = new IntersectionObserver(([entry]) => entry.isIntersecting && setVisible(true), { rootMargin: '200px' });
+    const observer = new IntersectionObserver(([entry]) => entry.isIntersecting && setVisible(true), {
+      rootMargin: '200px',
+    });
     observer.observe(element);
     return () => observer.disconnect();
   }, []);

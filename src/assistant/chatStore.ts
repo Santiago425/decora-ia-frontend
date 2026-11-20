@@ -64,11 +64,18 @@ class ChatStore {
     this.#set({ messages: [...this.#state.messages, pending], sending: true, error: '' });
     try {
       const { message, reply } = await assistantService.send(content, context);
-      this.#set({ messages: [...this.#state.messages.filter((m) => m.id !== pending.id), message, reply], sending: false });
+      this.#set({
+        messages: [...this.#state.messages.filter((m) => m.id !== pending.id), message, reply],
+        sending: false,
+      });
       this.onReply(reply);
       reply.actions.forEach((action) => assistantBus.publish(action));
     } catch (error) {
-      this.#set({ messages: this.#state.messages.filter((m) => m.id !== pending.id), sending: false, error: (error as Error).message });
+      this.#set({
+        messages: this.#state.messages.filter((m) => m.id !== pending.id),
+        sending: false,
+        error: (error as Error).message,
+      });
     }
   }
 

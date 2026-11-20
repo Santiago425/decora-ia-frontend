@@ -24,10 +24,14 @@
 @keyframes lumi-pulse {
   0%,
   100% {
-    box-shadow: 0 0 0 1px var(--sand-200), 0 0 0 0 color-mix(in srgb, var(--terracotta) 35%, transparent);
+    box-shadow:
+      0 0 0 1px var(--sand-200),
+      0 0 0 0 color-mix(in srgb, var(--terracotta) 35%, transparent);
   }
   50% {
-    box-shadow: 0 0 0 1px var(--sand-200), 0 0 0 8px color-mix(in srgb, var(--terracotta) 0%, transparent);
+    box-shadow:
+      0 0 0 1px var(--sand-200),
+      0 0 0 8px color-mix(in srgb, var(--terracotta) 0%, transparent);
   }
 }
 
@@ -278,7 +282,9 @@
   border: 0;
   border-radius: 50%;
   cursor: pointer;
-  transition: background 0.2s, transform 0.2s var(--ease-out);
+  transition:
+    background 0.2s,
+    transform 0.2s var(--ease-out);
 }
 
 .mic-button {

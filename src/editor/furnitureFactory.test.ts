@@ -24,7 +24,13 @@ describe('furniture factory method', () => {
 
   it('creates a scene item from catalog data', () => {
     const item = furnitureFactoryFor('sofa').createItem(catalogItem('sofa'), [1, -1]);
-    expect(item).toMatchObject({ kind: 'item', furniture_id: 7, size: [2, 0.9, 0.8], price: 1500000, position: [1, -1] });
+    expect(item).toMatchObject({
+      kind: 'item',
+      furniture_id: 7,
+      size: [2, 0.9, 0.8],
+      price: 1500000,
+      position: [1, -1],
+    });
     expect(item.id).toMatch(/^n-/);
   });
 

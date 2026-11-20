@@ -1,7 +1,10 @@
 import { config } from '../config';
 
 export class ApiError extends Error {
-  constructor(message: string, readonly status: number) {
+  constructor(
+    message: string,
+    readonly status: number,
+  ) {
     super(message);
     this.name = 'ApiError';
   }
@@ -11,7 +14,8 @@ type RequestOptions = Omit<RequestInit, 'body'> & { body?: unknown; timeoutMs?: 
 
 const isForm = (body: unknown): body is FormData => typeof FormData !== 'undefined' && body instanceof FormData;
 
-const NETWORK_ERROR = 'No pudimos conectar con el servidor. Si estuvo inactivo, puede tardar unos segundos en despertar.';
+const NETWORK_ERROR =
+  'No pudimos conectar con el servidor. Si estuvo inactivo, puede tardar unos segundos en despertar.';
 
 // Singleton: one HTTP client shared by the whole app, holding the session token.
 export class ApiClient {
@@ -25,7 +29,10 @@ export class ApiClient {
   #token: string | null = null;
   #unauthorizedHandler: () => void = () => {};
 
-  private constructor(readonly baseUrl: string, private readonly timeoutMs: number) {}
+  private constructor(
+    readonly baseUrl: string,
+    private readonly timeoutMs: number,
+  ) {}
 
   setToken(token: string | null): void {
     this.#token = token;

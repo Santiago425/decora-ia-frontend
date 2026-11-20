@@ -102,7 +102,10 @@ export class UpdateItemCommand implements Command {
   }
 
   undo(scene: SceneData): SceneData {
-    return { ...scene, nodes: replaceNode(scene.nodes, this.id, (node) => ({ ...node, ...this.#previous }) as SceneNodeData) };
+    return {
+      ...scene,
+      nodes: replaceNode(scene.nodes, this.id, (node) => ({ ...node, ...this.#previous }) as SceneNodeData),
+    };
   }
 }
 

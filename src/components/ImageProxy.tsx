@@ -37,7 +37,12 @@ export function ImageProxy({ src, alt, className = '' }: ImageProxyProps) {
   const failed = !src || state === 'error';
 
   return (
-    <div ref={holder} className={`image-proxy ${state} ${className}`} role={failed ? 'img' : undefined} aria-label={failed ? alt : undefined}>
+    <div
+      ref={holder}
+      className={`image-proxy ${state} ${className}`}
+      role={failed ? 'img' : undefined}
+      aria-label={failed ? alt : undefined}
+    >
       {failed ? (
         <ImageOff size={22} aria-hidden="true" />
       ) : (

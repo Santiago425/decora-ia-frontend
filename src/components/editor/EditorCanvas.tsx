@@ -36,7 +36,8 @@ interface Drag {
 const FLOOR = new Plane(new Vector3(0, 1, 0), 0);
 const FOV = 45;
 const snap = (value: number) => Math.round(value / config.editor.snap) * config.editor.snap;
-const cssColor = (name: string) => getComputedStyle(document.documentElement).getPropertyValue(name).trim() || '#f6f1e9';
+const cssColor = (name: string) =>
+  getComputedStyle(document.documentElement).getPropertyValue(name).trim() || '#f6f1e9';
 
 const HALF_FOV = Math.tan(((FOV / 2) * Math.PI) / 180);
 
@@ -51,7 +52,15 @@ function cameraPosition(view: CameraView, room: SceneData['room'], aspect = 1.4)
   return [direction.x, direction.y, direction.z];
 }
 
-function CameraRig({ view, room, controls }: { view: CameraView; room: SceneData['room']; controls: React.RefObject<OrbitControlsImpl> }) {
+function CameraRig({
+  view,
+  room,
+  controls,
+}: {
+  view: CameraView;
+  room: SceneData['room'];
+  controls: React.RefObject<OrbitControlsImpl>;
+}) {
   const camera = useThree((state) => state.camera) as PerspectiveCamera;
   const aspect = useThree((state) => state.size.width / Math.max(1, state.size.height));
   const { width, length, height } = room;
@@ -88,7 +97,10 @@ function DragController({
 
     function move(event: PointerEvent) {
       const rect = element.getBoundingClientRect();
-      pointer.set(((event.clientX - rect.left) / rect.width) * 2 - 1, -((event.clientY - rect.top) / rect.height) * 2 + 1);
+      pointer.set(
+        ((event.clientX - rect.left) / rect.width) * 2 - 1,
+        -((event.clientY - rect.top) / rect.height) * 2 + 1,
+      );
       raycaster.setFromCamera(pointer, camera);
       const drag = dragRef.current;
       if (!drag || !raycaster.ray.intersectPlane(FLOOR, hit)) return;
@@ -208,7 +220,12 @@ export const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(fu
         shadow-bias={-0.0004}
         shadow-radius={6}
       />
-      <pointLight position={[0, room.height - 0.3, 0]} intensity={0.6 * lighting.intensity} color={lighting.color} distance={size * 2} />
+      <pointLight
+        position={[0, room.height - 0.3, 0]}
+        intensity={0.6 * lighting.intensity}
+        color={lighting.color}
+        distance={size * 2}
+      />
 
       <RoomMesh room={room} materials={pricing.materials} />
       <ContactShadows position={[0, 0.005, 0]} scale={size * 1.4} opacity={0.35} blur={2.4} far={2} resolution={512} />

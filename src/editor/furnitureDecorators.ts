@@ -126,7 +126,8 @@ export class GlowDecorator extends AddonDecorator {
   parts(): Part[] {
     const parts = this.inner.parts();
     const shade = parts.find((part) => part.role === 'shade');
-    if (shade) return parts.map((part) => (part === shade ? { ...part, color: lighten(this.color, 0.3), emissive: 0.9 } : part));
+    if (shade)
+      return parts.map((part) => (part === shade ? { ...part, color: lighten(this.color, 0.3), emissive: 0.9 } : part));
     const [width, depth, height] = this.item.size;
     const strip: Part = {
       geometry: 'box',
@@ -167,12 +168,15 @@ export interface Pricing {
 
 export function decorateFurniture(item: SceneItemData, pricing: Pricing): PricedFurniture {
   const finish = item.finish ? pricing.materials.get(item.finish) : undefined;
-  return item.addons.reduce<PricedFurniture>((furniture, slug) => {
-    const addon = pricing.addons.get(slug);
-    if (!addon) return furniture;
-    const Decorator = DECORATORS[addon.visual] ?? ServiceDecorator;
-    return new Decorator(furniture, addon, item);
-  }, new BaseFurniture(item, finish));
+  return item.addons.reduce<PricedFurniture>(
+    (furniture, slug) => {
+      const addon = pricing.addons.get(slug);
+      if (!addon) return furniture;
+      const Decorator = DECORATORS[addon.visual] ?? ServiceDecorator;
+      return new Decorator(furniture, addon, item);
+    },
+    new BaseFurniture(item, finish),
+  );
 }
 
 export function buildPricing(addons: FurnitureAddon[], materials: Material[]): Pricing {

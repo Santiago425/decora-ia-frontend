@@ -90,7 +90,9 @@ export class FurnitureGroup implements SceneComponent {
 
   clone(): SceneGroupData {
     const copy = structuredClone(this.data);
-    return renewIds(translateNode(copy, config.editor.duplicateOffset, config.editor.duplicateOffset)) as SceneGroupData;
+    return renewIds(
+      translateNode(copy, config.editor.duplicateOffset, config.editor.duplicateOffset),
+    ) as SceneGroupData;
   }
 }
 
