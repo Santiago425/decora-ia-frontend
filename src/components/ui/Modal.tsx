@@ -7,9 +7,11 @@ interface ModalProps {
   children?: ReactNode;
   footer?: ReactNode;
   className?: string;
+  /** Close when the dark area around the dialog is clicked. */
+  closeOnBackdrop?: boolean;
 }
 
-export function Modal({ open, title, onClose, children, footer, className }: ModalProps) {
+export function Modal({ open, title, onClose, children, footer, className, closeOnBackdrop }: ModalProps) {
   const dialog = useRef<HTMLDialogElement>(null);
   const titleId = useId();
 
@@ -19,6 +21,18 @@ export function Modal({ open, title, onClose, children, footer, className }: Mod
     if (open && !element.open) element.showModal();
     if (!open && element.open) element.close();
   }, [open]);
+
+  useEffect(() => {
+    const element = dialog.current;
+    if (!element || !closeOnBackdrop) return;
+    // With no padding on the dialog, only a click on the backdrop lands on the dialog element itself.
+    // The keyboard way out is Escape, which the dialog already handles.
+    const onBackdrop = (event: MouseEvent) => {
+      if (event.target === element) onClose();
+    };
+    element.addEventListener('click', onBackdrop);
+    return () => element.removeEventListener('click', onBackdrop);
+  }, [closeOnBackdrop, onClose]);
 
   return (
     <dialog
