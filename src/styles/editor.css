@@ -866,6 +866,15 @@
   font-variant-numeric: tabular-nums;
 }
 
+.light-tones {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--text-2);
+}
+
 .budget-breakdown dl {
   display: grid;
   gap: 8px;
