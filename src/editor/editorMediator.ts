@@ -25,6 +25,11 @@ import { findFreeSpot, findNode, newNodeId, nodeBounds, topLevelIdOf } from './s
 import { themeFactoryFor } from './styleTheme';
 import { findWallSpot, isWallOpening, isWallOpeningShape, remountOpenings, wallMount } from './wallOpenings';
 
+export interface FurnitureVariant {
+  color?: string;
+  finish?: string | null;
+}
+
 export type EditorPanel = 'catalog' | 'settings' | 'versions';
 export type NoticeKind = 'info' | 'success' | 'error';
 
@@ -77,10 +82,13 @@ export class EditorMediator {
     private readonly options: EditorMediatorOptions,
   ) {}
 
-  addFurniture(item: FurnitureItem): void {
+  /** Adds a catalog piece, optionally in the color or finish picked in its detail sheet. */
+  addFurniture(item: FurnitureItem, variant: FurnitureVariant = {}): void {
     const scene = this.store.getState().scene;
     const factory = furnitureFactoryFor(item.category.shape);
     let node = factory.createItem(item, findFreeSpot(scene, [item.width, item.depth]));
+    if (variant.color) node = { ...node, color: variant.color };
+    if (variant.finish) node = { ...node, finish: variant.finish };
     if (isWallOpeningShape(item.category.shape))
       node = { ...node, ...findWallSpot(scene, node.size, item.category.shape) };
     // Art, curtains and TVs hang on a wall like a window does, but stay free to move afterwards.

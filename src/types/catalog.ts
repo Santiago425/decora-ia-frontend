@@ -88,7 +88,25 @@ export interface FurnitureItem {
   category: FurnitureCategory;
 }
 
-export type AddonVisual = 'cushions' | 'throw' | 'glass' | 'legs' | 'glow' | 'pot' | 'none';
+export type AddonVisual =
+  | 'cushions'
+  | 'throw'
+  | 'glass'
+  | 'legs'
+  | 'glow'
+  | 'pot'
+  | 'books'
+  | 'vase'
+  | 'runner'
+  | 'lamp'
+  | 'succulent'
+  | 'towels'
+  | 'headboard'
+  | 'duvet'
+  | 'frame'
+  | 'sheer'
+  | 'soundbar'
+  | 'none';
 
 export interface FurnitureAddon {
   id: number;

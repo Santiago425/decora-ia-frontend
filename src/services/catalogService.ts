@@ -21,4 +21,9 @@ export const catalogService = {
   addons: () => apiClient.get<FurnitureAddon[]>('/catalog/addons'),
   daylight: () => apiClient.get<DaylightPreset[]>('/catalog/daylight'),
   inspiration: () => apiClient.get<InspirationPhoto[]>('/catalog/inspiration'),
+  favorites: () => apiClient.get<number[]>('/catalog/favorites'),
+  setFavorite: (furnitureId: number, favorite: boolean) =>
+    favorite
+      ? apiClient.put<null>(`/catalog/favorites/${furnitureId}`)
+      : apiClient.delete<null>(`/catalog/favorites/${furnitureId}`),
 };

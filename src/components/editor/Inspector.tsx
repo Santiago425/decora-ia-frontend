@@ -1,4 +1,4 @@
-import { ArrowUpToLine, Copy, Group, RotateCcw, RotateCw, Trash2, Ungroup } from 'lucide-react';
+import { ArrowUpToLine, Check, Copy, Group, RotateCcw, RotateCw, Trash2, Ungroup } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { FurnitureGroup, FurnitureLeaf, type SceneComponent } from '../../editor/composite';
 import { config } from '../../config';
@@ -6,6 +6,7 @@ import type { FurnitureAddon, FurnitureCategory, FurnitureItem, Material } from 
 import type { SceneItemData } from '../../types/project';
 import { FURNITURE_LIMITS, resizeRange } from '../../utils/measure';
 import { MeasureInput } from './MeasureInput';
+import { darken } from '../../utils/color';
 import { formatCurrency } from '../../utils/format';
 import { CategoryIcon } from './categoryIcon';
 import { Button } from '../ui';
@@ -125,11 +126,89 @@ function ItemSize({ item, props }: { item: SceneItemData; props: InspectorProps 
   );
 }
 
+const ADDON_GROUPS: { title: string; services: boolean }[] = [
+  { title: 'Decoración', services: false },
+  { title: 'Servicios', services: true },
+];
+
+export function AddonSection({
+  addons,
+  chosen,
+  disabled,
+  onChange,
+}: {
+  addons: FurnitureAddon[];
+  chosen: string[];
+  disabled: boolean;
+  onChange: (addons: string[]) => void;
+}) {
+  const picked = addons.filter((addon) => chosen.includes(addon.slug));
+  const extra = picked.reduce((sum, addon) => sum + Number(addon.price), 0);
+
+  return (
+    <section className="inspector-section addon-section">
+      <header className="addon-head">
+        <h4>Complementos</h4>
+        {picked.length > 0 && (
+          <span className="addon-summary">
+            {picked.length} {picked.length === 1 ? 'elegido' : 'elegidos'} · +{formatCurrency(extra)}
+          </span>
+        )}
+      </header>
+      {ADDON_GROUPS.map(({ title, services }) => {
+        const group = addons.filter((addon) => (addon.visual === 'none') === services);
+        if (!group.length) return null;
+        return (
+          <div key={title} className="addon-group">
+            <h5>{title}</h5>
+            <div className="addon-list">
+              {group.map((addon) => {
+                const active = chosen.includes(addon.slug);
+                return (
+                  <label key={addon.slug} className="addon" data-active={active || undefined}>
+                    <input
+                      type="checkbox"
+                      checked={active}
+                      disabled={disabled}
+                      onChange={() =>
+                        onChange(active ? chosen.filter((slug) => slug !== addon.slug) : [...chosen, addon.slug])
+                      }
+                    />
+                    <span
+                      className="addon-icon"
+                      style={
+                        addon.color_hex
+                          ? { background: addon.color_hex, color: darken(addon.color_hex, 0.6) }
+                          : undefined
+                      }
+                      data-service={services || undefined}
+                    >
+                      <CategoryIcon name={addon.icon ?? 'sparkles'} size={16} aria-hidden="true" />
+                    </span>
+                    <span className="addon-text">
+                      <strong>{addon.name}</strong>
+                      <small>{addon.description}</small>
+                    </span>
+                    <em>+{formatCurrency(addon.price)}</em>
+                    <Check className="addon-check" size={14} aria-hidden="true" />
+                  </label>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+    </section>
+  );
+}
+
 function ItemInspector({ leaf, props }: { leaf: FurnitureLeaf; props: InspectorProps }) {
   const { data } = leaf;
   const category = props.categories.find((c) => c.slug === data.category);
   const addons = props.addons.filter((addon) => addon.categories.includes(data.category));
-  const colors = [...new Set([...props.palette, data.color])];
+  // The colors the piece is sold in come first, then the accents of the room's style.
+  const sold = props.furniture.find((f) => f.id === data.furniture_id)?.color_options ?? [];
+  const colors = [...new Set([...sold.map((option) => option.hex), ...props.palette, data.color])];
   const labels = leaf.furniture().labels();
 
   return (
@@ -209,34 +288,12 @@ function ItemInspector({ leaf, props }: { leaf: FurnitureLeaf; props: InspectorP
       )}
 
       {addons.length > 0 && (
-        <section className="inspector-section">
-          <h4>Complementos</h4>
-          <div className="addon-list">
-            {addons.map((addon) => {
-              const active = data.addons.includes(addon.slug);
-              return (
-                <label key={addon.slug} className="addon">
-                  <input
-                    type="checkbox"
-                    checked={active}
-                    disabled={props.disabled}
-                    onChange={() =>
-                      props.onAddons(
-                        data.id,
-                        active ? data.addons.filter((a) => a !== addon.slug) : [...data.addons, addon.slug],
-                      )
-                    }
-                  />
-                  <span>
-                    <strong>{addon.name}</strong>
-                    <small>{addon.description}</small>
-                  </span>
-                  <em>+{formatCurrency(addon.price)}</em>
-                </label>
-              );
-            })}
-          </div>
-        </section>
+        <AddonSection
+          addons={addons}
+          chosen={data.addons}
+          disabled={props.disabled}
+          onChange={(next) => props.onAddons(data.id, next)}
+        />
       )}
     </div>
   );
