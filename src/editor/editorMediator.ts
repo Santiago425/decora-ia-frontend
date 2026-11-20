@@ -1,3 +1,4 @@
+import type { ActionOutcome } from '../assistant/assistantBus';
 import type { AssistantAction } from '../types/assistant';
 import type { DesignStyle, FurnitureItem, Material } from '../types/catalog';
 import type { LightingData, RoomData } from '../types/project';
@@ -184,58 +185,59 @@ export class EditorMediator {
     return true;
   }
 
-  /** Lumi's actions arrive here; returns true when the editor handled the action. */
-  handleAssistant(action: AssistantAction): boolean {
+  /** Lumi's actions arrive here; the outcome tells the chat whether the scene really changed. */
+  handleAssistant(action: AssistantAction): ActionOutcome {
     const { params } = action;
     const editor = this.store.getState();
     const selected = editor.selection;
     if (NEEDS_SELECTION.has(action.type) && selected.length === 0) {
       this.options.notify('Primero selecciona un mueble en la habitación', 'info');
-      return true;
+      return 'blocked';
     }
     if (editor.readOnly && action.type !== 'undo' && action.type !== 'redo') {
       this.options.notify('Este proyecto está terminado. Reábrelo para seguir editando', 'info');
-      return true;
+      return 'blocked';
     }
     switch (action.type) {
       case 'add_furniture': {
         const item = this.options.catalog.furniture.find((f) => f.id === Number(params.furniture_id));
-        if (item) this.addFurniture(item);
-        return true;
+        if (!item) return 'blocked';
+        this.addFurniture(item);
+        return 'done';
       }
       case 'change_style':
         this.applyStyle(String(params.style));
-        return true;
+        return 'done';
       case 'change_wall':
       case 'change_floor': {
         const key = action.type === 'change_wall' ? 'wall_material' : 'floor_material';
         const label = action.type === 'change_wall' ? 'Cambiar paredes' : 'Cambiar piso';
         this.setRoom({ ...editor.scene.room, [key]: String(params.material) }, label);
-        return true;
+        return 'done';
       }
       case 'set_lighting': {
         const { lighting } = editor.scene;
         const intensity = Math.min(2, Math.max(0.3, lighting.intensity + Number(params.delta) * 0.4));
         this.setLighting({ ...lighting, intensity: Number(intensity.toFixed(2)) });
-        return true;
+        return 'done';
       }
       case 'undo':
         this.store.undo();
-        return true;
+        return 'done';
       case 'redo':
         this.store.redo();
-        return true;
+        return 'done';
       case 'rotate_selected':
         selected.forEach((id) => this.rotate(id, Number(params.degrees) || this.options.rotateStep));
-        return true;
+        return 'done';
       case 'remove_selected':
         selected.forEach((id) => this.remove(id));
-        return true;
+        return 'done';
       case 'duplicate_selected':
         selected.forEach((id) => this.duplicate(id));
-        return true;
+        return 'done';
       default:
-        return false;
+        return 'ignored';
     }
   }
 }

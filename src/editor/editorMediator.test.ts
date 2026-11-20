@@ -101,19 +101,19 @@ describe('editor mediator', () => {
 
   it('handles Lumi actions and asks for a selection when needed', () => {
     const { store, mediator, notify } = setup();
-    expect(mediator.handleAssistant({ type: 'rotate_selected', params: { degrees: 90 } })).toBe(true);
+    expect(mediator.handleAssistant({ type: 'rotate_selected', params: { degrees: 90 } })).toBe('blocked');
     expect(notify).toHaveBeenCalledWith('Primero selecciona un mueble en la habitación', 'info');
 
-    expect(mediator.handleAssistant({ type: 'add_furniture', params: { furniture_id: 7 } })).toBe(true);
+    expect(mediator.handleAssistant({ type: 'add_furniture', params: { furniture_id: 7 } })).toBe('done');
     expect(store.getState().scene.nodes).toHaveLength(1);
 
-    expect(mediator.handleAssistant({ type: 'set_lighting', params: { delta: 1 } })).toBe(true);
+    expect(mediator.handleAssistant({ type: 'set_lighting', params: { delta: 1 } })).toBe('done');
     expect(store.getState().scene.lighting.intensity).toBeCloseTo(1.4);
   });
 
   it('refuses edits on a finished project', () => {
     const { store, mediator, notify } = setup({ readOnly: true });
-    mediator.handleAssistant({ type: 'add_furniture', params: { furniture_id: 7 } });
+    expect(mediator.handleAssistant({ type: 'add_furniture', params: { furniture_id: 7 } })).toBe('blocked');
     expect(store.getState().scene.nodes).toHaveLength(0);
     expect(notify).toHaveBeenCalledWith(expect.stringContaining('terminado'), 'info');
   });
