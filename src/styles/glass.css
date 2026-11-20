@@ -1,0 +1,149 @@
+/* Light glass layer over the whole app: frosted linen surfaces, hairline highlights and a soft sage glow. */
+
+body {
+  background: var(--ambient-glow), var(--bg);
+  background-attachment: fixed;
+}
+
+/* The page photo runs under the sidebar too, so the menu reads as frosted glass. */
+.page-backdrop {
+  inset: 0;
+}
+
+/* Sidebar */
+.sidebar {
+  background: var(--glass-panel);
+  backdrop-filter: blur(22px) saturate(160%);
+  border-right: 1px solid var(--glass-edge);
+  box-shadow:
+    inset -1px 0 0 rgb(255 255 255 / 0.6),
+    12px 0 40px -28px rgb(var(--shadow-color) / 0.25);
+}
+
+.sidebar-link:hover {
+  background: var(--glass-hover);
+  color: var(--text);
+}
+
+.sidebar-link.active {
+  background: var(--glass-active);
+  color: var(--primary-strong);
+  box-shadow:
+    inset 0 0 0 1px rgb(47 93 80 / 0.14),
+    0 8px 22px -14px rgb(47 93 80 / 0.55);
+}
+
+.sidebar-link.active::before {
+  width: 3px;
+  background: var(--grad-primary);
+  box-shadow: 0 0 10px rgb(47 93 80 / 0.6);
+}
+
+.sidebar-user {
+  background: var(--glass-card);
+  border-color: var(--glass-edge);
+  box-shadow:
+    inset 0 1px 0 var(--white),
+    var(--shadow-sm);
+}
+
+.avatar {
+  background: var(--grad-primary);
+  box-shadow: 0 0 0 2px rgb(255 255 255 / 0.8);
+}
+
+/* Cards and panels */
+.card,
+.stat-card,
+.project-card,
+.getting-started {
+  background: var(--glass-card);
+  border: 1px solid var(--glass-edge);
+  box-shadow:
+    inset 0 1px 0 var(--white),
+    var(--shadow-md);
+}
+
+/* Stat cards sit right over the photo: let it glow through. */
+.stat-card {
+  background: var(--glass-tile);
+  backdrop-filter: blur(18px) saturate(160%);
+}
+
+.stat-icon {
+  box-shadow: 0 6px 18px -8px rgb(47 93 80 / 0.55);
+}
+
+.stat-card,
+.project-card {
+  transition:
+    box-shadow var(--duration) var(--ease-out),
+    border-color var(--duration) var(--ease-out);
+}
+
+.stat-card:hover,
+.project-card:hover,
+.tilt-card:hover > .project-card,
+.tilt-card:hover > .stat-card {
+  border-color: rgb(47 93 80 / 0.22);
+  box-shadow:
+    inset 0 1px 0 var(--white),
+    var(--shadow-lg),
+    0 0 40px -14px rgb(47 93 80 / 0.35);
+}
+
+/* Primary action: sage gradient with a soft glow and a light sweep */
+.button-primary {
+  background: var(--grad-primary);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.18),
+    0 10px 24px -12px rgb(47 93 80 / 0.7);
+}
+
+.button-primary:hover:not(:disabled) {
+  background: var(--grad-primary);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.22),
+    0 14px 32px -12px rgb(47 93 80 / 0.85);
+}
+
+.button-primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(110deg, transparent 30%, rgb(255 255 255 / 0.22) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.9s var(--ease-out);
+  pointer-events: none;
+}
+
+.button-primary:hover:not(:disabled)::after {
+  transform: translateX(100%);
+}
+
+/* Phone bars */
+@media (max-width: 760px) {
+  .mobile-topbar,
+  .mobile-nav {
+    background: var(--glass-panel);
+    backdrop-filter: blur(22px) saturate(160%);
+    border-color: var(--glass-edge);
+  }
+
+  .mobile-topbar {
+    box-shadow: 0 10px 30px -24px rgb(var(--shadow-color) / 0.4);
+  }
+
+  .mobile-nav {
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.7),
+      0 -10px 30px -24px rgb(var(--shadow-color) / 0.4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button-primary::after {
+    display: none;
+  }
+}

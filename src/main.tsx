@@ -16,6 +16,7 @@ import './styles/admin.css';
 import './styles/docs.css';
 import './styles/patterns.css';
 import './styles/intro.css';
+import './styles/glass.css';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
