@@ -304,7 +304,8 @@
 
   .app-main {
     margin-left: 0;
-    padding-bottom: calc(76px + env(safe-area-inset-bottom));
+    /* Clears the bottom nav and the floating Lumi button so the last row of a page stays tappable. */
+    padding-bottom: calc(140px + env(safe-area-inset-bottom));
   }
 
   .page {
