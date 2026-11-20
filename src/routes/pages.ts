@@ -9,6 +9,7 @@ export const pages = {
   editorHome: lazyWithPreload(() => import('../pages/EditorHome')),
   editor: lazyWithPreload(() => import('../pages/Editor')),
   projects: lazyWithPreload(() => import('../pages/Projects')),
+  shoppingList: lazyWithPreload(() => import('../pages/ShoppingList')),
   docs: lazyWithPreload(() => import('../pages/Docs')),
   admin: lazyWithPreload(() => import('../pages/Admin')),
   notFound: lazyWithPreload(() => import('../pages/NotFound')),
@@ -29,7 +30,11 @@ const byPath: Record<string, keyof typeof pages> = {
 /** Starts downloading a page as soon as the person shows intent (hover, focus or touch on its link). */
 export function preloadRoute(path: string): void {
   const pathname = path.split('?')[0];
-  const key = pathname.startsWith('/editor/') ? 'editor' : byPath[pathname];
+  const key = pathname.startsWith('/editor/')
+    ? 'editor'
+    : /^\/projects\/[^/]+\/compras$/.test(pathname)
+      ? 'shoppingList'
+      : byPath[pathname];
   if (key) void pages[key].preload().catch(() => undefined);
 }
 

@@ -9,6 +9,7 @@ import './styles/layout.css';
 import './styles/dashboard.css';
 import './styles/redesign.css';
 import './styles/editor.css';
+import './styles/shopping.css';
 import './styles/assistant.css';
 import './styles/projects.css';
 import './styles/admin.css';

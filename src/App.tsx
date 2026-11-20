@@ -16,6 +16,7 @@ const {
   editorHome: EditorHome,
   editor: Editor,
   projects: Projects,
+  shoppingList: ShoppingList,
   docs: Docs,
   admin: Admin,
   notFound: NotFound,
@@ -39,6 +40,7 @@ export default function App() {
                 <Route path="/editor" element={<EditorHome />} />
                 <Route path="/editor/:projectId" element={<Editor />} />
                 <Route path="/projects" element={<Projects />} />
+                <Route path="/projects/:projectId/compras" element={<ShoppingList />} />
                 <Route path="/docs" element={<Docs />} />
                 <Route element={<ProtectedRoute role="admin" />}>
                   <Route path="/admin" element={<Admin />} />

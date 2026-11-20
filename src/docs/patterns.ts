@@ -468,6 +468,53 @@ export const PATTERNS: PatternDoc[] = [
   RoomComposite o-- SceneComponent`,
   },
   {
+    id: 'composite-shopping',
+    name: 'Composite',
+    category: 'Estructural',
+    side: 'Backend',
+    summary: 'La lista de compras suma igual una línea, una sección o la lista entera.',
+    problem:
+      'La lista de compras tiene secciones (muebles, complementos, acabados) y las ideas del rediseño traen subsecciones propias. El total, lo ya comprado y lo pendiente se deben calcular igual en cualquier nivel.',
+    solution:
+      'ShoppingNode es la interfaz común. ShoppingLine es una hoja (cantidad por precio unitario) y ShoppingSection contiene otros nodos y suma sus resultados. ShoppingVisitor recorre la escena 3D para contar las piezas y ShoppingListReport la exporta con el Bridge de reportes.',
+    files: [
+      'app/patterns/composites/shopping_list.py',
+      'app/patterns/visitors/scene_visitors.py',
+      'app/services/shopping_list_service.py',
+    ],
+    diagram: `classDiagram
+  class ShoppingNode {
+    <<abstract>>
+    +total()* float
+    +purchased_total()* float
+    +lines()* ShoppingLine[]
+  }
+  class ShoppingLine {
+    +quantity float
+    +unit_price float
+    +purchased bool
+  }
+  class ShoppingSection {
+    -children ShoppingNode[]
+    +add(node)
+  }
+  class ShoppingVisitor {
+    +furniture
+    +addons
+    +surfaces
+  }
+  class ShoppingListService {
+    +build(project) ShoppingSection
+  }
+  class ShoppingListReport
+  ShoppingNode <|-- ShoppingLine
+  ShoppingNode <|-- ShoppingSection
+  ShoppingSection o-- ShoppingNode : children
+  ShoppingListService ..> ShoppingVisitor : walk_scene()
+  ShoppingListService --> ShoppingSection
+  ShoppingListReport --> ShoppingSection`,
+  },
+  {
     id: 'proxy-image',
     name: 'Proxy',
     category: 'Estructural',
@@ -1030,6 +1077,8 @@ export const ER_DIAGRAM = `erDiagram
     string name
     string status
     decimal estimated_budget
+    decimal budget_limit
+    json purchased_items
     json scene
   }
   redesigns {
