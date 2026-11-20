@@ -16,6 +16,7 @@ export interface Material {
   roughness: number;
   metalness: number;
   price_per_unit: string;
+  texture_url?: string | null;
 }
 
 export interface DesignStyle {
@@ -35,6 +36,7 @@ export interface RoomType {
   slug: string;
   name: string;
   icon: string;
+  cover_image_url?: string | null;
 }
 
 export interface FurnitureCategory {
