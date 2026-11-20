@@ -9,6 +9,11 @@ export function formatCurrency(value: number | string, { compact = false } = {})
   }).format(Number(value));
 }
 
+export function formatMeters(value: number, { unit = true } = {}): string {
+  const number = new Intl.NumberFormat(config.locale, { maximumFractionDigits: 2 }).format(value);
+  return unit ? `${number} m` : number;
+}
+
 const UNITS: [Intl.RelativeTimeFormatUnit, number][] = [
   ['year', 31_536_000],
   ['month', 2_592_000],

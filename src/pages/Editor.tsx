@@ -1,4 +1,4 @@
-import { History, LayoutGrid, Lock, RefreshCw, SlidersHorizontal } from 'lucide-react';
+import { History, LayoutGrid, Lock, RefreshCw, SlidersHorizontal, TriangleAlert } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { CatalogPanel } from '../components/editor/CatalogPanel';
@@ -17,6 +17,7 @@ import { RoomComposite } from '../editor/composite';
 import { EditorStore, useEditorState } from '../editor/editorStore';
 import { EditorMediator, type EditorPanel } from '../editor/editorMediator';
 import { buildPricing } from '../editor/furnitureDecorators';
+import { overlappingIds } from '../editor/layoutGuides';
 import { themeFactoryFor } from '../editor/styleTheme';
 import { useAsync } from '../hooks/useAsync';
 import { useMediaQuery } from '../hooks/useMediaQuery';
@@ -59,6 +60,7 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
   const [savedRevision, setSavedRevision] = useState(0);
   const [retryTick, setRetryTick] = useState(0);
   const [view, setView] = useState<CameraView>('perspective');
+  const [guides, setGuides] = useState(false);
   const [tab, setTab] = useState<EditorPanel>('catalog');
   const [sheet, setSheet] = useState<SheetState>('peek');
   const compact = useMediaQuery(COMPACT_QUERY);
@@ -75,6 +77,10 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
   const palette = themeFactoryFor(style, catalog.materials).createAccentPalette();
   const finishes = catalog.materials.filter((m) => m.surface === 'furniture');
   const total = composite.price();
+  const clashing = useMemo(
+    () => overlappingIds(state.scene.nodes, config.editor.overlapTolerance),
+    [state.scene.nodes],
+  );
 
   useEffect(() => {
     projectService
@@ -128,6 +134,7 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
         notify: (message, kind) => notificationCenter.notify(message, kind),
         isCompact: () => window.matchMedia(COMPACT_QUERY).matches,
         openShortcuts: () => setShortcutsOpen(true),
+        toggleGuides: () => setGuides((current) => !current),
       }),
   );
 
@@ -221,10 +228,12 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
         undoLabel={state.undoLabel}
         redoLabel={state.redoLabel}
         view={view}
+        guides={guides}
         busy={busy}
         onUndo={() => store.undo()}
         onRedo={() => store.redo()}
         onView={setView}
+        onGuides={() => setGuides((current) => !current)}
         onCapture={capture}
         onRename={rename}
         onAction={runProjectAction}
@@ -246,12 +255,19 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
             selection={state.selection}
             readOnly={disabled}
             view={view}
+            guides={guides}
+            clashing={clashing}
             onSelect={(id, additive) => mediator.select(id, additive)}
             onMove={(id, dx, dz) => mediator.move(id, dx, dz)}
           />
           {disabled && (
             <div className="stage-banner">
               <Lock size={16} /> Proyecto terminado: solo lectura. Reábrelo para seguir editando.
+            </div>
+          )}
+          {!disabled && clashing.size > 0 && (
+            <div className="stage-banner stage-warning" role="status">
+              <TriangleAlert size={16} /> {clashing.size} muebles se cruzan. Sepáralos para que quepan de verdad
             </div>
           )}
           <p className="stage-hint">Arrastra los muebles para moverlos · Gira la vista con un dedo o el mouse</p>

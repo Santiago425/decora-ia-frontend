@@ -41,6 +41,7 @@ export interface EditorMediatorOptions {
   notify: (message: string, kind: NoticeKind) => void;
   isCompact: () => boolean;
   openShortcuts?: () => void;
+  toggleGuides?: () => void;
 }
 
 export interface Shortcut {
@@ -56,6 +57,7 @@ export const SHORTCUTS: Shortcut[] = [
   { keys: ['R'], label: 'Girar (Shift + R gira al otro lado)' },
   { keys: ['←', '↑', '→', '↓'], label: 'Mover lo seleccionado' },
   { keys: ['Shift', 'Clic'], label: 'Seleccionar varios muebles' },
+  { keys: ['M'], label: 'Mostrar u ocultar las medidas' },
   { keys: ['Esc'], label: 'Quitar la selección' },
   { keys: ['?'], label: 'Mostrar esta ayuda' },
 ];
@@ -181,6 +183,7 @@ export class EditorMediator {
     else if (key in arrows && selected) this.move(selected, ...arrows[key]);
     else if (key === 'escape') this.store.select([]);
     else if (key === '?' && this.options.openShortcuts) this.options.openShortcuts();
+    else if (key === 'm' && !mod && this.options.toggleGuides) this.options.toggleGuides();
     else return false;
     return true;
   }

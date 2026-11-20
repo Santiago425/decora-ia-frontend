@@ -8,6 +8,7 @@ import type { Pricing } from '../../editor/furnitureDecorators';
 import { flattenItems, nodeBounds, type Bounds } from '../../editor/sceneTree';
 import type { SceneData, SceneNodeData } from '../../types/project';
 import { FurnitureMesh } from './FurnitureMesh';
+import { MeasureGuides } from './MeasureGuides';
 import { RoomMesh } from './RoomMesh';
 import { cssVar } from '../../styles/theme';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
@@ -24,6 +25,8 @@ interface EditorCanvasProps {
   selection: string[];
   readOnly: boolean;
   view: CameraView;
+  guides: boolean;
+  clashing: Set<string>;
   onSelect: (id: string | null, additive: boolean) => void;
   onMove: (id: string, dx: number, dz: number) => void;
 }
@@ -134,11 +137,19 @@ function DragController({
   return null;
 }
 
-function SelectionMarker({ node, offset }: { node: SceneNodeData; offset: [number, number] }) {
+function SelectionMarker({
+  node,
+  offset,
+  tone = '--primary',
+}: {
+  node: SceneNodeData;
+  offset: [number, number];
+  tone?: string;
+}) {
   const bounds = nodeBounds(node);
   const width = bounds.maxX - bounds.minX + 0.12;
   const depth = bounds.maxZ - bounds.minZ + 0.12;
-  const color = cssVar('--primary');
+  const color = cssVar(tone);
   return (
     <group position={[(bounds.minX + bounds.maxX) / 2 + offset[0], 0.012, (bounds.minZ + bounds.maxZ) / 2 + offset[1]]}>
       <mesh rotation={[-Math.PI / 2, 0, 0]}>
@@ -161,7 +172,7 @@ function SelectionMarker({ node, offset }: { node: SceneNodeData; offset: [numbe
 }
 
 export const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(function EditorCanvas(
-  { scene, pricing, selection, readOnly, view, onSelect, onMove },
+  { scene, pricing, selection, readOnly, view, guides, clashing, onSelect, onMove },
   ref,
 ) {
   const controls = useRef<OrbitControlsImpl>(null);
@@ -275,9 +286,33 @@ export const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(fu
         ));
       })}
 
+      {scene.nodes
+        .filter((node) => clashing.has(node.id) && !selection.includes(node.id))
+        .map((node) => (
+          <SelectionMarker
+            key={node.id}
+            node={node}
+            offset={drag?.id === node.id ? drag.delta : [0, 0]}
+            tone="--danger"
+          />
+        ))}
       {selectedNodes.map((node) => (
-        <SelectionMarker key={node.id} node={node} offset={drag?.id === node.id ? drag.delta : [0, 0]} />
+        <SelectionMarker
+          key={node.id}
+          node={node}
+          offset={drag?.id === node.id ? drag.delta : [0, 0]}
+          tone={clashing.has(node.id) ? '--danger' : '--primary'}
+        />
       ))}
+
+      {(guides || drag) && (
+        <MeasureGuides
+          room={room}
+          node={selectedNodes.length === 1 ? selectedNodes[0] : undefined}
+          offset={drag && drag.id === selectedNodes[0]?.id ? drag.delta : [0, 0]}
+          showRoom={guides}
+        />
+      )}
 
       <DragController active={drag !== null} dragRef={dragRef} room={room} onDrag={updateDrag} onDrop={drop} />
       <OrbitControls
