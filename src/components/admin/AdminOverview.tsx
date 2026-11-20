@@ -1,19 +1,17 @@
 import { Bot, FolderHeart, Image, RefreshCw, Users, WandSparkles } from 'lucide-react';
 import { useCallback } from 'react';
 import { useAsync } from '../../hooks/useAsync';
+import { usePublicMeta } from '../../hooks/usePublicMeta';
 import { adminService } from '../../services/adminService';
+import { providerLabel } from '../../services/metaService';
 import { STATUS_LABELS } from '../../projects/projectStatus';
 import { StatCard } from '../dashboard/StatCard';
 import { ActivityChart } from './ActivityChart';
 import { Button, Panel, Skeleton } from '../ui';
 
-const PROVIDER_LABELS: Record<string, string> = {
-  gemini: 'Google Gemini',
-  huggingface: 'Hugging Face',
-  mock: 'Modo demo',
-  local: 'Disco del servidor',
-  database: 'Base de datos',
-};
+function providerClass(key: string) {
+  return `provider ${key === 'mock' ? 'provider-mock' : 'provider-live'}`;
+}
 
 function Breakdown({ items, total }: { items: { label: string; value: number }[]; total: number }) {
   return (
@@ -35,6 +33,7 @@ function Breakdown({ items, total }: { items: { label: string; value: number }[]
 
 export function AdminOverview() {
   const { data, error, loading, retry } = useAsync(useCallback(() => adminService.stats(), []));
+  const { data: meta } = usePublicMeta();
 
   if (error)
     return (
@@ -109,23 +108,26 @@ export function AdminOverview() {
               <dt>
                 <Bot size={15} /> IA de texto
               </dt>
-              <dd className={`provider provider-${data.providers.text}`}>
-                {PROVIDER_LABELS[data.providers.text] ?? data.providers.text}
-              </dd>
+              <dd className={providerClass(data.providers.text)}>{providerLabel(meta, data.providers.text)}</dd>
             </div>
             <div>
               <dt>
                 <Image size={15} /> IA de imágenes
               </dt>
-              <dd className={`provider provider-${data.providers.image}`}>
-                {PROVIDER_LABELS[data.providers.image] ?? data.providers.image}
+              <dd className={providerClass(data.providers.image)}>
+                {providerLabel(meta, data.providers.image)}
+                {data.providers.image_fallback && data.providers.image_fallback !== 'none' && (
+                  <small className="provider-fallback">
+                    respaldo: {providerLabel(meta, data.providers.image_fallback)}
+                  </small>
+                )}
               </dd>
             </div>
             <div>
               <dt>
                 <FolderHeart size={15} /> Fotos
               </dt>
-              <dd className="provider">{PROVIDER_LABELS[data.providers.storage] ?? data.providers.storage}</dd>
+              <dd className="provider">{providerLabel(meta, data.providers.storage)}</dd>
             </div>
           </dl>
         </Panel>

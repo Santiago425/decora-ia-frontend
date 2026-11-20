@@ -382,3 +382,8 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+.docs-fallback {
+  color: var(--text-3);
+  font-weight: 500;
+}

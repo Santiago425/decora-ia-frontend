@@ -7,11 +7,25 @@ export interface DemoAccount {
   password: string;
 }
 
-export interface AppInfo {
+export type ProviderCapability = 'text' | 'image' | 'storage';
+
+export interface ProviderOption {
+  key: string;
+  label: string;
+  capabilities: ProviderCapability[];
+  active_for: ProviderCapability[];
+}
+
+export interface PublicMeta {
   app_name: string;
   assistant_name: string;
   environment: string;
-  api_prefix: string;
+  currency_code: string;
   providers: ProviderInfo;
+  available_providers: ProviderOption[];
   demo_accounts: DemoAccount[];
+}
+
+export interface AppInfo extends PublicMeta {
+  api_prefix: string;
 }
