@@ -17,6 +17,7 @@ import { dashboardService } from '../services/dashboardService';
 import { formatCurrency, greeting } from '../utils/format';
 import { Button, Panel, Skeleton } from '../components/ui';
 import { preloadHandlers } from '../routes/pages';
+import { projectLabel, projectPath } from '../projects/projectRoute';
 
 /** Keeps the activity panel as tall as the chart beside it. */
 const VISIBLE_ACTIVITY = 4;
@@ -118,10 +119,10 @@ export default function Dashboard() {
               {data.recent_projects.map((project, index) => (
                 <Link
                   key={project.id}
-                  to={`/editor/${project.id}`}
-                  {...preloadHandlers(`/editor/${project.id}`)}
+                  to={projectPath(project)}
+                  {...preloadHandlers(projectPath(project))}
                   className="project-link"
-                  aria-label={`Abrir ${project.name} en el editor 3D`}
+                  aria-label={projectLabel(project)}
                 >
                   <ProjectCard project={project} delay={index * 70} />
                 </Link>

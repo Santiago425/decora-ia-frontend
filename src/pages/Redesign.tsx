@@ -1,45 +1,95 @@
-import { AlertTriangle, Download, FolderHeart, RefreshCw, Shuffle, Sparkles, WandSparkles } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
+import {
+  AlertTriangle,
+  Box,
+  Download,
+  FolderHeart,
+  RefreshCw,
+  Shuffle,
+  SlidersHorizontal,
+  Sparkles,
+  WandSparkles,
+  X,
+} from 'lucide-react';
+import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { ImageProxy } from '../components/ImageProxy';
 import { BeforeAfter } from '../components/redesign/BeforeAfter';
 import { PhotoPicker } from '../components/redesign/PhotoPicker';
+import { RedesignOptions, type RedesignChoices } from '../components/redesign/RedesignOptions';
 import { RedesignProgress } from '../components/redesign/RedesignProgress';
 import { RedesignSummary } from '../components/redesign/RedesignSummary';
+import { RedesignVersions } from '../components/redesign/RedesignVersions';
 import { SuggestionsPanel } from '../components/redesign/SuggestionsPanel';
 import { config } from '../config';
 import { useAsync } from '../hooks/useAsync';
+import { preloadHandlers } from '../routes/pages';
 import { catalogService } from '../services/catalogService';
 import { notificationCenter } from '../services/notificationCenter';
 import { redesignService } from '../services/redesignService';
+import type { DesignStyle } from '../types/catalog';
 import type { Redesign as RedesignResult } from '../types/redesign';
 import { formatCurrency } from '../utils/format';
 import { shrinkImage } from '../utils/image';
 import { downloadImage, resolveMediaUrl } from '../utils/media';
-import { Badge, Button, Chip, PageHeader } from '../components/ui';
+import { Badge, Button, Chip, PageHeader, Skeleton } from '../components/ui';
 
 const TIER_LABELS = { economic: 'Económico', standard: 'Gama media', premium: 'Premium' };
 
+const toAmount = (budget: string) => (budget.trim() === '' ? null : Number(budget));
+
+function paletteColors(styles: DesignStyle[], choices: RedesignChoices) {
+  const palettes = styles.find((s) => s.slug === choices.style)?.palettes ?? [];
+  return palettes.find((p) => p.id === choices.paletteId)?.colors ?? [];
+}
+
+function choicesFrom(redesign: RedesignResult, styles: DesignStyle[]): RedesignChoices {
+  const style = redesign.style?.slug ?? styles[0]?.slug ?? '';
+  const palettes = styles.find((s) => s.slug === style)?.palettes ?? [];
+  const palette = palettes.find((p) => p.colors.join() === redesign.palette.join());
+  return {
+    style,
+    paletteId: palette?.id ?? null,
+    budget: redesign.budget ? String(Math.round(Number(redesign.budget))) : '',
+    keepStructure: redesign.keep_structure,
+  };
+}
+
 export default function Redesign() {
-  const [params] = useSearchParams();
+  const [params, setParams] = useSearchParams();
+  const projectId = params.get('project');
   const catalog = useAsync(useCallback(() => Promise.all([catalogService.roomTypes(), catalogService.styles()]), []));
   const [roomTypes, styles] = catalog.data ?? [[], []];
 
   const [photo, setPhoto] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [roomType, setRoomType] = useState(params.get('room_type') ?? '');
-  const [style, setStyle] = useState(params.get('style') ?? '');
-  const [paletteId, setPaletteId] = useState<number | null>(null);
-  const [budget, setBudget] = useState(params.get('budget') ?? '');
-  const [keepStructure, setKeepStructure] = useState(true);
+  const [choices, setChoices] = useState<RedesignChoices>({
+    style: params.get('style') ?? '',
+    paletteId: null,
+    budget: (params.get('budget') ?? '').replace(/\D/g, ''),
+    keepStructure: true,
+  });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [result, setResult] = useState<RedesignResult | null>(null);
+  const [versions, setVersions] = useState<RedesignResult[]>([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
+  const [tuning, setTuning] = useState<RedesignChoices | null>(null);
+  const tuningRef = useRef<HTMLFormElement>(null);
+  const isTuning = tuning !== null;
+  const loadedProject = versions[0]?.project_id;
 
   useEffect(() => {
     if (!roomType && roomTypes.length) setRoomType(roomTypes[0].slug);
-    if (!style && styles.length) setStyle(styles[0].slug);
-  }, [roomTypes, styles, roomType, style]);
+  }, [roomTypes, roomType]);
+
+  useEffect(() => {
+    if (!styles.length) return;
+    setChoices((current) => {
+      if (current.paletteId !== null) return current;
+      const style = styles.find((s) => s.slug === current.style) ?? styles[0];
+      return { ...current, style: style.slug, paletteId: style.palettes[0]?.id ?? null };
+    });
+  }, [styles]);
 
   useEffect(() => {
     if (!photo) return setPreview(null);
@@ -48,11 +98,30 @@ export default function Redesign() {
     return () => URL.revokeObjectURL(url);
   }, [photo]);
 
-  const selectedStyle = styles.find((s) => s.slug === style);
-  const palettes = useMemo(() => selectedStyle?.palettes ?? [], [selectedStyle]);
-  const palette = palettes.find((p) => p.id === paletteId);
+  useEffect(() => {
+    if (!projectId || projectId === loadedProject) return;
+    let active = true;
+    setLoadingHistory(true);
+    redesignService
+      .history(projectId)
+      .then((items) => {
+        if (!active) return;
+        setVersions(items);
+        setResult(items[0] ?? null);
+      })
+      .catch((e: Error) => active && setError(e.message))
+      .finally(() => active && setLoadingHistory(false));
+    return () => {
+      active = false;
+    };
+  }, [projectId, loadedProject]);
 
-  useEffect(() => setPaletteId(palettes[0]?.id ?? null), [palettes]);
+  useEffect(() => {
+    if (isTuning) tuningRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, [isTuning]);
+
+  const selectedStyle = styles.find((s) => s.slug === choices.style);
+  const palette = selectedStyle?.palettes.find((p) => p.id === choices.paletteId);
 
   async function run(action: () => Promise<RedesignResult>) {
     setBusy(true);
@@ -60,6 +129,13 @@ export default function Redesign() {
     try {
       const redesign = await action();
       setResult(redesign);
+      setTuning(null);
+      setVersions((items) =>
+        items.some((item) => item.id === redesign.id)
+          ? items.map((item) => (item.id === redesign.id ? redesign : item))
+          : [redesign, ...items.filter((item) => item.project_id === redesign.project_id)],
+      );
+      setParams({ project: redesign.project_id }, { replace: true });
       if (redesign.status === 'ready') notificationCenter.notify('¡Tu rediseño está listo!', 'success');
     } catch (e) {
       setError((e as Error).message);
@@ -71,32 +147,50 @@ export default function Redesign() {
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
     if (!photo) return setError('Primero sube o toma una foto de tu espacio');
-    const amount = budget.trim() === '' ? null : Number(budget.replace(/\D/g, ''));
     run(async () =>
       redesignService.create({
         photo: await shrinkImage(photo, config.maxPhotoSide),
         roomType,
-        style,
+        style: choices.style,
         palette: palette?.colors ?? [],
-        budget: amount,
-        keepStructure,
+        budget: toAmount(choices.budget),
+        keepStructure: choices.keepStructure,
+      }),
+    );
+  }
+
+  function createVariation(source: RedesignResult, options: RedesignChoices) {
+    run(() =>
+      redesignService.variation(source.id, {
+        style: options.style,
+        palette: paletteColors(styles, options),
+        budget: toAmount(options.budget),
+        keep_structure: options.keepStructure,
       }),
     );
   }
 
   function startOver() {
     setResult(null);
+    setVersions([]);
+    setTuning(null);
     setPhoto(null);
     setError('');
+    setParams({}, { replace: true });
   }
 
   const before = resolveMediaUrl(result?.original_image_url);
   const after = resolveMediaUrl(result?.result_image_url);
+  const alert = (error || catalog.error) && (
+    <p className="form-alert" role="alert">
+      {error || catalog.error}
+    </p>
+  );
 
   return (
     <div className="page redesign-page">
       <PageHeader
-        title="Rediseño con foto"
+        title={result ? result.project_name : 'Rediseño con foto'}
         patterns={['facade', 'builder-redesign', 'chain-images', 'strategy-budget']}
         actions={
           <Link to="/assistant" className="lumi-hint">
@@ -107,13 +201,23 @@ export default function Redesign() {
 
       {busy && <RedesignProgress preview={preview ?? before} />}
 
+      {!busy && loadingHistory && !result && (
+        <div className="redesign-result" aria-busy="true">
+          <Skeleton className="redesign-skeleton" />
+        </div>
+      )}
+
       {!busy && result?.status === 'ready' && before && after && (
         <section className="redesign-result">
           <div className="result-visual">
             <BeforeAfter before={before} after={after} />
+            <RedesignVersions versions={versions} current={result.id} onSelect={setResult} />
             <div className="result-actions">
-              <Button onClick={() => run(() => redesignService.variation(result.id))}>
-                <Shuffle size={18} /> Generar variación
+              <Button onClick={() => setTuning(tuning ? null : choicesFrom(result, styles))} aria-expanded={!!tuning}>
+                <SlidersHorizontal size={18} /> Probar con otras opciones
+              </Button>
+              <Button variant="ghost" onClick={() => run(() => redesignService.variation(result.id))}>
+                <Shuffle size={18} /> Otra versión igual
               </Button>
               <button
                 className="button button-ghost"
@@ -129,6 +233,37 @@ export default function Redesign() {
                 <WandSparkles size={18} /> Nueva foto
               </Button>
             </div>
+
+            {tuning && (
+              <form
+                ref={tuningRef}
+                className="redesign-tuning"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  createVariation(result, tuning);
+                }}
+              >
+                <header>
+                  <div>
+                    <h2>Prueba otra versión</h2>
+                    <p>Usamos la misma foto. Cambia lo que quieras y generamos una imagen nueva.</p>
+                  </div>
+                  <button type="button" className="icon-button" onClick={() => setTuning(null)} aria-label="Cerrar">
+                    <X size={18} />
+                  </button>
+                </header>
+                <RedesignOptions
+                  styles={styles}
+                  value={tuning}
+                  onChange={(changes) => setTuning({ ...tuning, ...changes })}
+                />
+                {alert}
+                <Button type="submit" size="lg" block>
+                  <WandSparkles size={20} /> Generar nueva versión
+                </Button>
+              </form>
+            )}
+            {!tuning && alert}
           </div>
           <aside className="result-side">
             <div className="result-meta">
@@ -138,6 +273,13 @@ export default function Redesign() {
             </div>
             <Link to="/projects" className="saved-note">
               <FolderHeart size={16} /> Guardado en «{result.project_name}»
+            </Link>
+            <Link
+              to={`/editor/${result.project_id}`}
+              {...preloadHandlers(`/editor/${result.project_id}`)}
+              className="editor-note"
+            >
+              <Box size={16} /> Seguir en el editor 3D
             </Link>
             <SuggestionsPanel suggestions={result.suggestions} total={result.estimated_total} />
           </aside>
@@ -149,15 +291,16 @@ export default function Redesign() {
           <AlertTriangle size={28} />
           <div>
             <strong>No pudimos terminar tu rediseño</strong>
-            <p>{result.error_message}</p>
+            <p>{error || result.error_message}</p>
           </div>
           <Button onClick={() => run(() => redesignService.retry(result.id))}>
             <RefreshCw size={18} /> Reintentar
           </Button>
+          {versions.length > 1 && <RedesignVersions versions={versions} current={result.id} onSelect={setResult} />}
         </div>
       )}
 
-      {!busy && !result && (
+      {!busy && !loadingHistory && !result && (
         <form className="redesign-form" onSubmit={handleSubmit} noValidate>
           <div className="redesign-photo">
             <PhotoPicker file={photo} onChange={setPhoto} onInvalid={setError} />
@@ -166,7 +309,7 @@ export default function Redesign() {
               roomName={roomTypes.find((room) => room.slug === roomType)?.name}
               styleName={selectedStyle?.name}
               paletteName={palette?.name}
-              budget={budget.trim() ? formatCurrency(Number(budget.replace(/\D/g, ''))) : ''}
+              budget={choices.budget ? formatCurrency(Number(choices.budget)) : ''}
             />
           </div>
 
@@ -182,70 +325,13 @@ export default function Redesign() {
               </div>
             </fieldset>
 
-            <fieldset>
-              <legend>Estilo</legend>
-              <div className="style-options">
-                {styles.map((item) => (
-                  <button
-                    key={item.slug}
-                    type="button"
-                    className={`style-option ${style === item.slug ? 'selected' : ''}`}
-                    aria-pressed={style === item.slug}
-                    onClick={() => setStyle(item.slug)}
-                  >
-                    <ImageProxy src={item.image_url} alt="" />
-                    <span>{item.name}</span>
-                  </button>
-                ))}
-              </div>
-            </fieldset>
+            <RedesignOptions
+              styles={styles}
+              value={choices}
+              onChange={(changes) => setChoices((current) => ({ ...current, ...changes }))}
+            />
 
-            {palettes.length > 0 && (
-              <fieldset>
-                <legend>Paleta de colores</legend>
-                <div className="palette-options">
-                  {palettes.map((option) => (
-                    <button
-                      key={option.id}
-                      type="button"
-                      className={`palette-option ${paletteId === option.id ? 'selected' : ''}`}
-                      aria-pressed={paletteId === option.id}
-                      onClick={() => setPaletteId(paletteId === option.id ? null : option.id)}
-                    >
-                      <span className="palette-dots">
-                        {option.colors.map((c) => (
-                          <i key={c} style={{ background: c }} />
-                        ))}
-                      </span>
-                      {option.name}
-                    </button>
-                  ))}
-                </div>
-              </fieldset>
-            )}
-
-            <div className="option-row">
-              <label className="budget-field">
-                <span>Presupuesto ({config.currency})</span>
-                <input
-                  inputMode="numeric"
-                  placeholder="Opcional"
-                  value={budget ? formatCurrency(Number(budget.replace(/\D/g, ''))) : ''}
-                  onChange={(e) => setBudget(e.target.value.replace(/\D/g, '').slice(0, 12))}
-                />
-              </label>
-              <label className="switch">
-                <input type="checkbox" checked={keepStructure} onChange={(e) => setKeepStructure(e.target.checked)} />
-                <span className="switch-track" />
-                <span>Conservar paredes, ventanas y piso</span>
-              </label>
-            </div>
-
-            {(error || catalog.error) && (
-              <p className="form-alert" role="alert">
-                {error || catalog.error}
-              </p>
-            )}
+            {alert}
 
             <div className="redesign-submit">
               <Button size="lg" block type="submit" disabled={!photo || catalog.loading}>

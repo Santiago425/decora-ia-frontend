@@ -46,3 +46,10 @@ export interface RedesignInput {
   budget: number | null;
   keepStructure: boolean;
 }
+
+export interface VariationOptions {
+  style?: string;
+  palette?: string[];
+  budget?: number | null;
+  keep_structure?: boolean;
+}

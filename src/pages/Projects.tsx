@@ -1,5 +1,6 @@
 import { Box, Copy, Pencil, Plus, RefreshCw, Search, Trash2, WandSparkles } from 'lucide-react';
 import { preloadHandlers } from '../routes/pages';
+import { projectLabel, projectPath } from '../projects/projectRoute';
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { ConfirmDialog } from '../components/ConfirmDialog';
@@ -213,10 +214,10 @@ export default function Projects() {
           {visible.map((project, index) => (
             <div key={project.id} className="project-item">
               <Link
-                to={`/editor/${project.id}`}
-                {...preloadHandlers(`/editor/${project.id}`)}
+                to={projectPath(project)}
+                {...preloadHandlers(projectPath(project))}
                 className="project-link"
-                aria-label={`Abrir ${project.name} en el editor 3D`}
+                aria-label={projectLabel(project)}
               >
                 <ProjectCard project={project} delay={Math.min(index, 8) * 50} />
               </Link>
