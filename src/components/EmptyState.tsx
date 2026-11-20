@@ -20,7 +20,7 @@ export function EmptyIllustration() {
       <rect x="52" y="78" width="108" height="24" rx="10" fill="var(--primary-strong)" opacity="0.9" />
       <rect x="40" y="88" width="18" height="34" rx="8" fill="var(--primary-strong)" />
       <rect x="154" y="88" width="18" height="34" rx="8" fill="var(--primary-strong)" />
-      <path d="M182 124V62" stroke="var(--accent-text)" strokeWidth="3" />
+      <path d="M182 124V62" stroke="var(--primary)" strokeWidth="3" />
       <path
         d="M182 64c-14-4-20-16-18-28 12 2 20 12 18 28zM182 78c12-6 24-4 30 4-10 8-22 6-30-4z"
         fill="var(--primary)"

@@ -30,23 +30,25 @@
 .button-primary {
   background: var(--primary);
   color: var(--on-primary);
-  box-shadow: 0 8px 20px color-mix(in srgb, var(--primary) 28%, transparent);
+  box-shadow: var(--shadow);
 }
 
 .button-primary:hover:not(:disabled) {
-  background: var(--primary-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 12px 26px color-mix(in srgb, var(--primary) 34%, transparent);
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .button-ghost {
-  background: transparent;
+  background: var(--surface);
   border-color: var(--border-strong);
   color: var(--text);
 }
 
 .button-ghost:hover:not(:disabled) {
-  background: var(--surface-3);
+  background: var(--surface-2);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
 }
 
 .button-danger {
@@ -60,9 +62,10 @@
 
 .button-glass {
   min-height: 40px;
-  background: color-mix(in srgb, var(--surface-2) 90%, transparent);
+  background: var(--glass);
+  border-color: var(--glass-border);
   color: var(--text);
-  backdrop-filter: blur(8px);
+  backdrop-filter: var(--glass-blur);
 }
 
 .button-large {
@@ -112,8 +115,8 @@
 }
 
 .badge-accent {
-  background: var(--accent-soft);
-  color: var(--accent-text);
+  background: var(--primary-soft);
+  color: var(--primary);
 }
 
 .badge-success {

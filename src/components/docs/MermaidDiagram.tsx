@@ -18,7 +18,7 @@ function loadMermaid(): Promise<Mermaid> {
           primaryColor: '--bg',
           primaryBorderColor: '--chart-3',
           primaryTextColor: '--text',
-          secondaryColor: '--primary-soft',
+          secondaryColor: '--surface-3',
           tertiaryColor: '--surface-2',
           lineColor: '--text-3',
           textColor: '--text',

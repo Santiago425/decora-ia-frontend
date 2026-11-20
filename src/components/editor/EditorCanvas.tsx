@@ -126,7 +126,7 @@ function SelectionMarker({ node, offset }: { node: SceneNodeData; offset: [numbe
   const bounds = nodeBounds(node);
   const width = bounds.maxX - bounds.minX + 0.12;
   const depth = bounds.maxZ - bounds.minZ + 0.12;
-  const color = cssVar('--accent');
+  const color = cssVar('--primary');
   return (
     <group position={[(bounds.minX + bounds.maxX) / 2 + offset[0], 0.012, (bounds.minZ + bounds.maxZ) / 2 + offset[1]]}>
       <mesh rotation={[-Math.PI / 2, 0, 0]}>

@@ -286,13 +286,13 @@
 }
 
 .tag-creacional {
-  background: var(--accent-soft);
-  color: var(--accent-text);
+  background: var(--primary-soft);
+  color: var(--primary);
 }
 
 .tag-estructural {
   background: var(--surface-3);
-  color: var(--accent-text);
+  color: var(--primary);
 }
 
 .tag-comportamiento {
@@ -394,8 +394,8 @@
   width: 40px;
   height: 40px;
   border-radius: var(--radius-sm);
-  background: var(--accent-soft);
-  color: var(--accent);
+  background: var(--primary-soft);
+  color: var(--primary);
   font-family: var(--font-display);
   font-size: 22px;
   font-weight: 700;
