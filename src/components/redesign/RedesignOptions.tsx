@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { config } from '../../config';
 import type { DesignStyle } from '../../types/catalog';
 import { formatCurrency } from '../../utils/format';
@@ -21,6 +22,19 @@ interface Props {
 
 export function RedesignOptions({ styles, value, onChange }: Props) {
   const palettes = styles.find((s) => s.slug === value.style)?.palettes ?? [];
+  const listRef = useRef<HTMLDivElement>(null);
+
+  // The style list scrolls sideways: bring the chosen style into view (for example when it comes from a link).
+  useEffect(() => {
+    const list = listRef.current;
+    const selected = list?.querySelector<HTMLElement>('.style-option.selected');
+    if (!list || !selected) return;
+    const box = list.getBoundingClientRect();
+    const card = selected.getBoundingClientRect();
+    if (card.left < box.left || card.right > box.right) {
+      list.scrollTo?.({ left: list.scrollLeft + card.left - box.left, behavior: 'smooth' });
+    }
+  }, [value.style, styles.length]);
 
   function selectStyle(slug: string) {
     const first = styles.find((s) => s.slug === slug)?.palettes[0];
@@ -31,7 +45,7 @@ export function RedesignOptions({ styles, value, onChange }: Props) {
     <>
       <fieldset>
         <legend>Estilo</legend>
-        <div className="style-options">
+        <div className="style-options" ref={listRef}>
           {styles.map((item) => {
             const selected = value.style === item.slug;
             return (

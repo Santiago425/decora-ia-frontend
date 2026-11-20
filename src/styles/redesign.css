@@ -215,14 +215,24 @@
   color: var(--text-3);
 }
 
+/* Two rows that scroll sideways, so a long list of styles does not push the rest of the form down. */
 .style-options {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  grid-template-rows: repeat(2, auto);
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - 24px) / 3.2);
   gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
 }
 
 .style-option {
   aspect-ratio: 4 / 5;
+  container-type: inline-size;
+  scroll-snap-align: start;
 }
 
 .style-face {
@@ -258,7 +268,7 @@
   z-index: 1;
   color: var(--text-inverse);
   font-family: var(--font-display);
-  font-size: 18px;
+  font-size: min(18px, calc((100cqi - 24px) / 7.6));
   letter-spacing: var(--tracking-display);
 }
 
@@ -1062,6 +1072,10 @@
 @media (max-width: 640px) {
   .redesign-tuning {
     padding: 18px 16px;
+  }
+
+  .style-options {
+    grid-auto-columns: 42%;
   }
 
   .version-thumb {
