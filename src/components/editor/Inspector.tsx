@@ -1,7 +1,11 @@
 import { ArrowUpToLine, Copy, Group, RotateCcw, RotateCw, Trash2, Ungroup } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { FurnitureGroup, FurnitureLeaf, type SceneComponent } from '../../editor/composite';
-import type { FurnitureAddon, FurnitureCategory, Material } from '../../types/catalog';
+import { config } from '../../config';
+import type { FurnitureAddon, FurnitureCategory, FurnitureItem, Material } from '../../types/catalog';
+import type { SceneItemData } from '../../types/project';
+import { FURNITURE_LIMITS, resizeRange } from '../../utils/measure';
+import { MeasureInput } from './MeasureInput';
 import { formatCurrency } from '../../utils/format';
 import { CategoryIcon } from './categoryIcon';
 import { Button } from '../ui';
@@ -9,6 +13,7 @@ import { Button } from '../ui';
 interface InspectorProps {
   selection: SceneComponent[];
   categories: FurnitureCategory[];
+  furniture: FurnitureItem[];
   addons: FurnitureAddon[];
   finishes: Material[];
   palette: string[];
@@ -21,6 +26,7 @@ interface InspectorProps {
   onSnapToWall: (id: string) => void;
   onRemove: (id: string) => void;
   onRename: (id: string, name: string) => void;
+  onResize: (id: string, size: SceneItemData['size']) => void;
   onGroup: (ids: string[]) => void;
   onUngroup: (id: string) => void;
   rotateStep: number;
@@ -73,6 +79,52 @@ function Actions({ id, disabled, props }: { id: string; disabled: boolean; props
   );
 }
 
+const SIDES = [
+  { index: 0, label: 'Ancho' },
+  { index: 1, label: 'Fondo' },
+  { index: 2, label: 'Alto' },
+] as const;
+
+/** Width, depth and height of one piece, limited around its catalog size. */
+function ItemSize({ item, props }: { item: SceneItemData; props: InspectorProps }) {
+  const catalog = props.furniture.find((f) => f.id === item.furniture_id);
+  const base: SceneItemData['size'] = catalog ? [catalog.width, catalog.depth, catalog.height] : item.size;
+  const changed = item.size.some((side, i) => side !== base[i]);
+
+  return (
+    <section className="inspector-section">
+      <h4>Medidas</h4>
+      <div className="dimension-row">
+        {SIDES.map(({ index, label }) => (
+          <MeasureInput
+            key={index}
+            label={label}
+            value={item.size[index]}
+            range={resizeRange(base[index], config.editor.resizeFactors, FURNITURE_LIMITS)}
+            disabled={props.disabled}
+            onCommit={(value) => {
+              if (value === null) return;
+              const size = [...item.size] as SceneItemData['size'];
+              size[index] = value;
+              props.onResize(item.id, size);
+            }}
+          />
+        ))}
+      </div>
+      {changed && (
+        <button
+          type="button"
+          className="link-button size-reset"
+          disabled={props.disabled}
+          onClick={() => props.onResize(item.id, base)}
+        >
+          Volver a la medida original
+        </button>
+      )}
+    </section>
+  );
+}
+
 function ItemInspector({ leaf, props }: { leaf: FurnitureLeaf; props: InspectorProps }) {
   const { data } = leaf;
   const category = props.categories.find((c) => c.slug === data.category);
@@ -99,6 +151,8 @@ function ItemInspector({ leaf, props }: { leaf: FurnitureLeaf; props: InspectorP
       </div>
 
       <Actions id={data.id} disabled={props.disabled} props={props} />
+
+      <ItemSize item={data} props={props} />
 
       <section className="inspector-section">
         <h4>Color</h4>

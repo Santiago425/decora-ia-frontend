@@ -1240,3 +1240,69 @@ kbd {
   background: var(--danger);
   color: var(--surface);
 }
+
+/* Room and furniture sizes */
+
+.room-size {
+  display: grid;
+  gap: 10px;
+}
+
+.field-label small,
+.field-hint {
+  font-weight: 500;
+  color: var(--text-3);
+}
+
+.field-hint {
+  font-size: 12px;
+}
+
+.size-presets {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(66px, 1fr));
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.size-preset {
+  display: grid;
+  gap: 2px;
+  padding: 8px 6px;
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.size-preset small {
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+.size-preset[aria-pressed='true'] {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+.size-preset:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.size-reset {
+  margin-top: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--primary);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}

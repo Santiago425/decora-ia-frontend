@@ -6,6 +6,7 @@ import {
   GroupNodesCommand,
   MoveNodeCommand,
   RemoveNodeCommand,
+  ResizeItemCommand,
   RotateNodeCommand,
   UngroupCommand,
   UpdateItemCommand,
@@ -96,5 +97,15 @@ describe('CommandHistory', () => {
     const start = scene();
     expect(history.execute(new GroupNodesCommand(['a'], { id: 'g', name: 'x' }), start)).toBe(start);
     expect(history.canUndo).toBe(false);
+  });
+
+  it('resizes a piece and undoes it', () => {
+    const history = new CommandHistory(10);
+    const start = scene();
+    const resized = history.execute(new ResizeItemCommand('a', [1.5, 0.8, 0.7]), start);
+    const piece = resized.nodes.find((node) => node.id === 'a');
+    expect(piece?.kind === 'item' && piece.size).toEqual([1.5, 0.8, 0.7]);
+    const back = history.undo(resized).nodes.find((node) => node.id === 'a');
+    expect(back?.kind === 'item' && back.size).toEqual([2, 1, 0.8]);
   });
 });

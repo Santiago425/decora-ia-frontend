@@ -2,7 +2,11 @@ import { Box, Sparkles } from 'lucide-react';
 import { useEffect, useId, useState, type FormEvent } from 'react';
 import type { DesignStyle, RoomType } from '../../types/catalog';
 import type { NewProject } from '../../types/project';
+import { config } from '../../config';
+import { ROOM_LIMITS } from '../../utils/measure';
 import { Button, Chip } from '../ui';
+import { MeasureInput } from './MeasureInput';
+import { SizePresets } from './SizePresets';
 
 interface NewProjectFormProps {
   roomTypes: RoomType[];
@@ -18,6 +22,10 @@ export function NewProjectForm({ roomTypes, styles, busy, onCreate }: NewProject
   const [roomType, setRoomType] = useState('');
   const [style, setStyle] = useState('');
   const [furnished, setFurnished] = useState(true);
+  const [width, setWidth] = useState<number | null>(null);
+  const [length, setLength] = useState<number | null>(null);
+  const [height, setHeight] = useState<number | null>(null);
+  const sizeLabel = useId();
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -29,7 +37,15 @@ export function NewProjectForm({ roomTypes, styles, busy, onCreate }: NewProject
     event.preventDefault();
     if (name.trim().length < 2) return setError('Ponle un nombre a tu proyecto (mínimo 2 letras)');
     setError('');
-    onCreate({ name: name.trim(), room_type: roomType, style, furnished });
+    onCreate({
+      name: name.trim(),
+      room_type: roomType,
+      style,
+      furnished,
+      ...(width !== null && { width }),
+      ...(length !== null && { length }),
+      ...(height !== null && { height }),
+    });
   }
 
   return (
@@ -78,6 +94,49 @@ export function NewProjectForm({ roomTypes, styles, busy, onCreate }: NewProject
             {item.name}
           </Chip>
         ))}
+      </div>
+
+      <span className="field-label" id={sizeLabel}>
+        Medidas del cuarto <small>(opcional)</small>
+      </span>
+      <div className="room-size" role="group" aria-labelledby={sizeLabel}>
+        <SizePresets
+          presets={config.editor.roomSizePresets}
+          current={width !== null && length !== null ? [width, length] : null}
+          onPick={([w, l]) => {
+            setWidth(w);
+            setLength(l);
+          }}
+        />
+        <div className="dimension-row">
+          <MeasureInput
+            label="Ancho"
+            value={width}
+            range={ROOM_LIMITS.width}
+            placeholder="Auto"
+            optional
+            onCommit={setWidth}
+          />
+          <MeasureInput
+            label="Largo"
+            value={length}
+            range={ROOM_LIMITS.length}
+            placeholder="Auto"
+            optional
+            onCommit={setLength}
+          />
+          <MeasureInput
+            label="Alto"
+            value={height}
+            range={ROOM_LIMITS.height}
+            placeholder="Auto"
+            optional
+            onCommit={setHeight}
+          />
+        </div>
+        <small className="field-hint">
+          Si dejas un campo vacío usamos la medida estándar. Puedes cambiarlas después en el editor.
+        </small>
       </div>
 
       <label className="switch">

@@ -8,6 +8,7 @@ import {
   MoveNodeCommand,
   RemoveNodeCommand,
   RenameNodeCommand,
+  ResizeItemCommand,
   RotateNodeCommand,
   UngroupCommand,
   UpdateItemCommand,
@@ -108,6 +109,10 @@ export class EditorMediator {
     if (!node) return;
     const [dx, dz] = wallSnapOffset(nodeBounds(node), scene.room);
     if (dx !== 0 || dz !== 0) this.move(id, dx, dz);
+  }
+
+  resize(id: string, size: [number, number, number]): void {
+    this.store.execute(new ResizeItemCommand(id, size));
   }
 
   rename(id: string, name: string): void {

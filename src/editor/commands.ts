@@ -109,6 +109,36 @@ export class UpdateItemCommand implements Command {
   }
 }
 
+export class ResizeItemCommand implements Command {
+  readonly label = 'Cambiar medidas';
+  #previous?: SceneItemData['size'];
+
+  constructor(
+    private readonly id: string,
+    private readonly size: SceneItemData['size'],
+  ) {}
+
+  execute(scene: SceneData): SceneData {
+    return {
+      ...scene,
+      nodes: replaceNode(scene.nodes, this.id, (node) => {
+        if (node.kind !== 'item') return node;
+        this.#previous = node.size;
+        return { ...node, size: this.size };
+      }),
+    };
+  }
+
+  undo(scene: SceneData): SceneData {
+    const previous = this.#previous;
+    if (!previous) return scene;
+    return {
+      ...scene,
+      nodes: replaceNode(scene.nodes, this.id, (node) => (node.kind === 'item' ? { ...node, size: previous } : node)),
+    };
+  }
+}
+
 export class RenameNodeCommand implements Command {
   readonly label = 'Renombrar';
   #previous = '';
