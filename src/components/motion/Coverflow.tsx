@@ -1,6 +1,7 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { photoSources } from '../../utils/photo';
 
 export interface CoverflowItem {
   id: number | string;
@@ -136,7 +137,13 @@ export function Coverflow({ items, label, onOpen }: CoverflowProps) {
                 opacity: Math.max(0, 1 - Math.max(0, distance - 2.5)),
               }}
             >
-              <img src={item.src} alt={item.alt} loading="lazy" decoding="async" draggable={false} />
+              <img
+                {...photoSources(item.src, '(max-width: 720px) 70vw, 420px')}
+                alt={item.alt}
+                loading="lazy"
+                decoding="async"
+                draggable={false}
+              />
               <div className="coverflow-caption">
                 <strong>{item.title}</strong>
                 {item.caption && <small>{item.caption}</small>}

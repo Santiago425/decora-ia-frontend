@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { config } from '../config';
+import { photoSources } from '../utils/photo';
 
 export function EmptyIllustration() {
   return (
@@ -37,7 +38,7 @@ export function EmptyState({ title, description, action }: { title: string; desc
       {config.emptyStateImageUrl ? (
         <img
           className="empty-photo"
-          src={config.emptyStateImageUrl}
+          {...photoSources(config.emptyStateImageUrl, '(max-width: 720px) 100vw, 480px')}
           alt="Rincón de una casa con luz suave y sombras de hojas"
           loading="lazy"
           decoding="async"
