@@ -245,6 +245,7 @@
 
 .style-legend strong {
   margin-left: auto;
+  font-variant-numeric: tabular-nums;
 }
 
 .legend-dot {
@@ -410,6 +411,7 @@
 
 .project-body strong {
   margin-top: 6px;
+  font-variant-numeric: tabular-nums;
 }
 
 .style-strip {
@@ -562,4 +564,125 @@
   color: var(--accent-text);
   font-size: 13px;
   font-weight: 650;
+}
+
+.stat-value.muted {
+  color: var(--text-3);
+  font-size: 24px;
+}
+
+.dashboard-skeleton {
+  display: grid;
+  gap: 32px;
+}
+
+.panel-skeleton.skeleton {
+  min-height: 260px;
+  border-radius: var(--radius-lg);
+}
+
+.getting-started {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 28px;
+  align-items: center;
+  padding: clamp(20px, 3vw, 32px);
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  animation: rise 0.6s var(--ease-out) 0.1s both;
+}
+
+.getting-started-intro {
+  display: grid;
+  justify-items: start;
+  gap: 14px;
+}
+
+.getting-started-intro .empty-illustration {
+  width: 170px;
+  height: auto;
+}
+
+.getting-started-kicker {
+  color: var(--primary-strong);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.getting-started-intro h2 {
+  margin-top: 4px;
+  font-size: clamp(24px, 2.4vw, 30px);
+}
+
+.getting-started-intro p {
+  max-width: 420px;
+  margin: 6px 0 0;
+  color: var(--text-2);
+}
+
+.getting-started-steps {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.getting-started-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 14px;
+  padding: 16px 18px 16px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface-2);
+  color: var(--text);
+  text-decoration: none !important;
+  transition:
+    border-color var(--duration-fast),
+    transform var(--duration) var(--ease-out),
+    box-shadow var(--duration);
+}
+
+.getting-started-step:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-sm);
+  transform: translateX(4px);
+}
+
+.step-number {
+  display: grid;
+  grid-row: span 2;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--primary);
+  color: var(--on-primary);
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.step-icon {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  color: var(--text-3);
+}
+
+.getting-started-step small {
+  color: var(--text-2);
+  font-size: 13.5px;
+}
+
+@media (max-width: 900px) {
+  .getting-started {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
