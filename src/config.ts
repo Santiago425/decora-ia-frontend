@@ -27,6 +27,7 @@ export const config = Object.freeze({
     historyLimit: Number(read('VITE_EDITOR_HISTORY_LIMIT')) || 100,
     autosaveMs: Number(read('VITE_EDITOR_AUTOSAVE_MS')) || 1500,
     duplicateOffset: Number(read('VITE_EDITOR_DUPLICATE_OFFSET')) || 0.3,
+    overlapTolerance: Number(read('VITE_EDITOR_OVERLAP_TOLERANCE')) || 0.02,
   },
   currency: read('VITE_CURRENCY'),
   locale: read('VITE_LOCALE'),

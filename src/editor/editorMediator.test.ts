@@ -39,6 +39,7 @@ function setup({ compact = false, readOnly = false } = {}) {
   const showPanel = vi.fn();
   const notify = vi.fn();
   const openShortcuts = vi.fn();
+  const toggleGuides = vi.fn();
   const mediator = new EditorMediator(store, {
     catalog: { furniture: [sofa], materials: [], styles: [] },
     pricing: buildPricing([], []),
@@ -48,11 +49,19 @@ function setup({ compact = false, readOnly = false } = {}) {
     notify,
     isCompact: () => compact,
     openShortcuts,
+    toggleGuides,
   });
-  return { store, mediator, showPanel, notify, openShortcuts };
+  return { store, mediator, showPanel, notify, openShortcuts, toggleGuides };
 }
 
 describe('editor mediator', () => {
+  it('toggles the measure guides with M', () => {
+    const { mediator, toggleGuides } = setup();
+    expect(mediator.handleKey(key('m'))).toBe(true);
+    expect(mediator.handleKey(key('m', { ctrlKey: true }))).toBe(false);
+    expect(toggleGuides).toHaveBeenCalledTimes(1);
+  });
+
   it('adds furniture and selects it', () => {
     const { store, mediator } = setup();
     mediator.addFurniture(sofa);

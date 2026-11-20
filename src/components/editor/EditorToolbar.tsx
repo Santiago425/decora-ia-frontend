@@ -1,4 +1,16 @@
-import { ArrowLeft, Box, Camera, CheckCircle2, CloudOff, Keyboard, Loader2, Redo2, Square, Undo2 } from 'lucide-react';
+import {
+  ArrowLeft,
+  Box,
+  Camera,
+  CheckCircle2,
+  CloudOff,
+  Keyboard,
+  Loader2,
+  Redo2,
+  Ruler,
+  Square,
+  Undo2,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { ProjectAction, ProjectDetail } from '../../types/project';
@@ -30,10 +42,12 @@ interface EditorToolbarProps {
   undoLabel: string | null;
   redoLabel: string | null;
   view: CameraView;
+  guides: boolean;
   busy: boolean;
   onUndo: () => void;
   onRedo: () => void;
   onView: (view: CameraView) => void;
+  onGuides: () => void;
   onCapture: () => void;
   onRename: (name: string) => void;
   onAction: (action: ProjectAction) => void;
@@ -112,6 +126,14 @@ export function EditorToolbar(props: EditorToolbarProps) {
             title="Vista desde arriba"
           >
             <Square size={18} /> <span>Planta</span>
+          </button>
+          <button
+            className="tool-button"
+            aria-pressed={props.guides}
+            onClick={props.onGuides}
+            title="Mostrar medidas y distancias a las paredes (M)"
+          >
+            <Ruler size={18} /> <span>Medidas</span>
           </button>
           <button className="tool-button" onClick={props.onCapture} title="Descargar imagen">
             <Camera size={18} /> <span>Captura</span>
