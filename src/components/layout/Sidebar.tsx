@@ -2,6 +2,7 @@ import { LogOut } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { navFor } from '../../navigation';
+import { preloadHandlers } from '../../routes/pages';
 import { Logo } from '../Logo';
 import { Avatar } from './UserBadge';
 
@@ -15,7 +16,7 @@ export function Sidebar() {
       </div>
       <nav className="sidebar-nav" aria-label="Principal">
         {navFor(user.role).map(({ to, label, icon: Icon }) => (
-          <NavLink key={to} to={to} end={to === '/'} className="sidebar-link" title={label}>
+          <NavLink key={to} to={to} end={to === '/'} className="sidebar-link" {...preloadHandlers(to)} title={label}>
             <Icon size={20} strokeWidth={1.9} />
             <span>{label}</span>
           </NavLink>

@@ -11,6 +11,7 @@ import type { UserRole } from '../types/auth';
 import type { DemoAccount } from '../types/meta';
 import { validateEmail, validatePassword } from '../utils/validation';
 import { Button } from '../components/ui';
+import { preloadHandlers } from '../routes/pages';
 
 export default function Login() {
   const { login } = useAuth();
@@ -91,7 +92,10 @@ export default function Login() {
       </form>
       <DemoAccess disabled={loading} onSelect={handleDemo} />
       <p className="auth-switch">
-        ¿Aún no tienes cuenta? <Link to="/register">Créala gratis</Link>
+        ¿Aún no tienes cuenta?{' '}
+        <Link to="/register" {...preloadHandlers('/register')}>
+          Créala gratis
+        </Link>
       </p>
     </AuthLayout>
   );

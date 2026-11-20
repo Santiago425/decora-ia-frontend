@@ -429,6 +429,30 @@ export const PATTERNS: PatternDoc[] = [
   ProjectCard --> ImageProxy`,
   },
   {
+    id: 'proxy-pages',
+    name: 'Proxy virtual',
+    category: 'Estructural',
+    side: 'Frontend',
+    summary: 'Cada página se descarga cuando hace falta, y empieza antes si el usuario apunta a su enlace.',
+    problem:
+      'Cargar el editor 3D, los gráficos y la documentación al abrir el login hacía que la primera visita bajara más de 700 kB de código que casi nadie usa en ese momento.',
+    solution:
+      'lazyWithPreload devuelve un componente que ocupa el lugar de la página real. Al mostrarse la descarga; preloadRoute la adelanta al pasar el cursor, enfocar o tocar el enlace.',
+    files: ['src/utils/lazyWithPreload.ts', 'src/routes/pages.ts', 'vite.config.ts'],
+    diagram: `classDiagram
+  class PreloadableComponent {
+    +preload() Promise
+    +render()
+  }
+  class Page {
+    <<real>>
+  }
+  class Sidebar
+  PreloadableComponent --> Page : import() al mostrarse
+  Sidebar ..> PreloadableComponent : preload() al pasar el cursor
+  App --> PreloadableComponent`,
+  },
+  {
     id: 'proxy-admin',
     name: 'Proxy de protección',
     category: 'Estructural',

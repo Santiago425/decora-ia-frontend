@@ -1,12 +1,11 @@
 import { Crown, FolderHeart, History, Palette, RefreshCw, Wallet, WandSparkles } from 'lucide-react';
-import { useCallback } from 'react';
+import { lazy, Suspense, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { ActivityList } from '../components/dashboard/ActivityList';
 import { ProjectCard } from '../components/dashboard/ProjectCard';
 import { QuickActions } from '../components/dashboard/QuickActions';
 import { StatCard } from '../components/dashboard/StatCard';
 import { StyleStrip } from '../components/dashboard/StyleStrip';
-import { StyleUsageChart } from '../components/dashboard/StyleUsageChart';
 import { DashboardSkeleton } from '../components/dashboard/DashboardSkeleton';
 import { GettingStarted } from '../components/dashboard/GettingStarted';
 import { ImageProxy } from '../components/ImageProxy';
@@ -15,10 +14,15 @@ import { useAsync } from '../hooks/useAsync';
 import { useAuth } from '../hooks/useAuth';
 import { dashboardService } from '../services/dashboardService';
 import { formatCurrency, greeting } from '../utils/format';
-import { Button, Panel } from '../components/ui';
+import { Button, Panel, Skeleton } from '../components/ui';
+import { preloadHandlers } from '../routes/pages';
 
 /** Keeps the activity panel as tall as the chart beside it. */
 const VISIBLE_ACTIVITY = 4;
+
+const StyleUsageChart = lazy(() =>
+  import('../components/dashboard/StyleUsageChart').then((m) => ({ default: m.StyleUsageChart })),
+);
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -83,7 +87,9 @@ export default function Dashboard() {
           <section className="dashboard-row">
             <Panel as="article" title="Estilos más usados">
               {data.style_usage.length ? (
-                <StyleUsageChart data={data.style_usage} />
+                <Suspense fallback={<Skeleton height={180} radius="var(--radius-lg)" />}>
+                  <StyleUsageChart data={data.style_usage} />
+                </Suspense>
               ) : (
                 <p className="panel-empty">
                   <Palette size={18} aria-hidden="true" /> Cuando crees proyectos verás aquí tus estilos preferidos.
@@ -111,6 +117,7 @@ export default function Dashboard() {
                 <Link
                   key={project.id}
                   to={`/editor/${project.id}`}
+                  {...preloadHandlers(`/editor/${project.id}`)}
                   className="project-link"
                   aria-label={`Abrir ${project.name} en el editor 3D`}
                 >
