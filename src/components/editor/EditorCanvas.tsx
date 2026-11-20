@@ -1,4 +1,4 @@
-import { ContactShadows, OrbitControls } from '@react-three/drei';
+import { ContactShadows, Environment, Lightformer, OrbitControls } from '@react-three/drei';
 import { Canvas, useThree, type ThreeEvent } from '@react-three/fiber';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { Plane, Vector2, Vector3, type PerspectiveCamera } from 'three';
@@ -225,6 +225,18 @@ export const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(fu
         color={lighting.color}
         distance={size * 2}
       />
+
+      <Environment resolution={128} environmentIntensity={0.35 * lighting.intensity}>
+        <Lightformer
+          form="rect"
+          intensity={2}
+          color={lighting.color}
+          position={[0, 5, 0]}
+          scale={[10, 10, 1]}
+          rotation-x={Math.PI / 2}
+        />
+        <Lightformer form="rect" intensity={0.8} position={[-5, 2, 3]} scale={[6, 3, 1]} rotation-y={Math.PI / 2} />
+      </Environment>
 
       <RoomMesh room={room} materials={pricing.materials} />
       <ContactShadows position={[0, 0.005, 0]} scale={size * 1.4} opacity={0.35} blur={2.4} far={2} resolution={512} />
