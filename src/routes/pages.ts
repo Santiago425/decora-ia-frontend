@@ -32,7 +32,7 @@ export function preloadRoute(path: string): void {
   const pathname = path.split('?')[0];
   const key = pathname.startsWith('/editor/')
     ? 'editor'
-    : /^\/projects\/[^/]+\/compras$/.test(pathname)
+    : /^\/projects\/[^/]+\/shopping-list$/.test(pathname)
       ? 'shoppingList'
       : byPath[pathname];
   if (key) void pages[key].preload().catch(() => undefined);

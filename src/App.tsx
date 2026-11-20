@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { AppLayout } from './components/layout/AppLayout';
 import { GuestRoute, ProtectedRoute } from './components/ProtectedRoute';
+import { LegacyShoppingRedirect } from './components/LegacyShoppingRedirect';
 import { LoadingScreen } from './components/LoadingScreen';
 import { Toaster } from './components/Toaster';
 import { AuthProvider } from './context/AuthContext';
@@ -40,7 +41,8 @@ export default function App() {
                 <Route path="/editor" element={<EditorHome />} />
                 <Route path="/editor/:projectId" element={<Editor />} />
                 <Route path="/projects" element={<Projects />} />
-                <Route path="/projects/:projectId/compras" element={<ShoppingList />} />
+                <Route path="/projects/:projectId/shopping-list" element={<ShoppingList />} />
+                <Route path="/projects/:projectId/compras" element={<LegacyShoppingRedirect />} />
                 <Route path="/docs" element={<Docs />} />
                 <Route element={<ProtectedRoute role="admin" />}>
                   <Route path="/admin" element={<Admin />} />

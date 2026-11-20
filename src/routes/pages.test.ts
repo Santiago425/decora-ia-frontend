@@ -20,3 +20,11 @@ describe('preloadRoute', () => {
     spies.forEach((spy) => expect(spy).not.toHaveBeenCalled());
   });
 });
+
+describe('preloadRoute for the shopping list', () => {
+  it('maps a project shopping list link to its page', () => {
+    const spy = vi.spyOn(pages.shoppingList, 'preload').mockReturnValue(new Promise(() => undefined));
+    preloadRoute('/projects/42/shopping-list');
+    expect(spy).toHaveBeenCalledOnce();
+  });
+});
