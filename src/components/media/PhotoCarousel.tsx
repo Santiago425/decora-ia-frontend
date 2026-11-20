@@ -1,15 +1,23 @@
 import { useEffect, useState } from 'react';
 import { config } from '../../config';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { photoSources } from '../../utils/photo';
 
 interface PhotoCarouselProps {
   photos: string[];
   className?: string;
   intervalMs?: number;
+  /** Width the photos take on screen, so the browser picks the right size. */
+  sizes?: string;
 }
 
 /** Decorative photos that cross-fade in place; with reduced motion only the first one is shown. */
-export function PhotoCarousel({ photos, className = '', intervalMs = config.photoIntervalMs }: PhotoCarouselProps) {
+export function PhotoCarousel({
+  photos,
+  className = '',
+  intervalMs = config.photoIntervalMs,
+  sizes = '100vw',
+}: PhotoCarouselProps) {
   const [index, setIndex] = useState(0);
   const [loaded, setLoaded] = useState<Set<number>>(() => new Set());
   const still = useReducedMotion();
@@ -29,7 +37,7 @@ export function PhotoCarousel({ photos, className = '', intervalMs = config.phot
         visible.has(position) || loaded.has(position) ? (
           <img
             key={src}
-            src={src}
+            {...photoSources(src, sizes)}
             alt=""
             decoding="async"
             loading={position === 0 ? 'eager' : 'lazy'}

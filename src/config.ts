@@ -43,6 +43,13 @@ export const config = Object.freeze({
   dashboardBannerUrl: list('VITE_DASHBOARD_BANNER_URL')[0] ?? '',
   dashboardBackdropUrl: read('VITE_DASHBOARD_BACKDROP_URL'),
   emptyStateImageUrl: read('VITE_EMPTY_STATE_IMAGE_URL'),
+  photo: {
+    widths: list('VITE_PHOTO_WIDTHS')
+      .map(Number)
+      .filter((width) => width > 0),
+    defaultWidth: Number(read('VITE_PHOTO_DEFAULT_WIDTH')) || 1920,
+    quality: Number(read('VITE_PHOTO_QUALITY')) || 80,
+  },
   photoIntervalMs: Number(read('VITE_PHOTO_INTERVAL_MS')) || 6000,
   recentRedesignsLimit: Number(read('VITE_RECENT_REDESIGNS_LIMIT')) || 6,
   photoCredits: { name: read('VITE_PHOTO_CREDITS_NAME'), url: read('VITE_PHOTO_CREDITS_URL') },

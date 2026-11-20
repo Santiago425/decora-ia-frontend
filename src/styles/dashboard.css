@@ -755,16 +755,17 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: saturate(0.85);
-  animation: backdrop-in 1.2s var(--ease-out) both;
+  transform-origin: 60% 40%;
+  animation:
+    backdrop-in 1.2s var(--ease-out) both,
+    ken-burns 48s ease-in-out 1.2s infinite alternate;
 }
 
 .page-backdrop::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: var(--backdrop-veil);
-  backdrop-filter: blur(2px);
+  background: var(--backdrop-glow), var(--backdrop-veil);
 }
 
 @keyframes backdrop-in {
@@ -781,6 +782,15 @@
 @media (max-width: 760px) {
   .page-backdrop {
     inset: 0;
+  }
+}
+
+@keyframes ken-burns {
+  from {
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+  to {
+    transform: scale(1.08) translate3d(-1.5%, -1%, 0);
   }
 }
 

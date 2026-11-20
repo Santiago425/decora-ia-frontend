@@ -23,6 +23,7 @@ import { formatCurrency, greeting } from '../utils/format';
 import { Button, Panel, Skeleton } from '../components/ui';
 import { preloadHandlers } from '../routes/pages';
 import { projectLabel, projectPath } from '../projects/projectRoute';
+import { photoSources } from '../utils/photo';
 
 /** Keeps the activity panel as tall as the chart beside it. */
 const VISIBLE_ACTIVITY = 4;
@@ -42,12 +43,17 @@ export default function Dashboard() {
     <div className="page dashboard">
       {config.dashboardBackdropUrl && (
         <div className="page-backdrop" aria-hidden="true">
-          <img src={config.dashboardBackdropUrl} alt="" decoding="async" referrerPolicy="no-referrer" />
+          <img {...photoSources(config.dashboardBackdropUrl)} alt="" decoding="async" referrerPolicy="no-referrer" />
         </div>
       )}
       <ParallaxLayers className="hero-banner">
         <div className="hero-photo parallax-layer">
-          <ImageProxy src={config.dashboardBannerUrl} alt="" className="hero-image" />
+          <ImageProxy
+            src={config.dashboardBannerUrl}
+            alt=""
+            className="hero-image"
+            sizes="(max-width: 960px) 100vw, 75vw"
+          />
         </div>
         <div className="hero-content parallax-layer">
           <span className="hero-kicker">{greeting()}</span>
