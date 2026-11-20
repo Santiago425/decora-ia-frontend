@@ -3,7 +3,9 @@ import react from '@vitejs/plugin-react';
 
 const VENDOR_CHUNKS: Record<string, string[]> = {
   react: ['react', 'react-dom', 'react-router', 'react-router-dom', 'scheduler', 'use-sync-external-store'],
-  three: ['three', '@react-three/fiber', '@react-three/drei', 'three-stdlib'],
+  three: ['three'],
+  r3f: ['@react-three/fiber', 'its-fine', 'react-reconciler', 'react-use-measure', 'suspend-react', 'zustand'],
+  drei: ['@react-three/drei', 'three-stdlib'],
 };
 
 const SHARED_HELPERS = ['vite/preload-helper', 'commonjsHelpers'];

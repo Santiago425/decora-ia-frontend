@@ -1,0 +1,127 @@
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  grid-template: 'brand skip' auto 'scene scene' 1fr 'tagline counter' auto / 1fr auto;
+  gap: 8px;
+  padding: clamp(20px, 4vw, 48px);
+  background: var(--bg);
+  color: var(--text);
+  transition:
+    opacity var(--exit, 450ms) var(--ease-out),
+    transform var(--exit, 450ms) var(--ease-out);
+}
+
+.intro.leaving {
+  opacity: 0;
+  transform: scale(1.03);
+  pointer-events: none;
+}
+
+.intro-scene {
+  grid-area: scene;
+  position: relative;
+  min-height: 0;
+  animation: intro-in 0.6s var(--ease-out) both;
+}
+
+.intro-scene::after {
+  content: '';
+  position: absolute;
+  inset: auto 15% 6% 15%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--wood), transparent);
+  opacity: 0.6;
+}
+
+.intro-canvas {
+  position: absolute !important;
+  inset: 0;
+}
+
+.intro-brand {
+  grid-area: brand;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: intro-in 0.5s var(--ease-out) both;
+}
+
+.intro-name {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 560;
+  letter-spacing: var(--tracking-display);
+}
+
+.intro-skip {
+  grid-area: skip;
+  align-self: center;
+  justify-self: end;
+  min-height: 40px;
+  padding: 0 18px;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 650;
+  transition:
+    transform var(--duration) var(--ease-out),
+    box-shadow var(--duration) var(--ease-out);
+}
+
+.intro-skip:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.intro-tagline {
+  grid-area: tagline;
+  align-self: end;
+  max-width: 22ch;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(22px, 3vw, 34px);
+  line-height: 1.1;
+  letter-spacing: var(--tracking-display);
+  color: var(--text-2);
+  animation: intro-in 0.6s var(--ease-out) 0.2s both;
+}
+
+.intro-counter {
+  grid-area: counter;
+  align-self: end;
+  display: flex;
+  align-items: flex-start;
+  font-family: var(--font-display);
+  font-size: clamp(64px, 12vw, 140px);
+  font-weight: 400;
+  line-height: 0.8;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.intro-counter small {
+  margin-left: 6px;
+  font-size: 0.24em;
+  color: var(--text-3);
+  letter-spacing: 0;
+}
+
+@keyframes intro-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+@media (max-width: 640px) {
+  .intro {
+    grid-template: 'brand skip' auto 'scene scene' 1fr 'counter counter' auto 'tagline tagline' auto / 1fr auto;
+  }
+
+  .intro-name {
+    font-size: 22px;
+  }
+}
