@@ -9,6 +9,7 @@ import { StyleStrip } from '../components/dashboard/StyleStrip';
 import { DashboardSkeleton } from '../components/dashboard/DashboardSkeleton';
 import { GettingStarted } from '../components/dashboard/GettingStarted';
 import { ImageProxy } from '../components/ImageProxy';
+import { PatternBadge } from '../components/patterns/PatternBadge';
 import { config } from '../config';
 import { useAsync } from '../hooks/useAsync';
 import { useAuth } from '../hooks/useAuth';
@@ -37,6 +38,7 @@ export default function Dashboard() {
         <div className="hero-content">
           <span className="hero-kicker">{greeting()}</span>
           <h1>{firstName}, ¿qué espacio transformamos hoy?</h1>
+          <PatternBadge ids={['proxy-image', 'proxy-pages', 'singleton-api', 'observer']} />
           <QuickActions />
         </div>
       </section>

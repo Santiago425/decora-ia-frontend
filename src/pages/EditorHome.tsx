@@ -37,6 +37,7 @@ export default function EditorHome() {
       <PageHeader
         title="Editor 3D"
         subtitle="Diseña tu espacio en tres dimensiones, prueba muebles y conoce el presupuesto al instante."
+        patterns={['builder-room', 'prototype']}
       />
 
       {error && (

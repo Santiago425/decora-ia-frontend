@@ -5,6 +5,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { navFor } from '../../navigation';
 import { preloadHandlers } from '../../routes/pages';
 import { Logo } from '../Logo';
+import { PatternModeToggle } from '../patterns/PatternModeToggle';
 import { Avatar } from './UserBadge';
 
 export function MobileTopBar() {
@@ -40,6 +41,7 @@ export function MobileNav() {
             {label}
           </NavLink>
         ))}
+        <PatternModeToggle className="sheet-link" tabIndex={open ? 0 : -1} />
         <button className="sheet-link" onClick={logout} tabIndex={open ? 0 : -1}>
           <LogOut size={20} />
           Cerrar sesión

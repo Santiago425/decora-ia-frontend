@@ -8,6 +8,7 @@ export default function Assistant() {
       <PageHeader
         title={config.assistantName}
         subtitle="Escríbele o háblale. Entiende lo que necesitas y lo hace por ti dentro de la app."
+        patterns={['strategy-assistant', 'chain-assistant', 'adapter-voice', 'observer']}
       />
       <ChatPanel />
     </div>
