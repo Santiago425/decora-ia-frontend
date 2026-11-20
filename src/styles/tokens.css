@@ -139,6 +139,9 @@
   --scene-plant: #5f7d5a;
   --scene-metal: #3a3631;
   --scene-mirror: #dfe6e8;
+  --scene-frame: #2f2a25;
+  --scene-screen: #15171a;
+  --scene-towel: #f3eee6;
 
   --font-display: 'Fraunces Variable', Georgia, serif;
   --font-body: 'Plus Jakarta Sans Variable', system-ui, sans-serif;

@@ -83,6 +83,11 @@ export class EditorMediator {
     let node = factory.createItem(item, findFreeSpot(scene, [item.width, item.depth]));
     if (isWallOpeningShape(item.category.shape))
       node = { ...node, ...findWallSpot(scene, node.size, item.category.shape) };
+    // Art, curtains and TVs hang on a wall like a window does, but stay free to move afterwards.
+    else if (item.category.blocks_floor === false) {
+      const sameKind = (other: { category: string }) => other.category === item.category.slug;
+      node = { ...node, ...findWallSpot(scene, node.size, 'window', sameKind) };
+    }
     if (this.store.execute(new AddNodesCommand([node], `Agregar ${item.name}`))) this.store.select([node.id]);
   }
 

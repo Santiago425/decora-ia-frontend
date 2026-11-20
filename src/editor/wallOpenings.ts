@@ -93,11 +93,17 @@ function slots(scene: SceneData, size: Size3): WallMount[] {
 /**
  * First place on a wall that does not cover another door or window. A door also needs the floor in front
  * of it free, so it skips furniture too; a window hangs higher and may sit over a sofa or a desk.
+ * `alsoAvoid` marks other wall pieces to keep clear, so two paintings never land on the same spot.
  * Falls back to the middle of the back wall when every wall is taken.
  */
-export function findWallSpot(scene: SceneData, size: Size3, shape = 'window'): WallMount {
+export function findWallSpot(
+  scene: SceneData,
+  size: Size3,
+  shape = 'window',
+  alsoAvoid: (item: SceneItemData) => boolean = () => false,
+): WallMount {
   const items = flattenItems(scene.nodes);
-  const openings = items.filter(isWallOpening).map(itemBounds);
+  const openings = items.filter((item) => isWallOpening(item) || alsoAvoid(item)).map(itemBounds);
   const furniture = items.filter((item) => !isWallOpeningShape(item.shape) && item.size[2] > FLAT).map(itemBounds);
   const blocked = shape === 'door' ? [...openings, ...furniture] : openings;
   const candidates = slots(scene, size);
