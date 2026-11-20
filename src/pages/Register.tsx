@@ -34,7 +34,11 @@ export default function Register() {
     setLoading(true);
     setServerError('');
     try {
-      const user = await register({ full_name: form.fullName.trim(), email: form.email.trim(), password: form.password });
+      const user = await register({
+        full_name: form.fullName.trim(),
+        email: form.email.trim(),
+        password: form.password,
+      });
       notificationCenter.notify(`Bienvenido a ${config.appName}, ${user.full_name.split(' ')[0]}`, 'success');
       navigate('/', { replace: true });
     } catch (error) {

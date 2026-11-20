@@ -41,8 +41,21 @@ export function PhotoPicker({ file, onChange, onInvalid }: PhotoPickerProps) {
 
   const inputs = (
     <>
-      <input ref={uploadInput} type="file" accept="image/jpeg,image/png,image/webp" hidden onChange={(e) => accept(e.target.files?.[0])} />
-      <input ref={cameraInput} type="file" accept="image/*" capture="environment" hidden onChange={(e) => accept(e.target.files?.[0])} />
+      <input
+        ref={uploadInput}
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        hidden
+        onChange={(e) => accept(e.target.files?.[0])}
+      />
+      <input
+        ref={cameraInput}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        hidden
+        onChange={(e) => accept(e.target.files?.[0])}
+      />
     </>
   );
 
@@ -77,7 +90,11 @@ export function PhotoPicker({ file, onChange, onInvalid }: PhotoPickerProps) {
         <button type="button" className="button button-primary" onClick={() => uploadInput.current?.click()}>
           <ImagePlus size={18} /> Subir foto
         </button>
-        <button type="button" className="button button-ghost camera-button" onClick={() => cameraInput.current?.click()}>
+        <button
+          type="button"
+          className="button button-ghost camera-button"
+          onClick={() => cameraInput.current?.click()}
+        >
           <Camera size={18} /> Tomar foto
         </button>
       </div>

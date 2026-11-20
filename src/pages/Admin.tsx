@@ -27,16 +27,21 @@ export default function Admin() {
         </div>
       </header>
 
-      <nav className="admin-tabs" role="tablist" aria-label="Secciones de administración">
+      <div className="admin-tabs" role="tablist" aria-label="Secciones de administración">
         {(Object.keys(TABS) as Tab[]).map((key) => {
           const { label, icon: Icon } = TABS[key];
           return (
-            <button key={key} role="tab" aria-selected={tab === key} onClick={() => setParams(key === 'overview' ? {} : { tab: key })}>
+            <button
+              key={key}
+              role="tab"
+              aria-selected={tab === key}
+              onClick={() => setParams(key === 'overview' ? {} : { tab: key })}
+            >
               <Icon size={17} /> {label}
             </button>
           );
         })}
-      </nav>
+      </div>
 
       {tab === 'overview' && <AdminOverview />}
       {tab === 'users' && <UsersPanel />}

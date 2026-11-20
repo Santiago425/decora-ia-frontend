@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { FurnitureGroup, FurnitureLeaf, type SceneComponent } from '../../editor/composite';
 import type { FurnitureAddon, FurnitureCategory, Material } from '../../types/catalog';
 import { formatCurrency } from '../../utils/format';
-import { categoryIcon } from './categoryIcon';
+import { CategoryIcon } from './categoryIcon';
 
 interface InspectorProps {
   selection: SceneComponent[];
@@ -27,16 +27,36 @@ interface InspectorProps {
 function Actions({ id, disabled, props }: { id: string; disabled: boolean; props: InspectorProps }) {
   return (
     <div className="inspector-actions">
-      <button className="tool-button" onClick={() => props.onRotate(id, props.rotateStep)} disabled={disabled} title="Rotar a la izquierda (R)">
+      <button
+        className="tool-button"
+        onClick={() => props.onRotate(id, props.rotateStep)}
+        disabled={disabled}
+        title="Rotar a la izquierda (R)"
+      >
         <RotateCcw size={17} /> <span>Rotar</span>
       </button>
-      <button className="tool-button" onClick={() => props.onRotate(id, -props.rotateStep)} disabled={disabled} title="Rotar a la derecha (Shift + R)">
+      <button
+        className="tool-button"
+        onClick={() => props.onRotate(id, -props.rotateStep)}
+        disabled={disabled}
+        title="Rotar a la derecha (Shift + R)"
+      >
         <RotateCw size={17} /> <span>Rotar</span>
       </button>
-      <button className="tool-button" onClick={() => props.onDuplicate(id)} disabled={disabled} title="Duplicar (Ctrl + D)">
+      <button
+        className="tool-button"
+        onClick={() => props.onDuplicate(id)}
+        disabled={disabled}
+        title="Duplicar (Ctrl + D)"
+      >
         <Copy size={17} /> <span>Duplicar</span>
       </button>
-      <button className="tool-button danger" onClick={() => props.onRemove(id)} disabled={disabled} title="Eliminar (Supr)">
+      <button
+        className="tool-button danger"
+        onClick={() => props.onRemove(id)}
+        disabled={disabled}
+        title="Eliminar (Supr)"
+      >
         <Trash2 size={17} /> <span>Eliminar</span>
       </button>
     </div>
@@ -46,7 +66,6 @@ function Actions({ id, disabled, props }: { id: string; disabled: boolean; props
 function ItemInspector({ leaf, props }: { leaf: FurnitureLeaf; props: InspectorProps }) {
   const { data } = leaf;
   const category = props.categories.find((c) => c.slug === data.category);
-  const Icon = categoryIcon(category?.icon);
   const addons = props.addons.filter((addon) => addon.categories.includes(data.category));
   const colors = [...new Set([...props.palette, data.color])];
   const labels = leaf.furniture().labels();
@@ -55,7 +74,7 @@ function ItemInspector({ leaf, props }: { leaf: FurnitureLeaf; props: InspectorP
     <div className="inspector">
       <header className="inspector-head">
         <span className="catalog-swatch" style={{ background: data.color }}>
-          <Icon size={20} aria-hidden="true" />
+          <CategoryIcon name={category?.icon} size={20} aria-hidden="true" />
         </span>
         <div>
           <h3>{data.name}</h3>
@@ -86,6 +105,7 @@ function ItemInspector({ leaf, props }: { leaf: FurnitureLeaf; props: InspectorP
             />
           ))}
           <label className="swatch swatch-picker" title="Elegir otro color">
+            <span className="sr-only">Elegir otro color</span>
             <input
               type="color"
               value={data.color}
@@ -100,7 +120,12 @@ function ItemInspector({ leaf, props }: { leaf: FurnitureLeaf; props: InspectorP
         <section className="inspector-section">
           <h4>Acabado</h4>
           <div className="finish-grid">
-            <button className="finish" aria-pressed={!data.finish} disabled={props.disabled} onClick={() => props.onFinish(data.id, null, data.color)}>
+            <button
+              className="finish"
+              aria-pressed={!data.finish}
+              disabled={props.disabled}
+              onClick={() => props.onFinish(data.id, null, data.color)}
+            >
               Original
             </button>
             {props.finishes.map((material) => (
@@ -132,7 +157,10 @@ function ItemInspector({ leaf, props }: { leaf: FurnitureLeaf; props: InspectorP
                     checked={active}
                     disabled={props.disabled}
                     onChange={() =>
-                      props.onAddons(data.id, active ? data.addons.filter((a) => a !== addon.slug) : [...data.addons, addon.slug])
+                      props.onAddons(
+                        data.id,
+                        active ? data.addons.filter((a) => a !== addon.slug) : [...data.addons, addon.slug],
+                      )
                     }
                   />
                   <span>
@@ -178,7 +206,11 @@ function GroupInspector({ group, props }: { group: FurnitureGroup; props: Inspec
         <strong>{formatCurrency(group.price())}</strong>
       </div>
       <Actions id={group.id} disabled={props.disabled} props={props} />
-      <button className="button button-ghost button-block" disabled={props.disabled} onClick={() => props.onUngroup(group.id)}>
+      <button
+        className="button button-ghost button-block"
+        disabled={props.disabled}
+        onClick={() => props.onUngroup(group.id)}
+      >
         <Ungroup size={17} /> Desagrupar
       </button>
       <ul className="group-items">
@@ -210,7 +242,11 @@ export function Inspector(props: InspectorProps) {
           </div>
         </header>
         <p className="panel-hint">Agrúpalos para moverlos, rotarlos y duplicarlos como una sola pieza.</p>
-        <button className="button button-primary button-block" disabled={props.disabled} onClick={() => props.onGroup(selection.map((s) => s.id))}>
+        <button
+          className="button button-primary button-block"
+          disabled={props.disabled}
+          onClick={() => props.onGroup(selection.map((s) => s.id))}
+        >
           <Group size={17} /> Agrupar
         </button>
       </div>

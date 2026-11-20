@@ -34,7 +34,9 @@ export default function EditorHome() {
     <div className="page editor-home">
       <header className="page-header">
         <h1>Editor 3D</h1>
-        <p className="page-subtitle">Diseña tu espacio en tres dimensiones, prueba muebles y conoce el presupuesto al instante.</p>
+        <p className="page-subtitle">
+          Diseña tu espacio en tres dimensiones, prueba muebles y conoce el presupuesto al instante.
+        </p>
       </header>
 
       {error && (
@@ -54,13 +56,27 @@ export default function EditorHome() {
             <h2>Abre un proyecto</h2>
             <span className="muted">{projects.length} en total</span>
           </div>
-          {loading && !data && <div className="project-grid">{[0, 1].map((i) => <div key={i} className="project-card skeleton" />)}</div>}
+          {loading && !data && (
+            <div className="project-grid">
+              {[0, 1].map((i) => (
+                <div key={i} className="project-card skeleton" />
+              ))}
+            </div>
+          )}
           {data && !projects.length && (
-            <EmptyState title="Aún no tienes proyectos" description="Crea el primero con el formulario y empieza a diseñar." />
+            <EmptyState
+              title="Aún no tienes proyectos"
+              description="Crea el primero con el formulario y empieza a diseñar."
+            />
           )}
           <div className="project-grid">
             {projects.map((project, index) => (
-              <Link key={project.id} to={`/editor/${project.id}`} className="project-link" aria-label={`Abrir ${project.name} en el editor`}>
+              <Link
+                key={project.id}
+                to={`/editor/${project.id}`}
+                className="project-link"
+                aria-label={`Abrir ${project.name} en el editor`}
+              >
                 <ProjectCard project={project} delay={index * 60} />
               </Link>
             ))}

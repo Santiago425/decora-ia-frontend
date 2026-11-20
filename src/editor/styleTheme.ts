@@ -79,7 +79,11 @@ export function themeFactoryFor(style: DesignStyle | undefined, catalog: Materia
   return style ? new CatalogStyleTheme(style, catalog) : new NeutralStyleTheme(catalog);
 }
 
-export function surfaceFinish(slug: string | null, materials: Map<string, Material>, fallbackColor: string): SurfaceFinish {
+export function surfaceFinish(
+  slug: string | null,
+  materials: Map<string, Material>,
+  fallbackColor: string,
+): SurfaceFinish {
   return toFinish(slug ? materials.get(slug) : undefined, fallbackColor);
 }
 

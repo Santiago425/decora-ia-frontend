@@ -11,7 +11,16 @@ interface ConfirmDialogProps {
   onCancel: () => void;
 }
 
-export function ConfirmDialog({ open, title, message, confirmLabel, danger, busy, onConfirm, onCancel }: ConfirmDialogProps) {
+export function ConfirmDialog({
+  open,
+  title,
+  message,
+  confirmLabel,
+  danger,
+  busy,
+  onConfirm,
+  onCancel,
+}: ConfirmDialogProps) {
   const dialog = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -29,7 +38,12 @@ export function ConfirmDialog({ open, title, message, confirmLabel, danger, busy
         <button className="button button-ghost" onClick={onCancel} disabled={busy}>
           Cancelar
         </button>
-        <button className={`button ${danger ? 'button-danger' : 'button-primary'}`} onClick={onConfirm} disabled={busy} autoFocus>
+        <button
+          className={`button ${danger ? 'button-danger' : 'button-primary'}`}
+          onClick={onConfirm}
+          disabled={busy}
+          autoFocus
+        >
           {busy ? 'Un momento…' : confirmLabel}
         </button>
       </div>

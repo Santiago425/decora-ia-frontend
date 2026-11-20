@@ -1,19 +1,10 @@
 import { chatStore } from '../assistant/chatStore';
-import { createContext, useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { apiClient } from '../services/apiClient';
 import { authService } from '../services/authService';
 import { sessionStore } from '../services/sessionStore';
-import type { LoginPayload, RegisterPayload, Session, User } from '../types/auth';
-
-export interface AuthContextValue {
-  user: User | null;
-  ready: boolean;
-  login: (payload: LoginPayload) => Promise<User>;
-  register: (payload: RegisterPayload) => Promise<User>;
-  logout: () => void;
-}
-
-export const AuthContext = createContext<AuthContextValue | null>(null);
+import { AuthContext, type AuthContextValue } from './authContext';
+import type { Session, User } from '../types/auth';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);

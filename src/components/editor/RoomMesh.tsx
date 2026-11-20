@@ -35,7 +35,12 @@ export function RoomMesh({ room, materials }: { room: RoomData; materials: Map<s
       {walls.map(({ position, rotation, span }, index) => (
         <mesh key={index} position={[...position]} rotation={[0, rotation, 0]} receiveShadow>
           <planeGeometry args={[span, height]} />
-          <meshStandardMaterial color={wall.color} roughness={wall.roughness} metalness={wall.metalness} side={FrontSide} />
+          <meshStandardMaterial
+            color={wall.color}
+            roughness={wall.roughness}
+            metalness={wall.metalness}
+            side={FrontSide}
+          />
         </mesh>
       ))}
     </group>

@@ -73,7 +73,11 @@ export class EditorStore {
 
   #commit(scene: SceneData): void {
     const ids = new Set(scene.nodes.map((node) => node.id));
-    this.#set({ scene, revision: this.#state.revision + 1, selection: this.#state.selection.filter((id) => ids.has(id)) });
+    this.#set({
+      scene,
+      revision: this.#state.revision + 1,
+      selection: this.#state.selection.filter((id) => ids.has(id)),
+    });
   }
 
   #withHistory(state: Omit<EditorState, 'canUndo' | 'canRedo' | 'undoLabel' | 'redoLabel'>): EditorState {

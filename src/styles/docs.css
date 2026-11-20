@@ -242,7 +242,9 @@
   overflow: hidden;
   border: 1px solid var(--sand-200);
   border-radius: var(--radius-md);
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
 .pattern-card.open {

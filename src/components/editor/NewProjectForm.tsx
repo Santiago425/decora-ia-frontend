@@ -58,7 +58,12 @@ export function NewProjectForm({ roomTypes, styles, busy, onCreate }: NewProject
       <span className="field-label">Tipo de habitación</span>
       <div className="chips">
         {roomTypes.map((room) => (
-          <button type="button" key={room.slug} className={`chip ${roomType === room.slug ? 'selected' : ''}`} onClick={() => setRoomType(room.slug)}>
+          <button
+            type="button"
+            key={room.slug}
+            className={`chip ${roomType === room.slug ? 'selected' : ''}`}
+            onClick={() => setRoomType(room.slug)}
+          >
             {room.name}
           </button>
         ))}
@@ -67,7 +72,12 @@ export function NewProjectForm({ roomTypes, styles, busy, onCreate }: NewProject
       <span className="field-label">Estilo</span>
       <div className="chips">
         {styles.map((item) => (
-          <button type="button" key={item.slug} className={`chip ${style === item.slug ? 'selected' : ''}`} onClick={() => setStyle(item.slug)}>
+          <button
+            type="button"
+            key={item.slug}
+            className={`chip ${style === item.slug ? 'selected' : ''}`}
+            onClick={() => setStyle(item.slug)}
+          >
             {item.name}
           </button>
         ))}

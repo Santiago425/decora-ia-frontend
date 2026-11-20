@@ -229,7 +229,9 @@
   color: var(--ink);
   font-size: 13px;
   font-weight: 650;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 }
 
 .tool-button:hover:not(:disabled):not([aria-pressed='true']) {
@@ -443,7 +445,10 @@
   border-radius: var(--radius-md);
   background: var(--sand-50);
   text-align: left;
-  transition: border-color 0.15s, transform 0.15s, background 0.15s;
+  transition:
+    border-color 0.15s,
+    transform 0.15s,
+    background 0.15s;
 }
 
 .catalog-item:hover:not(:disabled) {
@@ -913,7 +918,6 @@
   background: none;
   font-size: 14px;
 }
-
 
 @media (max-width: 1280px) {
   .editor-body {

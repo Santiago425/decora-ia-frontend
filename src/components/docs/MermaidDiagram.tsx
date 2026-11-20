@@ -1,6 +1,7 @@
+import type MermaidApi from 'mermaid';
 import { useEffect, useId, useRef, useState } from 'react';
 
-type Mermaid = typeof import('mermaid').default;
+type Mermaid = typeof MermaidApi;
 let loader: Promise<Mermaid> | null = null;
 
 function loadMermaid(): Promise<Mermaid> {
@@ -37,7 +38,9 @@ export function MermaidDiagram({ code, label }: { code: string; label: string })
   useEffect(() => {
     const element = container.current;
     if (!element) return;
-    const observer = new IntersectionObserver(([entry]) => entry.isIntersecting && setVisible(true), { rootMargin: '200px' });
+    const observer = new IntersectionObserver(([entry]) => entry.isIntersecting && setVisible(true), {
+      rootMargin: '200px',
+    });
     observer.observe(element);
     return () => observer.disconnect();
   }, []);

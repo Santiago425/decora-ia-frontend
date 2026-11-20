@@ -5,8 +5,16 @@ import { notificationCenter } from '../../services/notificationCenter';
 import type { ReportKind } from '../../types/admin';
 
 const REPORTS: { kind: ReportKind; title: string; description: string }[] = [
-  { kind: 'usuarios', title: 'Usuarios', description: 'Nombre, correo, rol, estado, proyectos y último ingreso de cada cuenta.' },
-  { kind: 'proyectos', title: 'Proyectos', description: 'Todos los proyectos con su dueño, estado, estilo, presupuesto y rediseños.' },
+  {
+    kind: 'usuarios',
+    title: 'Usuarios',
+    description: 'Nombre, correo, rol, estado, proyectos y último ingreso de cada cuenta.',
+  },
+  {
+    kind: 'proyectos',
+    title: 'Proyectos',
+    description: 'Todos los proyectos con su dueño, estado, estilo, presupuesto y rediseños.',
+  },
 ];
 
 export function ReportsPanel() {
@@ -45,7 +53,11 @@ export function ReportsPanel() {
               <h3>{report.title}</h3>
               <p>{report.description}</p>
             </div>
-            <button className="button button-ghost" onClick={() => download(report.kind)} disabled={busy === report.kind}>
+            <button
+              className="button button-ghost"
+              onClick={() => download(report.kind)}
+              disabled={busy === report.kind}
+            >
               <Download size={17} /> {busy === report.kind ? 'Preparando…' : 'Descargar'}
             </button>
           </article>

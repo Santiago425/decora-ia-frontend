@@ -2,7 +2,14 @@ import { ChevronDown, Copy, Database, Layers, Puzzle, Search, ShieldCheck, User,
 import { useCallback, useMemo, useState } from 'react';
 import { MermaidDiagram } from '../components/docs/MermaidDiagram';
 import { config } from '../config';
-import { ARCHITECTURE_DIAGRAM, ER_DIAGRAM, PATTERNS, type PatternCategory, type PatternDoc, type Side } from '../docs/patterns';
+import {
+  ARCHITECTURE_DIAGRAM,
+  ER_DIAGRAM,
+  PATTERNS,
+  type PatternCategory,
+  type PatternDoc,
+  type Side,
+} from '../docs/patterns';
 import { useAsync } from '../hooks/useAsync';
 import { metaService } from '../services/metaService';
 import { notificationCenter } from '../services/notificationCenter';
@@ -19,13 +26,37 @@ const SECTIONS = [
 ];
 
 const STACK = [
-  { area: 'Frontend', items: ['React 18 + TypeScript', 'Vite', 'React Router', 'React Three Fiber + drei (3D)', 'Recharts', 'Web Speech API (voz)'] },
-  { area: 'Backend', items: ['Python + FastAPI', 'SQLAlchemy 2 + Alembic', 'Pydantic v2', 'JWT + bcrypt', 'slowapi (límite de peticiones)', 'pytest'] },
+  {
+    area: 'Frontend',
+    items: [
+      'React 18 + TypeScript',
+      'Vite',
+      'React Router',
+      'React Three Fiber + drei (3D)',
+      'Recharts',
+      'Web Speech API (voz)',
+    ],
+  },
+  {
+    area: 'Backend',
+    items: [
+      'Python + FastAPI',
+      'SQLAlchemy 2 + Alembic',
+      'Pydantic v2',
+      'JWT + bcrypt',
+      'slowapi (límite de peticiones)',
+      'pytest',
+    ],
+  },
   { area: 'Datos e IA', items: ['PostgreSQL en Neon', 'Google Gemini', 'Hugging Face (imágenes)', 'Modo demo sin IA'] },
   { area: 'Despliegue', items: ['Vercel (frontend)', 'Render (backend)', 'Variables en .env, nada fijo en el código'] },
 ];
 
-const PROVIDER_LABELS: Record<string, string> = { gemini: 'Google Gemini', huggingface: 'Hugging Face', mock: 'Modo demo' };
+const PROVIDER_LABELS: Record<string, string> = {
+  gemini: 'Google Gemini',
+  huggingface: 'Hugging Face',
+  mock: 'Modo demo',
+};
 
 function copy(text: string) {
   navigator.clipboard
@@ -96,8 +127,8 @@ export default function Docs() {
         <span className="docs-kicker">Proyecto final · Patrones de Diseño</span>
         <h1>Documentación de {config.appName}</h1>
         <p className="page-subtitle">
-          Cómo está construida la app: arquitectura, base de datos y los {distinct} patrones de diseño aplicados ({PATTERNS.length} usos
-          entre backend y frontend), cada uno con su diagrama UML.
+          Cómo está construida la app: arquitectura, base de datos y los {distinct} patrones de diseño aplicados (
+          {PATTERNS.length} usos entre backend y frontend), cada uno con su diagrama UML.
         </p>
         <nav className="docs-index" aria-label="Secciones">
           {SECTIONS.map(({ id, label, icon: Icon }) => (
@@ -111,9 +142,9 @@ export default function Docs() {
       <section id="arquitectura" className="docs-section">
         <h2>Arquitectura</h2>
         <p>
-          El frontend y el backend viven en repositorios separados y se comunican por una API REST con sesiones JWT. El backend está
-          organizado por capas: <strong>routers → services → repositories → models</strong>. La IA está separada detrás de adaptadores, así
-          que el modelo se cambia desde el <code>.env</code> sin tocar código.
+          El frontend y el backend viven en repositorios separados y se comunican por una API REST con sesiones JWT. El
+          backend está organizado por capas: <strong>routers → services → repositories → models</strong>. La IA está
+          separada detrás de adaptadores, así que el modelo se cambia desde el <code>.env</code> sin tocar código.
         </p>
         <MermaidDiagram code={ARCHITECTURE_DIAGRAM} label="Diagrama de arquitectura" />
         {info && (
@@ -145,7 +176,9 @@ export default function Docs() {
           <div className="account-grid">
             {info.demo_accounts.map((account) => (
               <article key={account.email} className="account-card">
-                <span className={`account-icon ${account.role}`}>{account.role === 'admin' ? <ShieldCheck size={20} /> : <User size={20} />}</span>
+                <span className={`account-icon ${account.role}`}>
+                  {account.role === 'admin' ? <ShieldCheck size={20} /> : <User size={20} />}
+                </span>
                 <div>
                   <h3>{account.role === 'admin' ? 'Administrador' : 'Usuario'}</h3>
                   <small>{account.name}</small>
@@ -164,7 +197,11 @@ export default function Docs() {
                     <dt>Contraseña</dt>
                     <dd>
                       <code>{account.password}</code>
-                      <button className="icon-button" onClick={() => copy(account.password)} aria-label="Copiar contraseña">
+                      <button
+                        className="icon-button"
+                        onClick={() => copy(account.password)}
+                        aria-label="Copiar contraseña"
+                      >
                         <Copy size={14} />
                       </button>
                     </dd>
@@ -181,8 +218,9 @@ export default function Docs() {
       <section id="base-de-datos" className="docs-section">
         <h2>Base de datos</h2>
         <p>
-          PostgreSQL en la nube (Neon). Tablas y columnas en inglés. El catálogo (estilos, habitaciones, muebles, materiales, paletas y
-          complementos) vive en la base de datos y el administrador lo edita desde la app. Las migraciones se manejan con Alembic.
+          PostgreSQL en la nube (Neon). Tablas y columnas en inglés. El catálogo (estilos, habitaciones, muebles,
+          materiales, paletas y complementos) vive en la base de datos y el administrador lo edita desde la app. Las
+          migraciones se manejan con Alembic.
         </p>
         <MermaidDiagram code={ER_DIAGRAM} label="Diagrama entidad relación" />
       </section>
@@ -192,18 +230,34 @@ export default function Docs() {
         <div className="docs-filters">
           <label className="search-box">
             <Search size={18} />
-            <input type="search" value={text} onChange={(e) => setText(e.target.value)} placeholder="Buscar patrón o archivo" aria-label="Buscar patrón" />
+            <input
+              type="search"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              placeholder="Buscar patrón o archivo"
+              aria-label="Buscar patrón"
+            />
           </label>
           <div className="chips" role="group" aria-label="Tipo de patrón">
             {(['all', ...CATEGORIES] as const).map((c) => (
-              <button key={c} className={`chip ${category === c ? 'selected' : ''}`} aria-pressed={category === c} onClick={() => setCategory(c)}>
+              <button
+                key={c}
+                className={`chip ${category === c ? 'selected' : ''}`}
+                aria-pressed={category === c}
+                onClick={() => setCategory(c)}
+              >
                 {c === 'all' ? 'Todos' : c}
               </button>
             ))}
           </div>
           <div className="chips" role="group" aria-label="Lado">
             {(['all', ...SIDES] as const).map((s) => (
-              <button key={s} className={`chip ${side === s ? 'selected' : ''}`} aria-pressed={side === s} onClick={() => setSide(s)}>
+              <button
+                key={s}
+                className={`chip ${side === s ? 'selected' : ''}`}
+                aria-pressed={side === s}
+                onClick={() => setSide(s)}
+              >
                 {s === 'all' ? 'Back y front' : s}
               </button>
             ))}

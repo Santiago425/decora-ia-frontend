@@ -1,7 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ChatMessage } from '../types/assistant';
 
-const message = (id: number, sender: 'user' | 'assistant', content: string, actions: ChatMessage['actions'] = []): ChatMessage => ({
+const message = (
+  id: number,
+  sender: 'user' | 'assistant',
+  content: string,
+  actions: ChatMessage['actions'] = [],
+): ChatMessage => ({
   id,
   sender,
   content,
@@ -26,7 +31,11 @@ describe('chatStore', () => {
 
   it('saves the reply and publishes its actions to whoever can run them', async () => {
     const action = { type: 'add_furniture' as const, params: { furniture_id: 3 } };
-    send.mockResolvedValue({ message: message(1, 'user', 'agrega una planta'), reply: message(2, 'assistant', 'Listo', [action]), provider: 'rules' });
+    send.mockResolvedValue({
+      message: message(1, 'user', 'agrega una planta'),
+      reply: message(2, 'assistant', 'Listo', [action]),
+      provider: 'rules',
+    });
     const handler = vi.fn(() => true);
     const unsubscribe = assistantBus.subscribe(handler);
 

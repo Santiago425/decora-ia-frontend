@@ -51,7 +51,11 @@ export function MobileNav() {
             <span>{label}</span>
           </NavLink>
         ))}
-        <button className={`mobile-link ${open ? 'active' : ''}`} onClick={() => setOpen((v) => !v)} aria-expanded={open}>
+        <button
+          className={`mobile-link ${open ? 'active' : ''}`}
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+        >
           {open ? <X size={21} /> : <Menu size={21} />}
           <span>Más</span>
         </button>

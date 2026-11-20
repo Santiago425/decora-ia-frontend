@@ -19,7 +19,17 @@ const LIMITS = { width: [1.5, 20], length: [1.5, 20], height: [2, 5] } as const;
 type Dimension = keyof typeof LIMITS;
 const LABELS: Record<Dimension, string> = { width: 'Ancho', length: 'Largo', height: 'Alto' };
 
-function DimensionInput({ field, room, disabled, onRoom }: { field: Dimension; room: RoomData; disabled: boolean; onRoom: RoomPanelProps['onRoom'] }) {
+function DimensionInput({
+  field,
+  room,
+  disabled,
+  onRoom,
+}: {
+  field: Dimension;
+  room: RoomData;
+  disabled: boolean;
+  onRoom: RoomPanelProps['onRoom'];
+}) {
   const [value, setValue] = useState(String(room[field]));
   useEffect(() => setValue(String(room[field])), [room, field]);
   const [min, max] = LIMITS[field];
@@ -51,7 +61,14 @@ function DimensionInput({ field, room, disabled, onRoom }: { field: Dimension; r
   );
 }
 
-function MaterialPicker({ title, surface, room, materials, disabled, onRoom }: {
+function MaterialPicker({
+  title,
+  surface,
+  room,
+  materials,
+  disabled,
+  onRoom,
+}: {
   title: string;
   surface: 'wall' | 'floor';
   room: RoomData;
@@ -72,7 +89,9 @@ function MaterialPicker({ title, surface, room, materials, disabled, onRoom }: {
               className="material"
               aria-pressed={room[key] === material.slug}
               disabled={disabled}
-              onClick={() => onRoom({ ...room, [key]: material.slug }, surface === 'wall' ? 'Cambiar paredes' : 'Cambiar piso')}
+              onClick={() =>
+                onRoom({ ...room, [key]: material.slug }, surface === 'wall' ? 'Cambiar paredes' : 'Cambiar piso')
+              }
               title={`${material.name} · ${formatCurrency(material.price_per_unit)} por m²`}
             >
               <span className="material-swatch" style={{ background: material.color_hex }} />
@@ -103,7 +122,13 @@ export function RoomPanel({ composite, styles, materials, disabled, onStyle, onR
         <h4>Estilo</h4>
         <div className="theme-grid">
           {styles.map((item) => (
-            <button key={item.slug} className="theme-option" aria-pressed={style === item.slug} disabled={disabled} onClick={() => onStyle(item.slug)}>
+            <button
+              key={item.slug}
+              className="theme-option"
+              aria-pressed={style === item.slug}
+              disabled={disabled}
+              onClick={() => onStyle(item.slug)}
+            >
               <span className="theme-colors">
                 {(item.palettes[0]?.colors ?? []).slice(0, 4).map((color) => (
                   <i key={color} style={{ background: color }} />
@@ -124,8 +149,22 @@ export function RoomPanel({ composite, styles, materials, disabled, onStyle, onR
         </div>
       </section>
 
-      <MaterialPicker title="Paredes" surface="wall" room={room} materials={materials} disabled={disabled} onRoom={onRoom} />
-      <MaterialPicker title="Piso" surface="floor" room={room} materials={materials} disabled={disabled} onRoom={onRoom} />
+      <MaterialPicker
+        title="Paredes"
+        surface="wall"
+        room={room}
+        materials={materials}
+        disabled={disabled}
+        onRoom={onRoom}
+      />
+      <MaterialPicker
+        title="Piso"
+        surface="floor"
+        room={room}
+        materials={materials}
+        disabled={disabled}
+        onRoom={onRoom}
+      />
 
       <section className="inspector-section">
         <h4>Iluminación</h4>

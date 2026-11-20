@@ -10,9 +10,15 @@ export async function shrinkImage(file: Blob, maxSide: number, quality = 0.9): P
   const canvas = document.createElement('canvas');
   canvas.width = Math.round(bitmap.width * scale);
   canvas.height = Math.round(bitmap.height * scale);
-  canvas.getContext('2d')!.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  const context = canvas.getContext('2d');
+  if (!context) throw new Error('No pudimos leer la foto');
+  context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
   bitmap.close();
   return new Promise((resolve, reject) =>
-    canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('No pudimos leer la foto'))), 'image/jpeg', quality),
+    canvas.toBlob(
+      (blob) => (blob ? resolve(blob) : reject(new Error('No pudimos leer la foto'))),
+      'image/jpeg',
+      quality,
+    ),
   );
 }

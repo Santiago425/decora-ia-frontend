@@ -20,9 +20,16 @@ export const PATTERNS: PatternDoc[] = [
     category: 'Creacional',
     side: 'Backend',
     summary: 'Una sola configuración y una sola conexión a la base de datos para todo el servidor.',
-    problem: 'Leer el .env en cada petición o abrir un pool de conexiones por endpoint gasta recursos y puede dar valores distintos en cada lugar.',
-    solution: 'get_settings() está cacheado y siempre devuelve el mismo objeto Settings. Database y AIClient usan SingletonMeta, que guarda la primera instancia y la reutiliza.',
-    files: ['app/core/settings.py', 'app/patterns/singleton.py', 'app/core/database.py', 'app/patterns/ai/ai_client.py'],
+    problem:
+      'Leer el .env en cada petición o abrir un pool de conexiones por endpoint gasta recursos y puede dar valores distintos en cada lugar.',
+    solution:
+      'get_settings() está cacheado y siempre devuelve el mismo objeto Settings. Database y AIClient usan SingletonMeta, que guarda la primera instancia y la reutiliza.',
+    files: [
+      'app/core/settings.py',
+      'app/patterns/singleton.py',
+      'app/core/database.py',
+      'app/patterns/ai/ai_client.py',
+    ],
     diagram: `classDiagram
   class SingletonMeta {
     -_instances dict
@@ -51,8 +58,10 @@ export const PATTERNS: PatternDoc[] = [
     category: 'Creacional',
     side: 'Frontend',
     summary: 'Un único cliente HTTP que guarda el token de la sesión.',
-    problem: 'Si cada pantalla creara su propio cliente, habría que pasar el token a todos y avisar a cada uno cuando la sesión expire.',
-    solution: 'ApiClient tiene el constructor privado y getInstance() devuelve siempre la misma instancia, que guarda el token y avisa cuando el servidor responde 401.',
+    problem:
+      'Si cada pantalla creara su propio cliente, habría que pasar el token a todos y avisar a cada uno cuando la sesión expire.',
+    solution:
+      'ApiClient tiene el constructor privado y getInstance() devuelve siempre la misma instancia, que guarda el token y avisa cuando el servidor responde 401.',
     files: ['src/services/apiClient.ts'],
     diagram: `classDiagram
   class ApiClient {
@@ -73,8 +82,10 @@ export const PATTERNS: PatternDoc[] = [
     category: 'Creacional',
     side: 'Frontend',
     summary: 'Cada tipo de mueble decide de qué piezas 3D está hecho.',
-    problem: 'Un sofá, una cama y una lámpara se dibujan con piezas muy distintas. Un switch gigante con todas las formas sería difícil de mantener.',
-    solution: 'FurnitureFactory define createItem() y deja a cada subclase el método buildParts(). La forma viene de la categoría guardada en la base de datos.',
+    problem:
+      'Un sofá, una cama y una lámpara se dibujan con piezas muy distintas. Un switch gigante con todas las formas sería difícil de mantener.',
+    solution:
+      'FurnitureFactory define createItem() y deja a cada subclase el método buildParts(). La forma viene de la categoría guardada en la base de datos.',
     files: ['src/editor/furnitureFactory.ts'],
     diagram: `classDiagram
   class FurnitureFactory {
@@ -105,8 +116,10 @@ export const PATTERNS: PatternDoc[] = [
     category: 'Creacional',
     side: 'Frontend',
     summary: 'Cada estilo produce una familia coherente de luz, paredes, piso y colores.',
-    problem: 'Al cambiar de estilo hay que cambiar varias cosas a la vez, y deben combinar entre sí. Mezclar una pared industrial con un piso nórdico se ve mal.',
-    solution: 'StyleThemeFactory crea toda la familia. CatalogStyleTheme la arma con los materiales del estilo en la base de datos y NeutralStyleTheme es la opción por defecto.',
+    problem:
+      'Al cambiar de estilo hay que cambiar varias cosas a la vez, y deben combinar entre sí. Mezclar una pared industrial con un piso nórdico se ve mal.',
+    solution:
+      'StyleThemeFactory crea toda la familia. CatalogStyleTheme la arma con los materiales del estilo en la base de datos y NeutralStyleTheme es la opción por defecto.',
     files: ['src/editor/styleTheme.ts'],
     diagram: `classDiagram
   class StyleThemeFactory {
@@ -128,8 +141,10 @@ export const PATTERNS: PatternDoc[] = [
     category: 'Creacional',
     side: 'Backend',
     summary: 'Arma paso a paso la petición de rediseño que se envía a la IA.',
-    problem: 'Una petición a la IA tiene muchas partes opcionales (habitación, estilo, paleta, presupuesto, conservar estructura) y se debe validar antes de enviarla.',
-    solution: 'RedesignRequestBuilder encadena with_photo(), in_style(), with_budget()… y build() valida todo y genera el prompt final.',
+    problem:
+      'Una petición a la IA tiene muchas partes opcionales (habitación, estilo, paleta, presupuesto, conservar estructura) y se debe validar antes de enviarla.',
+    solution:
+      'RedesignRequestBuilder encadena with_photo(), in_style(), with_budget()… y build() valida todo y genera el prompt final.',
     files: ['app/patterns/builders/redesign_request_builder.py'],
     diagram: `classDiagram
   class RedesignRequestBuilder {
@@ -154,8 +169,10 @@ export const PATTERNS: PatternDoc[] = [
     category: 'Creacional',
     side: 'Backend',
     summary: 'Construye la escena 3D inicial de cada proyecto.',
-    problem: 'Un proyecto nuevo necesita habitación, materiales, luz y muebles ubicados con sentido según el tipo de habitación.',
-    solution: 'RoomBuilder arma la escena parte por parte y StarterLayoutDirector sabe en qué orden y posición agregar los muebles sugeridos.',
+    problem:
+      'Un proyecto nuevo necesita habitación, materiales, luz y muebles ubicados con sentido según el tipo de habitación.',
+    solution:
+      'RoomBuilder arma la escena parte por parte y StarterLayoutDirector sabe en qué orden y posición agregar los muebles sugeridos.',
     files: ['app/patterns/builders/room_builder.py'],
     diagram: `classDiagram
   class RoomBuilder {
@@ -178,7 +195,8 @@ export const PATTERNS: PatternDoc[] = [
     side: 'Frontend',
     summary: 'Duplicar un mueble, un grupo o un proyecto copia todo con identificadores nuevos.',
     problem: 'Copiar un grupo de muebles a mano obliga a conocer su estructura interna y a regenerar cada id.',
-    solution: 'Cada pieza implementa clone(). En el backend, ProjectPrototype clona el proyecto completo con su escena.',
+    solution:
+      'Cada pieza implementa clone(). En el backend, ProjectPrototype clona el proyecto completo con su escena.',
     files: ['src/editor/composite.ts', 'app/patterns/prototypes/project_prototype.py'],
     diagram: `classDiagram
   class Prototype~T~ {
@@ -203,8 +221,10 @@ export const PATTERNS: PatternDoc[] = [
     category: 'Estructural',
     side: 'Backend',
     summary: 'La IA es intercambiable: Gemini, Hugging Face o modo demo con la misma interfaz.',
-    problem: 'Cada proveedor de IA tiene su propia API, formato y errores. El resto del sistema no debería depender de ninguno.',
-    solution: 'ImageEditor y DesignAdvisor son la interfaz común. Cada adaptador traduce la API de su proveedor y se elige con AI_IMAGE_PROVIDER y AI_TEXT_PROVIDER.',
+    problem:
+      'Cada proveedor de IA tiene su propia API, formato y errores. El resto del sistema no debería depender de ninguno.',
+    solution:
+      'ImageEditor y DesignAdvisor son la interfaz común. Cada adaptador traduce la API de su proveedor y se elige con AI_IMAGE_PROVIDER y AI_TEXT_PROVIDER.',
     files: ['app/patterns/ai/'],
     diagram: `classDiagram
   class ImageEditor {
@@ -229,7 +249,8 @@ export const PATTERNS: PatternDoc[] = [
     side: 'Backend',
     summary: 'Guardar fotos en disco o en la base de datos sin cambiar el código que las usa.',
     problem: 'En desarrollo es cómodo guardar en disco, pero el disco de Render se borra en cada despliegue.',
-    solution: 'StorageAdapter define save() y load(). LocalStorageAdapter y DatabaseStorageAdapter los implementan y se elige con STORAGE_PROVIDER.',
+    solution:
+      'StorageAdapter define save() y load(). LocalStorageAdapter y DatabaseStorageAdapter los implementan y se elige con STORAGE_PROVIDER.',
     files: ['app/patterns/storage/storage_adapter.py'],
     diagram: `classDiagram
   class StorageAdapter {
@@ -249,7 +270,8 @@ export const PATTERNS: PatternDoc[] = [
     side: 'Frontend',
     summary: 'Una interfaz simple para el micrófono y la voz del navegador.',
     problem: 'Cada navegador expone el reconocimiento de voz con nombres y eventos distintos, y algunos no lo tienen.',
-    solution: 'VoiceAdapter envuelve SpeechRecognition y speechSynthesis en listen(), speak() y stop(), con mensajes de error en español.',
+    solution:
+      'VoiceAdapter envuelve SpeechRecognition y speechSynthesis en listen(), speak() y stop(), con mensajes de error en español.',
     files: ['src/assistant/voiceAdapter.ts'],
     diagram: `classDiagram
   class VoiceAdapter {
@@ -277,7 +299,8 @@ export const PATTERNS: PatternDoc[] = [
     side: 'Backend',
     summary: 'Caché y registro de tiempos para cualquier proveedor de IA.',
     problem: 'Queremos medir cuánto tarda la IA y no repetir llamadas iguales, sin tocar el código de cada proveedor.',
-    solution: 'LoggingImageEditor y CachingImageEditor envuelven a otro ImageEditor y añaden su comportamiento antes y después de delegar.',
+    solution:
+      'LoggingImageEditor y CachingImageEditor envuelven a otro ImageEditor y añaden su comportamiento antes y después de delegar.',
     files: ['app/patterns/ai/ai_decorators.py'],
     diagram: `classDiagram
   class ImageEditor {
@@ -301,8 +324,10 @@ export const PATTERNS: PatternDoc[] = [
     category: 'Estructural',
     side: 'Frontend',
     summary: 'Cojines, manta, vidrio o luz LED se suman a un mueble sin cambiar su clase.',
-    problem: 'Cada combinación de complementos cambia precio y apariencia. Crear una subclase por combinación sería imposible.',
-    solution: 'BaseFurniture es el mueble y cada AddonDecorator lo envuelve sumando su precio y sus piezas 3D. Se pueden apilar varios.',
+    problem:
+      'Cada combinación de complementos cambia precio y apariencia. Crear una subclase por combinación sería imposible.',
+    solution:
+      'BaseFurniture es el mueble y cada AddonDecorator lo envuelve sumando su precio y sus piezas 3D. Se pueden apilar varios.',
     files: ['src/editor/furnitureDecorators.ts'],
     diagram: `classDiagram
   class PricedFurniture {
@@ -331,7 +356,8 @@ export const PATTERNS: PatternDoc[] = [
     category: 'Estructural',
     side: 'Backend',
     summary: 'Una sola llamada para todo el proceso de rediseño.',
-    problem: 'Rediseñar implica validar la foto, guardarla, llamar a la IA, calcular sugerencias y presupuesto y registrar el proyecto. El endpoint no debería orquestar todo eso.',
+    problem:
+      'Rediseñar implica validar la foto, guardarla, llamar a la IA, calcular sugerencias y presupuesto y registrar el proyecto. El endpoint no debería orquestar todo eso.',
     solution: 'RedesignFacade.create_redesign() coordina los subsistemas y el router solo la llama.',
     files: ['app/patterns/facades/redesign_facade.py'],
     diagram: `classDiagram
@@ -353,8 +379,10 @@ export const PATTERNS: PatternDoc[] = [
     category: 'Estructural',
     side: 'Frontend',
     summary: 'Un mueble, un grupo y la habitación completa se tratan igual.',
-    problem: 'El editor permite agrupar muebles y grupos dentro de grupos. Calcular el precio o mover algo no debería depender de si es una pieza o un grupo.',
-    solution: 'SceneComponent es la interfaz común. FurnitureLeaf es una pieza y FurnitureGroup contiene otros componentes y suma sus resultados.',
+    problem:
+      'El editor permite agrupar muebles y grupos dentro de grupos. Calcular el precio o mover algo no debería depender de si es una pieza o un grupo.',
+    solution:
+      'SceneComponent es la interfaz común. FurnitureLeaf es una pieza y FurnitureGroup contiene otros componentes y suma sus resultados.',
     files: ['src/editor/composite.ts'],
     diagram: `classDiagram
   class SceneComponent {
@@ -382,8 +410,10 @@ export const PATTERNS: PatternDoc[] = [
     category: 'Estructural',
     side: 'Frontend',
     summary: 'Las imágenes se cargan solo cuando entran en pantalla.',
-    problem: 'El inicio y Mis proyectos muestran muchas fotos. Descargarlas todas al abrir la página la vuelve lenta, sobre todo en el celular.',
-    solution: 'ImageProxy ocupa el lugar de la imagen real, muestra un marcador y la carga cuando el usuario se acerca a ella.',
+    problem:
+      'El inicio y Mis proyectos muestran muchas fotos. Descargarlas todas al abrir la página la vuelve lenta, sobre todo en el celular.',
+    solution:
+      'ImageProxy ocupa el lugar de la imagen real, muestra un marcador y la carga cuando el usuario se acerca a ella.',
     files: ['src/components/ImageProxy.tsx'],
     diagram: `classDiagram
   class ImageProxy {
@@ -404,8 +434,10 @@ export const PATTERNS: PatternDoc[] = [
     category: 'Estructural',
     side: 'Backend',
     summary: 'Solo un administrador puede cambiar el catálogo, y cada cambio queda registrado.',
-    problem: 'Editar precios o esconder muebles afecta a todos los usuarios. Hay que verificar permisos y dejar rastro sin mezclar eso con la lógica del catálogo.',
-    solution: 'CatalogAdminProxy tiene la misma interfaz que CatalogAdminService: revisa el rol del usuario, delega y registra quién cambió qué.',
+    problem:
+      'Editar precios o esconder muebles afecta a todos los usuarios. Hay que verificar permisos y dejar rastro sin mezclar eso con la lógica del catálogo.',
+    solution:
+      'CatalogAdminProxy tiene la misma interfaz que CatalogAdminService: revisa el rol del usuario, delega y registra quién cambió qué.',
     files: ['app/patterns/proxies/catalog_admin_proxy.py'],
     diagram: `classDiagram
   class CatalogAdmin {
@@ -433,7 +465,8 @@ export const PATTERNS: PatternDoc[] = [
     side: 'Backend',
     summary: 'Presupuesto económico, medio o premium.',
     problem: 'Según el dinero disponible hay que elegir productos distintos sin pasarse del presupuesto.',
-    solution: 'Cada BudgetStrategy decide qué producto elegir de cada categoría. El límite entre estrategias viene del .env.',
+    solution:
+      'Cada BudgetStrategy decide qué producto elegir de cada categoría. El límite entre estrategias viene del .env.',
     files: ['app/patterns/strategies/budget_strategies.py'],
     diagram: `classDiagram
   class BudgetStrategy {
@@ -456,7 +489,8 @@ export const PATTERNS: PatternDoc[] = [
     side: 'Backend',
     summary: 'Lumi entiende los mensajes con Gemini o con reglas en español.',
     problem: 'La IA puede no estar disponible (sin clave, sin cuota o caída) y Lumi debe seguir funcionando.',
-    solution: 'IntentInterpreter es la estrategia. GeminiIntentInterpreter usa la IA y RuleBasedInterpreter reglas propias. Se elige con AI_TEXT_PROVIDER.',
+    solution:
+      'IntentInterpreter es la estrategia. GeminiIntentInterpreter usa la IA y RuleBasedInterpreter reglas propias. Se elige con AI_TEXT_PROVIDER.',
     files: ['app/patterns/assistant/interpreters.py'],
     diagram: `classDiagram
   class IntentInterpreter {
@@ -504,7 +538,8 @@ export const PATTERNS: PatternDoc[] = [
     side: 'Backend',
     summary: 'La foto pasa por formato, tamaño, resolución y contenido.',
     problem: 'Hay varias reglas para aceptar una foto y cada una tiene su propio mensaje de error.',
-    solution: 'Cada ImageValidator revisa una cosa y pasa la foto al siguiente con then(). Si algo falla, corta la cadena con un mensaje claro.',
+    solution:
+      'Cada ImageValidator revisa una cosa y pasa la foto al siguiente con then(). Si algo falla, corta la cadena con un mensaje claro.',
     files: ['app/patterns/validators/image_validators.py'],
     diagram: `classDiagram
   class ImageValidator {
@@ -530,7 +565,8 @@ export const PATTERNS: PatternDoc[] = [
     side: 'Backend',
     summary: 'Si Gemini falla, el mensaje pasa a las reglas.',
     problem: 'Un error de la IA no debería dejar al usuario sin respuesta.',
-    solution: 'FallbackInterpreter intenta con el primer intérprete y, ante un error de IA, pasa la petición al siguiente.',
+    solution:
+      'FallbackInterpreter intenta con el primer intérprete y, ante un error de IA, pasa la petición al siguiente.',
     files: ['app/patterns/assistant/interpreters.py'],
     diagram: `sequenceDiagram
   participant U as Usuario
@@ -551,7 +587,8 @@ export const PATTERNS: PatternDoc[] = [
     side: 'Frontend',
     summary: 'Deshacer y rehacer en el editor 3D.',
     problem: 'Cada cambio del editor (agregar, mover, rotar, pintar, agrupar) debe poder revertirse en orden.',
-    solution: 'Cada acción es un objeto con execute() y undo(). CommandHistory guarda las pilas de deshacer y rehacer con un límite configurable.',
+    solution:
+      'Cada acción es un objeto con execute() y undo(). CommandHistory guarda las pilas de deshacer y rehacer con un límite configurable.',
     files: ['src/editor/commands.ts'],
     diagram: `classDiagram
   class Command {
@@ -585,7 +622,8 @@ export const PATTERNS: PatternDoc[] = [
     side: 'Backend',
     summary: 'Versiones guardadas de cada escena 3D.',
     problem: 'El usuario quiere guardar puntos de su diseño y volver a ellos sin exponer cómo se guarda la escena.',
-    solution: 'ProjectSceneOriginator crea y restaura SceneMemento. SceneVersionRepository es el cuidador y conserva solo las últimas versiones.',
+    solution:
+      'ProjectSceneOriginator crea y restaura SceneMemento. SceneVersionRepository es el cuidador y conserva solo las últimas versiones.',
     files: ['app/patterns/mementos/scene_memento.py', 'app/repositories/project_repository.py'],
     diagram: `classDiagram
   class ProjectSceneOriginator {
@@ -610,9 +648,16 @@ export const PATTERNS: PatternDoc[] = [
     category: 'Comportamiento',
     side: 'Frontend',
     summary: 'Avisos, editor y Lumi se comunican sin conocerse.',
-    problem: 'Muchas partes reaccionan a lo mismo: el lienzo y los paneles al cambio de escena, cualquier pantalla a un aviso, el editor a una orden de Lumi.',
-    solution: 'notificationCenter, editorStore, chatStore y assistantBus permiten suscribirse y publicar. Lumi publica sus acciones y quien puede ejecutarlas las atiende.',
-    files: ['src/services/notificationCenter.ts', 'src/editor/editorStore.ts', 'src/assistant/assistantBus.ts', 'src/assistant/chatStore.ts'],
+    problem:
+      'Muchas partes reaccionan a lo mismo: el lienzo y los paneles al cambio de escena, cualquier pantalla a un aviso, el editor a una orden de Lumi.',
+    solution:
+      'notificationCenter, editorStore, chatStore y assistantBus permiten suscribirse y publicar. Lumi publica sus acciones y quien puede ejecutarlas las atiende.',
+    files: [
+      'src/services/notificationCenter.ts',
+      'src/editor/editorStore.ts',
+      'src/assistant/assistantBus.ts',
+      'src/assistant/chatStore.ts',
+    ],
     diagram: `classDiagram
   class AssistantBus {
     -handlers Set
@@ -638,7 +683,8 @@ export const PATTERNS: PatternDoc[] = [
     category: 'Comportamiento',
     side: 'Backend',
     summary: 'Borrador, en diseño y terminado.',
-    problem: 'Lo que se puede hacer con un proyecto depende de su estado. Un proyecto terminado no se puede editar hasta reabrirlo.',
+    problem:
+      'Lo que se puede hacer con un proyecto depende de su estado. Un proyecto terminado no se puede editar hasta reabrirlo.',
     solution: 'Cada estado es una clase que decide qué acciones permite. ProjectLifecycle delega en el estado actual.',
     files: ['app/patterns/states/project_states.py', 'app/patterns/states/redesign_states.py'],
     diagram: `stateDiagram-v2
@@ -657,7 +703,8 @@ export const PATTERNS: PatternDoc[] = [
     category: 'Comportamiento',
     side: 'Backend',
     summary: 'Reportes CSV de usuarios y proyectos.',
-    problem: 'Todos los reportes siguen los mismos pasos (encabezados, filas, formato, nombre del archivo) y solo cambia qué datos traen.',
+    problem:
+      'Todos los reportes siguen los mismos pasos (encabezados, filas, formato, nombre del archivo) y solo cambia qué datos traen.',
     solution: 'ReportExporter.export() fija el algoritmo y cada reporte implementa columns(), records() y to_row().',
     files: ['app/patterns/reports/report_exporters.py'],
     diagram: `classDiagram
@@ -681,8 +728,10 @@ export const PATTERNS: PatternDoc[] = [
     category: 'Comportamiento',
     side: 'Backend',
     summary: 'Recorre la escena para calcular el presupuesto real.',
-    problem: 'El presupuesto debe calcularse en el servidor con los precios de la base de datos, recorriendo habitación, grupos y muebles.',
-    solution: 'Cada SceneVisitor define visit_room(), visit_group() y visit_item(). BudgetVisitor suma precios y FurnitureIdCollector reúne los muebles usados.',
+    problem:
+      'El presupuesto debe calcularse en el servidor con los precios de la base de datos, recorriendo habitación, grupos y muebles.',
+    solution:
+      'Cada SceneVisitor define visit_room(), visit_group() y visit_item(). BudgetVisitor suma precios y FurnitureIdCollector reúne los muebles usados.',
     files: ['app/patterns/visitors/scene_visitors.py'],
     diagram: `classDiagram
   class SceneVisitor {
@@ -707,7 +756,8 @@ export const PATTERNS: PatternDoc[] = [
     side: 'Backend',
     summary: 'Los servicios piden y guardan datos sin escribir SQL.',
     problem: 'Mezclar consultas SQL con la lógica de negocio hace el código difícil de leer y de probar.',
-    solution: 'BaseRepository ofrece get, list, add y delete. Cada repositorio agrega consultas propias como search() o daily_counts().',
+    solution:
+      'BaseRepository ofrece get, list, add y delete. Cada repositorio agrega consultas propias como search() o daily_counts().',
     files: ['app/repositories/'],
     diagram: `classDiagram
   class BaseRepository~T~ {

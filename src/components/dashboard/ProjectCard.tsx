@@ -1,15 +1,10 @@
 import { Box } from 'lucide-react';
 import { useState } from 'react';
-import type { ProjectStatus, ProjectSummary } from '../../types/dashboard';
+import { STATUS_LABELS } from '../../projects/projectStatus';
+import type { ProjectSummary } from '../../types/dashboard';
 import { formatCurrency } from '../../utils/format';
 import { resolveMediaUrl } from '../../utils/media';
 import { ImageProxy } from '../ImageProxy';
-
-export const STATUS_LABELS: Record<ProjectStatus, string> = {
-  draft: 'Borrador',
-  in_design: 'En diseño',
-  finished: 'Terminado',
-};
 
 export function ProjectCard({ project, delay }: { project: ProjectSummary; delay: number }) {
   const [split, setSplit] = useState(50);
@@ -27,7 +22,10 @@ export function ProjectCard({ project, delay }: { project: ProjectSummary; delay
         onPointerLeave={() => setSplit(50)}
       >
         {project.after_image_url || project.before_image_url ? (
-          <ImageProxy src={resolveMediaUrl(project.after_image_url ?? project.before_image_url)} alt={`Diseño de ${project.name}`} />
+          <ImageProxy
+            src={resolveMediaUrl(project.after_image_url ?? project.before_image_url)}
+            alt={`Diseño de ${project.name}`}
+          />
         ) : (
           <div className="thumb-scene" aria-hidden="true">
             <Box size={34} strokeWidth={1.5} />

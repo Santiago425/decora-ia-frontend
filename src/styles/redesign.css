@@ -42,7 +42,10 @@
   border: 2px dashed var(--sand-300);
   border-radius: var(--radius-xl);
   background: radial-gradient(circle at 50% 30%, var(--white), var(--sand-50));
-  transition: border-color 0.2s, background 0.2s, transform 0.2s;
+  transition:
+    border-color 0.2s,
+    background 0.2s,
+    transform 0.2s;
 }
 
 .dropzone.dragging {
@@ -177,7 +180,9 @@
   border: 3px solid transparent;
   border-radius: var(--radius-md);
   background: var(--sand-200);
-  transition: border-color 0.2s, transform 0.2s;
+  transition:
+    border-color 0.2s,
+    transform 0.2s;
 }
 
 .style-option .image-proxy {
@@ -354,7 +359,13 @@
 .progress-scan {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, transparent 0%, rgba(196, 112, 79, 0.35) 48%, rgba(255, 255, 255, 0.7) 50%, transparent 52%);
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(196, 112, 79, 0.35) 48%,
+    rgba(255, 255, 255, 0.7) 50%,
+    transparent 52%
+  );
   background-size: 100% 220%;
   animation: scan 2.4s ease-in-out infinite;
 }

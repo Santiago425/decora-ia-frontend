@@ -7,7 +7,12 @@ interface BrowserRecognition {
   lang: string;
   interimResults: boolean;
   continuous: boolean;
-  onresult: ((event: { resultIndex: number; results: ArrayLike<ArrayLike<{ transcript: string }> & { isFinal: boolean }> }) => void) | null;
+  onresult:
+    | ((event: {
+        resultIndex: number;
+        results: ArrayLike<ArrayLike<{ transcript: string }> & { isFinal: boolean }>;
+      }) => void)
+    | null;
   onerror: ((event: { error: string }) => void) | null;
   onend: (() => void) | null;
   start(): void;
@@ -24,14 +29,20 @@ const VOICE_ERRORS: Record<string, string> = {
   network: 'El reconocimiento de voz necesita conexión a internet.',
 };
 
+declare global {
+  interface Window {
+    SpeechRecognition?: RecognitionConstructor;
+    webkitSpeechRecognition?: RecognitionConstructor;
+  }
+}
+
 // Adapter: hides the different browser speech APIs behind one small interface for listening and speaking.
 export class VoiceAdapter {
   readonly #Recognition: RecognitionConstructor | undefined;
   #recognition: BrowserRecognition | null = null;
 
   constructor(private readonly lang: string) {
-    const scope = window as unknown as { SpeechRecognition?: RecognitionConstructor; webkitSpeechRecognition?: RecognitionConstructor };
-    this.#Recognition = scope.SpeechRecognition ?? scope.webkitSpeechRecognition;
+    this.#Recognition = window.SpeechRecognition ?? window.webkitSpeechRecognition;
   }
 
   get canListen(): boolean {
@@ -43,7 +54,8 @@ export class VoiceAdapter {
   }
 
   listen(onResult: (result: RecognitionResult) => void, onError: (message: string) => void, onEnd: () => void): void {
-    if (!this.#Recognition) return onError('Tu navegador no permite dictar por voz. Prueba con Chrome o escribe tu mensaje.');
+    if (!this.#Recognition)
+      return onError('Tu navegador no permite dictar por voz. Prueba con Chrome o escribe tu mensaje.');
     this.stopListening();
     const recognition = new this.#Recognition();
     recognition.lang = this.lang;
@@ -53,7 +65,8 @@ export class VoiceAdapter {
       const result = event.results[event.results.length - 1];
       onResult({ transcript: Array.from(event.results, (r) => r[0].transcript).join(' '), final: result.isFinal });
     };
-    recognition.onerror = (event) => event.error !== 'aborted' && onError(VOICE_ERRORS[event.error] ?? 'No pude escucharte esta vez.');
+    recognition.onerror = (event) =>
+      event.error !== 'aborted' && onError(VOICE_ERRORS[event.error] ?? 'No pude escucharte esta vez.');
     recognition.onend = () => {
       this.#recognition = null;
       onEnd();

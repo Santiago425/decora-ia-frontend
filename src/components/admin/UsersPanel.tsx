@@ -38,7 +38,9 @@ export function UsersPanel() {
     setSaving(target.id);
     try {
       const updated = await adminService.updateUser(target.id, patch);
-      setData((current) => current && { ...current, items: current.items.map((u) => (u.id === updated.id ? updated : u)) });
+      setData(
+        (current) => current && { ...current, items: current.items.map((u) => (u.id === updated.id ? updated : u)) },
+      );
       notificationCenter.notify(`Actualizaste a ${updated.full_name}`, 'success');
     } catch (e) {
       notificationCenter.notify((e as Error).message, 'error');
@@ -111,7 +113,9 @@ export function UsersPanel() {
                     </select>
                   </td>
                   <td data-label="Proyectos">{user.project_count}</td>
-                  <td data-label="Último ingreso">{user.last_login_at ? formatRelativeTime(user.last_login_at) : 'Nunca'}</td>
+                  <td data-label="Último ingreso">
+                    {user.last_login_at ? formatRelativeTime(user.last_login_at) : 'Nunca'}
+                  </td>
                   <td data-label="Activo">
                     <label className="toggle" title={isMe ? 'No puedes desactivar tu propia cuenta' : undefined}>
                       <input
@@ -129,18 +133,30 @@ export function UsersPanel() {
             })}
           </tbody>
         </table>
-        {data && data.items.length === 0 && <p className="panel-empty table-empty">No hay usuarios con ese nombre o correo.</p>}
+        {data && data.items.length === 0 && (
+          <p className="panel-empty table-empty">No hay usuarios con ese nombre o correo.</p>
+        )}
       </div>
 
       {pages > 1 && (
         <nav className="pager" aria-label="Páginas">
-          <button className="icon-button" disabled={page <= 1} onClick={() => setPage(page - 1)} aria-label="Página anterior">
+          <button
+            className="icon-button"
+            disabled={page <= 1}
+            onClick={() => setPage(page - 1)}
+            aria-label="Página anterior"
+          >
             <ChevronLeft size={18} />
           </button>
           <span>
             Página {page} de {pages}
           </span>
-          <button className="icon-button" disabled={page >= pages} onClick={() => setPage(page + 1)} aria-label="Página siguiente">
+          <button
+            className="icon-button"
+            disabled={page >= pages}
+            onClick={() => setPage(page + 1)}
+            aria-label="Página siguiente"
+          >
             <ChevronRight size={18} />
           </button>
         </nav>

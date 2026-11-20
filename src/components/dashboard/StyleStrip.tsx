@@ -15,7 +15,9 @@ export function StyleStrip() {
           <div className="style-tile-text">
             <strong>{style.name}</strong>
             <span className="style-swatches">
-              {style.palettes[0]?.colors.slice(0, 5).map((color) => <i key={color} style={{ background: color }} />)}
+              {style.palettes[0]?.colors.slice(0, 5).map((color) => (
+                <i key={color} style={{ background: color }} />
+              ))}
             </span>
           </div>
         </Link>

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { ProjectAction, ProjectDetail } from '../../types/project';
 import { formatCurrency } from '../../utils/format';
-import { STATUS_LABELS } from '../dashboard/ProjectCard';
+import { STATUS_LABELS } from '../../projects/projectStatus';
 import type { CameraView } from './EditorCanvas';
 
 export type SaveState = 'saved' | 'pending' | 'saving' | 'error';
@@ -78,18 +78,38 @@ export function EditorToolbar(props: EditorToolbarProps) {
 
       <div className="toolbar-tools">
         <div className="tool-group" role="group" aria-label="Historial">
-          <button className="tool-button" onClick={props.onUndo} disabled={!props.canUndo} title={props.undoLabel ? `Deshacer: ${props.undoLabel} (Ctrl + Z)` : 'Deshacer'}>
+          <button
+            className="tool-button"
+            onClick={props.onUndo}
+            disabled={!props.canUndo}
+            title={props.undoLabel ? `Deshacer: ${props.undoLabel} (Ctrl + Z)` : 'Deshacer'}
+          >
             <Undo2 size={18} /> <span>Deshacer</span>
           </button>
-          <button className="tool-button" onClick={props.onRedo} disabled={!props.canRedo} title={props.redoLabel ? `Rehacer: ${props.redoLabel} (Ctrl + Y)` : 'Rehacer'}>
+          <button
+            className="tool-button"
+            onClick={props.onRedo}
+            disabled={!props.canRedo}
+            title={props.redoLabel ? `Rehacer: ${props.redoLabel} (Ctrl + Y)` : 'Rehacer'}
+          >
             <Redo2 size={18} /> <span>Rehacer</span>
           </button>
         </div>
         <div className="tool-group" role="group" aria-label="Vista">
-          <button className="tool-button" aria-pressed={props.view === 'perspective'} onClick={() => props.onView('perspective')} title="Vista 3D">
+          <button
+            className="tool-button"
+            aria-pressed={props.view === 'perspective'}
+            onClick={() => props.onView('perspective')}
+            title="Vista 3D"
+          >
             <Box size={18} /> <span>3D</span>
           </button>
-          <button className="tool-button" aria-pressed={props.view === 'top'} onClick={() => props.onView('top')} title="Vista desde arriba">
+          <button
+            className="tool-button"
+            aria-pressed={props.view === 'top'}
+            onClick={() => props.onView('top')}
+            title="Vista desde arriba"
+          >
             <Square size={18} /> <span>Planta</span>
           </button>
           <button className="tool-button" onClick={props.onCapture} title="Descargar imagen">

@@ -11,8 +11,19 @@ import type { AssistantAction, ChatMessage } from '../../types/assistant';
 import { LumiOrb } from './LumiOrb';
 
 const SUGGESTIONS: Record<string, string[]> = {
-  editor: ['Agrega una planta', 'Pinta las paredes verde salvia', 'Aplica el estilo japandi', 'Más luz, por favor', 'Deshaz el último cambio'],
-  default: ['Crea una sala nórdica', '¿Qué estilo me recomiendas para un dormitorio?', 'Quiero rediseñar una foto de mi cocina', '¿Cuánto llevo de presupuesto?'],
+  editor: [
+    'Agrega una planta',
+    'Pinta las paredes verde salvia',
+    'Aplica el estilo japandi',
+    'Más luz, por favor',
+    'Deshaz el último cambio',
+  ],
+  default: [
+    'Crea una sala nórdica',
+    '¿Qué estilo me recomiendas para un dormitorio?',
+    'Quiero rediseñar una foto de mi cocina',
+    '¿Cuánto llevo de presupuesto?',
+  ],
 };
 
 const ACTION_LABELS: Record<AssistantAction['type'], string> = {
@@ -32,9 +43,15 @@ const ACTION_LABELS: Record<AssistantAction['type'], string> = {
 };
 
 function richText(text: string): ReactNode {
-  return text.split(/(\*\*[^*]+\*\*)/g).map((part, index) =>
-    part.startsWith('**') ? <strong key={index}>{part.slice(2, -2)}</strong> : <Fragment key={index}>{part}</Fragment>,
-  );
+  return text
+    .split(/(\*\*[^*]+\*\*)/g)
+    .map((part, index) =>
+      part.startsWith('**') ? (
+        <strong key={index}>{part.slice(2, -2)}</strong>
+      ) : (
+        <Fragment key={index}>{part}</Fragment>
+      ),
+    );
 }
 
 function Bubble({ message }: { message: ChatMessage }) {
@@ -46,7 +63,12 @@ function Bubble({ message }: { message: ChatMessage }) {
         {message.actions.length > 0 && (
           <div className="bubble-actions">
             {message.actions.map((action, index) => (
-              <span key={index}>✓ {action.type === 'add_furniture' && action.params.name ? `Agregó ${action.params.name}` : ACTION_LABELS[action.type]}</span>
+              <span key={index}>
+                ✓{' '}
+                {action.type === 'add_furniture' && action.params.name
+                  ? `Agregó ${action.params.name}`
+                  : ACTION_LABELS[action.type]}
+              </span>
             ))}
           </div>
         )}
@@ -140,7 +162,12 @@ export function ChatPanel({ compact = false, onClose }: { compact?: boolean; onC
             </button>
           )}
           {chat.messages.length > 0 && (
-            <button className="icon-button" onClick={() => chatStore.clear()} title="Borrar conversación" aria-label="Borrar conversación">
+            <button
+              className="icon-button"
+              onClick={() => chatStore.clear()}
+              title="Borrar conversación"
+              aria-label="Borrar conversación"
+            >
               <Trash2 size={16} />
             </button>
           )}
@@ -156,7 +183,9 @@ export function ChatPanel({ compact = false, onClose }: { compact?: boolean; onC
         {chat.loaded && chat.messages.length === 0 && (
           <li className="chat-intro">
             <LumiOrb size={56} />
-            <h3>Hola{firstName && `, ${firstName}`}. Soy {config.assistantName}.</h3>
+            <h3>
+              Hola{firstName && `, ${firstName}`}. Soy {config.assistantName}.
+            </h3>
             <p>
               {context.page === 'editor'
                 ? 'Dime qué quieres cambiar en tu habitación y lo hago por ti.'

@@ -53,7 +53,13 @@ export default function Dashboard() {
         <>
           <section className="stats-grid" aria-label="Resumen">
             <StatCard icon={FolderHeart} label="Proyectos creados" value={data.stats.projects} tone="sage" delay={0} />
-            <StatCard icon={WandSparkles} label="Rediseños generados" value={data.stats.redesigns} tone="terracotta" delay={80} />
+            <StatCard
+              icon={WandSparkles}
+              label="Rediseños generados"
+              value={data.stats.redesigns}
+              tone="terracotta"
+              delay={80}
+            />
             <StatCard
               icon={Crown}
               label="Estilo favorito"
@@ -103,7 +109,12 @@ export default function Dashboard() {
             {data.recent_projects.length ? (
               <div className="project-grid">
                 {data.recent_projects.map((project, index) => (
-                  <Link key={project.id} to={`/editor/${project.id}`} className="project-link" aria-label={`Abrir ${project.name} en el editor 3D`}>
+                  <Link
+                    key={project.id}
+                    to={`/editor/${project.id}`}
+                    className="project-link"
+                    aria-label={`Abrir ${project.name} en el editor 3D`}
+                  >
                     <ProjectCard project={project} delay={index * 70} />
                   </Link>
                 ))}

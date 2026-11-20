@@ -1,4 +1,13 @@
-import { BookOpen, Box, FolderHeart, LayoutDashboard, ShieldCheck, Sparkles, WandSparkles, type LucideIcon } from 'lucide-react';
+import {
+  BookOpen,
+  Box,
+  FolderHeart,
+  LayoutDashboard,
+  ShieldCheck,
+  Sparkles,
+  WandSparkles,
+  type LucideIcon,
+} from 'lucide-react';
 import { config } from './config';
 import type { UserRole } from './types/auth';
 

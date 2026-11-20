@@ -18,15 +18,30 @@ const project = (overrides: Partial<ProjectSummary>): ProjectSummary => ({
 });
 
 const projects = [
-  project({ name: 'Sala luminosa', style_name: 'Nórdico', estimated_budget: '500', updated_at: '2026-10-03T00:00:00Z' }),
-  project({ name: 'Cocina', status: 'finished', redesign_count: 2, estimated_budget: '900', updated_at: '2026-10-02T00:00:00Z' }),
+  project({
+    name: 'Sala luminosa',
+    style_name: 'Nórdico',
+    estimated_budget: '500',
+    updated_at: '2026-10-03T00:00:00Z',
+  }),
+  project({
+    name: 'Cocina',
+    status: 'finished',
+    redesign_count: 2,
+    estimated_budget: '900',
+    updated_at: '2026-10-02T00:00:00Z',
+  }),
   project({ name: 'Baño', status: 'in_design', estimated_budget: '100', updated_at: '2026-10-05T00:00:00Z' }),
 ];
 
 describe('applyQuery', () => {
   it('sorts by the chosen strategy', () => {
     expect(applyQuery(projects, DEFAULT_QUERY).map((p) => p.name)).toEqual(['Baño', 'Sala luminosa', 'Cocina']);
-    expect(applyQuery(projects, { ...DEFAULT_QUERY, sort: 'budget' }).map((p) => p.name)).toEqual(['Cocina', 'Sala luminosa', 'Baño']);
+    expect(applyQuery(projects, { ...DEFAULT_QUERY, sort: 'budget' }).map((p) => p.name)).toEqual([
+      'Cocina',
+      'Sala luminosa',
+      'Baño',
+    ]);
     expect(applyQuery(projects, { ...DEFAULT_QUERY, sort: 'name' })[0].name).toBe('Baño');
   });
 

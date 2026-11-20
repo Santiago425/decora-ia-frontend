@@ -10,7 +10,15 @@ export function StyleUsageChart({ data }: { data: StyleUsage[] }) {
       <div className="style-chart-ring">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
-            <Pie data={data} dataKey="count" nameKey="name" innerRadius="64%" outerRadius="100%" paddingAngle={3} stroke="none">
+            <Pie
+              data={data}
+              dataKey="count"
+              nameKey="name"
+              innerRadius="64%"
+              outerRadius="100%"
+              paddingAngle={3}
+              stroke="none"
+            >
               {data.map((item, index) => (
                 <Cell key={item.slug} fill={COLORS[index % COLORS.length]} />
               ))}
