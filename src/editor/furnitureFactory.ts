@@ -565,6 +565,220 @@ export class WindowFactory extends FurnitureFactory {
   }
 }
 
+export class PoufFactory extends FurnitureFactory {
+  protected buildParts(w: number, d: number, h: number, color: string): Part[] {
+    if (w / d < 1.4) {
+      const radius = Math.min(w, d) / 2;
+      return [
+        cylinder(radius * 0.96, h * 0.85, radius, [0, (h * 0.85) / 2, 0], color, 'seat'),
+        cylinder(radius * 0.9, h * 0.15, radius * 0.96, [0, h * 0.925, 0], lighten(color, 0.08), 'seat'),
+      ];
+    }
+    const legHeight = Math.min(0.12, h * 0.3);
+    return [
+      ...legs(w, d, legHeight, 0.022, darken(color, LEG_COLOR_SHIFT)),
+      box([w, h - legHeight, d], [0, legHeight + (h - legHeight) / 2, 0], color, 'seat'),
+      box([w * 0.98, 0.012, d * 0.96], [0, h - 0.004, 0], darken(color, 0.06), 'decor'),
+    ];
+  }
+}
+
+export class SideTableFactory extends FurnitureFactory {
+  protected buildParts(w: number, d: number, h: number, color: string): Part[] {
+    const radius = Math.min(w, d) / 2;
+    const top = 0.03;
+    const stem = darken(color, 0.3);
+    return [
+      cylinder(radius, top, radius, [0, h - top / 2, 0], color, 'top'),
+      cylinder(0.025, h - top, 0.03, [0, (h - top) / 2, 0], stem, 'leg'),
+      cylinder(radius * 0.55, 0.02, radius * 0.6, [0, 0.01, 0], stem, 'leg'),
+    ];
+  }
+}
+
+export class StoolFactory extends FurnitureFactory {
+  protected buildParts(w: number, d: number, h: number, color: string): Part[] {
+    const radius = Math.min(w, d) / 2;
+    const seat = 0.05;
+    const legColor = darken(color, 0.25);
+    const ring = h * 0.35;
+    return [
+      ...legs(w * 0.85, d * 0.85, h - seat, 0.018, legColor, 0.03),
+      cylinder(radius * 0.8, 0.02, radius * 0.8, [0, ring, 0], legColor, 'leg'),
+      cylinder(radius, seat, radius * 0.92, [0, h - seat / 2, 0], color, 'seat'),
+    ];
+  }
+}
+
+/** Center height of pieces that hang on the wall, such as art or a TV. */
+const wallCenter = (h: number) => Math.max(h / 2 + 0.3, config.editor.wallArtCenter);
+
+export class ArtFactory extends FurnitureFactory {
+  protected buildParts(w: number, d: number, h: number, color: string): Part[] {
+    const center = wallCenter(h);
+    const panels = w / h > 2 ? 3 : 1;
+    const gap = panels > 1 ? 0.05 : 0;
+    const panelWidth = (w - gap * (panels - 1)) / panels;
+    const frame = Math.min(0.03, panelWidth * 0.06);
+    const frameColor = cssVar('--scene-frame') || darken(color, 0.6);
+    const parts: Part[] = [];
+    for (let i = 0; i < panels; i++) {
+      const x = -w / 2 + panelWidth / 2 + i * (panelWidth + gap);
+      parts.push(box([panelWidth, h, d * 0.7], [x, center, -d * 0.15], frameColor, 'body'));
+      parts.push(
+        box([panelWidth - frame * 2, h - frame * 2, 0.008], [x, center, d / 2 - 0.004], lighten(color, 0.55), 'top'),
+      );
+      // Two soft color blocks make it read as a painting, not a plain board.
+      parts.push(
+        box(
+          [(panelWidth - frame * 2) * 0.62, (h - frame * 2) * 0.5, 0.006],
+          [x - panelWidth * 0.08, center + h * 0.1, d / 2],
+          color,
+          'decor',
+        ),
+        box(
+          [(panelWidth - frame * 2) * 0.35, (h - frame * 2) * 0.3, 0.006],
+          [x + panelWidth * 0.18, center - h * 0.18, d / 2 + 0.001],
+          darken(color, 0.25),
+          'decor',
+        ),
+      );
+    }
+    return parts;
+  }
+}
+
+export class CurtainFactory extends FurnitureFactory {
+  protected buildParts(w: number, d: number, h: number, color: string): Part[] {
+    const rod = cssVar('--scene-handle') || darken(color, 0.6);
+    const folds = Math.max(4, Math.round(w / 0.16));
+    const panel = w / 2;
+    const parts: Part[] = [metal(box([w + 0.12, 0.025, 0.025], [0, h - 0.02, 0], rod, 'leg'))];
+    for (const side of [-1, 1]) {
+      for (let i = 0; i < folds / 2; i++) {
+        const x = side * (w / 2 - (panel / (folds / 2)) * (i + 0.5));
+        const z = (i % 2 ? 0.25 : -0.25) * d;
+        parts.push({
+          ...box(
+            [panel / (folds / 2) + 0.01, h - 0.05, d * 0.45],
+            [x, (h - 0.05) / 2, z],
+            i % 2 ? darken(color, 0.07) : color,
+            'body',
+          ),
+          roughness: 1,
+        });
+      }
+    }
+    return parts;
+  }
+}
+
+export class TvFactory extends FurnitureFactory {
+  protected buildParts(w: number, d: number, h: number, color: string): Part[] {
+    const center = wallCenter(h);
+    return [
+      box([w, h, d * 0.6], [0, center, -d * 0.2], color, 'body'),
+      {
+        ...box(
+          [w - 0.02, h - 0.02, 0.004],
+          [0, center, d * 0.1 + 0.002],
+          cssVar('--scene-screen') || darken(color, 0.4),
+          'glass',
+        ),
+        roughness: 0.15,
+        metalness: 0.4,
+      },
+    ];
+  }
+}
+
+export class VaseFactory extends FurnitureFactory {
+  protected buildParts(w: number, d: number, h: number, color: string): Part[] {
+    const radius = Math.min(w, d) / 2;
+    const body = h <= 0.7 ? h : h * 0.45;
+    const parts: Part[] = [
+      { ...cylinder(radius * 0.45, body * 0.7, radius * 0.8, [0, body * 0.35, 0], color, 'body'), roughness: 0.6 },
+      { ...cylinder(radius * 0.3, body * 0.3, radius * 0.45, [0, body * 0.85, 0], color, 'body'), roughness: 0.6 },
+    ];
+    if (h > 0.7) {
+      const stems = darken(cssVar('--scene-pot') || color, 0.45);
+      parts.push(
+        cylinder(0.008, h - body, 0.008, [0, body + (h - body) / 2, 0], stems, 'foliage'),
+        sphere(radius * 0.55, [radius * 0.25, h - radius * 0.5, 0], lighten(stems, 0.35), 'foliage'),
+        sphere(radius * 0.4, [-radius * 0.3, h - radius * 1.1, radius * 0.1], lighten(stems, 0.25), 'foliage'),
+      );
+    }
+    return parts;
+  }
+}
+
+export class BasketFactory extends FurnitureFactory {
+  protected buildParts(w: number, d: number, h: number, color: string): Part[] {
+    const radius = Math.min(w, d) / 2;
+    const bands = Math.max(2, Math.round(h / 0.12));
+    return [
+      { ...cylinder(radius, h, radius * 0.85, [0, h / 2, 0], color, 'body'), roughness: 1 },
+      ...Array.from({ length: bands }, (_, i): Part => ({
+        ...cylinder(
+          radius * 1.005 - (0.15 * radius * i) / bands,
+          0.015,
+          radius * 1.005 - (0.15 * radius * (i + 1)) / bands,
+          [0, h - (h / bands) * (i + 0.5), 0],
+          darken(color, 0.15),
+          'decor',
+        ),
+        roughness: 1,
+      })),
+    ];
+  }
+}
+
+export class TowelRackFactory extends FurnitureFactory {
+  protected buildParts(w: number, d: number, h: number, color: string): Part[] {
+    const bars = Math.max(2, Math.round(h / 0.3));
+    const side = 0.025;
+    const parts: Part[] = [
+      metal(box([side, h, side], [-w / 2 + side / 2, h / 2, 0], color, 'leg')),
+      metal(box([side, h, side], [w / 2 - side / 2, h / 2, 0], color, 'leg')),
+    ];
+    for (let i = 1; i <= bars; i++) {
+      parts.push(metal(box([w, 0.018, 0.018], [0, (h / (bars + 0.5)) * i, (i % 2 ? 1 : -1) * d * 0.2], color, 'top')));
+    }
+    parts.push({
+      ...box(
+        [w * 0.7, h * 0.32, 0.02],
+        [0, (h / (bars + 0.5)) * bars - h * 0.16, d * 0.2 + 0.015],
+        cssVar('--scene-towel') || lighten(color, 0.7),
+        'decor',
+      ),
+      roughness: 1,
+    });
+    return parts;
+  }
+}
+
+export class ApplianceFactory extends FurnitureFactory {
+  protected buildParts(w: number, d: number, h: number, color: string): Part[] {
+    const front = d / 2;
+    const door = Math.min(w, h) * 0.62;
+    return [
+      { ...box([w, h, d], [0, h / 2, 0], color, 'body'), roughness: 0.35 },
+      box([w * 0.96, 0.1, 0.01], [0, h - 0.07, front], darken(color, 0.12), 'decor'),
+      {
+        ...box(
+          [door, door, 0.02],
+          [0, h * 0.45, front + 0.005],
+          cssVar('--scene-screen') || darken(color, 0.55),
+          'glass',
+        ),
+        roughness: 0.1,
+        metalness: 0.3,
+      },
+      metal(box([door * 0.92, door * 0.92, 0.012], [0, h * 0.45, front], lighten(color, 0.1), 'decor')),
+    ];
+  }
+}
+
 const FACTORIES: Record<string, FurnitureFactory> = {
   sofa: new SofaFactory(),
   chair: new ChairFactory(),
@@ -588,6 +802,16 @@ const FACTORIES: Record<string, FurnitureFactory> = {
   tv_stand: new TvStandFactory(),
   door: new DoorFactory(),
   window: new WindowFactory(),
+  pouf: new PoufFactory(),
+  side_table: new SideTableFactory(),
+  stool: new StoolFactory(),
+  art: new ArtFactory(),
+  curtain: new CurtainFactory(),
+  tv: new TvFactory(),
+  vase: new VaseFactory(),
+  basket: new BasketFactory(),
+  towel_rack: new TowelRackFactory(),
+  appliance: new ApplianceFactory(),
 };
 
 const fallback = new BoxFactory();

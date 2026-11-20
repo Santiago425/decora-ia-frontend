@@ -63,6 +63,13 @@ export interface FurnitureCategory {
   icon: string;
   shape: string;
   room_types: string[];
+  /** False for pieces that hang on the wall, such as art, curtains or a TV. */
+  blocks_floor?: boolean;
+}
+
+export interface ColorOption {
+  name: string;
+  hex: string;
 }
 
 export interface FurnitureItem {
@@ -75,6 +82,9 @@ export interface FurnitureItem {
   height: number;
   default_color: string;
   model_url: string | null;
+  materials?: string;
+  color_options?: ColorOption[];
+  finish_options?: string[];
   category: FurnitureCategory;
 }
 
@@ -87,6 +97,7 @@ export interface FurnitureAddon {
   description: string;
   price: string;
   visual: AddonVisual;
+  icon?: string;
   color_hex: string | null;
   categories: string[];
 }

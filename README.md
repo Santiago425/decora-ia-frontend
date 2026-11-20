@@ -206,6 +206,7 @@ Todas están documentadas en [`.env.example`](.env.example) y se leen en un úni
 | `VITE_EDITOR_CAPTURE_QUALITY`                                                            | Calidad JPEG de la vista 3D que se envía para crear la foto real                       |
 | `VITE_EDITOR_MAX_SCENE_LIGHTS`                                                           | Cuántas ventanas y lámparas dan luz propia a la vez en el editor 3D                    |
 | `VITE_EDITOR_WINDOW_SILL`                                                                | Altura desde el piso a la que empiezan las ventanas en el editor 3D                    |
+| `VITE_EDITOR_WALL_ART_CENTER`                                                            | Altura del centro de los cuadros y televisores colgados en la pared                    |
 | `VITE_ROOM_SIZE_PRESETS`                                                                 | Tamaños rápidos del cuarto al crear un proyecto 3D                                     |
 | `VITE_EDITOR_RESIZE_MIN_FACTOR` / `VITE_EDITOR_RESIZE_MAX_FACTOR`                        | Cuánto puede encogerse o crecer un mueble respecto a su tamaño de catálogo             |
 | `VITE_AUTH_IMAGE_URL`, `VITE_SIDEBAR_PHOTO_URL`, `VITE_PAGE_BACKDROP_URL`                | Fotos del login, de la tarjeta del menú y del fondo animado de cada página             |

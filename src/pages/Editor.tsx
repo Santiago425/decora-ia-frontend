@@ -100,15 +100,17 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
   const palette = themeFactoryFor(style, catalog.materials).createAccentPalette();
   const finishes = catalog.materials.filter((m) => m.surface === 'furniture');
   const total = composite.price();
-  const clashing = useMemo(
-    // Windows hang above the floor, so a sofa under a window is not a clash.
-    () =>
-      overlappingIds(
-        state.scene.nodes.filter((node) => !(isWallOpening(node) && node.shape === 'window')),
-        config.editor.overlapTolerance,
+  const clashing = useMemo(() => {
+    const hanging = new Set(catalog.categories.filter((c) => c.blocks_floor === false).map((c) => c.slug));
+    // Windows, art and TVs hang above the floor, so a sofa under them is not a clash.
+    return overlappingIds(
+      state.scene.nodes.filter(
+        (node) =>
+          !(isWallOpening(node) && node.shape === 'window') && !(node.kind === 'item' && hanging.has(node.category)),
       ),
-    [state.scene.nodes],
-  );
+      config.editor.overlapTolerance,
+    );
+  }, [state.scene.nodes, catalog.categories]);
 
   useEffect(() => {
     projectService
