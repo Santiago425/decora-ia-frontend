@@ -1,7 +1,7 @@
 import type { BudgetStatus, ShoppingList } from '../types/shopping';
 import { formatCurrency } from '../utils/format';
 
-export const shoppingPath = (projectId: string) => `/projects/${projectId}/compras`;
+export const shoppingPath = (projectId: string) => `/projects/${projectId}/shopping-list`;
 
 export function budgetMessage(list: Pick<ShoppingList, 'budget_status' | 'budget_remaining'>): string {
   const remaining = Math.abs(list.budget_remaining ?? 0);

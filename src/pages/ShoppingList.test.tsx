@@ -49,9 +49,9 @@ const LIST: ShoppingListData = {
 
 function renderPage() {
   render(
-    <MemoryRouter initialEntries={['/projects/p1/compras']}>
+    <MemoryRouter initialEntries={['/projects/p1/shopping-list']}>
       <Routes>
-        <Route path="/projects/:projectId/compras" element={<ShoppingList />} />
+        <Route path="/projects/:projectId/shopping-list" element={<ShoppingList />} />
       </Routes>
     </MemoryRouter>,
   );
