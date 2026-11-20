@@ -8,6 +8,7 @@ import { useAuth } from '../hooks/useAuth';
 import { notificationCenter } from '../services/notificationCenter';
 import { validateEmail, validateFullName, validatePassword } from '../utils/validation';
 import { Button } from '../components/ui';
+import { preloadHandlers } from '../routes/pages';
 
 type Errors = Partial<Record<'fullName' | 'email' | 'password' | 'confirm', string | null>>;
 
@@ -106,7 +107,10 @@ export default function Register() {
         </Button>
       </form>
       <p className="auth-switch">
-        ¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link>
+        ¿Ya tienes cuenta?{' '}
+        <Link to="/login" {...preloadHandlers('/login')}>
+          Inicia sesión
+        </Link>
       </p>
     </AuthLayout>
   );

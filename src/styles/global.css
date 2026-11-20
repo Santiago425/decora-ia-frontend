@@ -89,6 +89,14 @@ button {
   animation: slide 1.1s ease-in-out infinite;
 }
 
+.page-loading {
+  min-height: 50vh;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  animation: appear 0.2s ease 0.25s forwards;
+}
+
 .welcome-page {
   min-height: 100vh;
   display: grid;
@@ -119,6 +127,12 @@ button {
 .welcome-card p {
   margin: 0 0 8px;
   color: var(--text-2);
+}
+
+@keyframes appear {
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes spin {

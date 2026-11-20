@@ -10,6 +10,7 @@ import { notificationCenter } from '../services/notificationCenter';
 import { projectService } from '../services/projectService';
 import type { NewProject } from '../types/project';
 import { Button, PageHeader, Skeleton } from '../components/ui';
+import { preloadHandlers } from '../routes/pages';
 
 export default function EditorHome() {
   const navigate = useNavigate();
@@ -73,6 +74,7 @@ export default function EditorHome() {
               <Link
                 key={project.id}
                 to={`/editor/${project.id}`}
+                {...preloadHandlers(`/editor/${project.id}`)}
                 className="project-link"
                 aria-label={`Abrir ${project.name} en el editor`}
               >

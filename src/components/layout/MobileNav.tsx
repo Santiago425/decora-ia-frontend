@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { navFor } from '../../navigation';
+import { preloadHandlers } from '../../routes/pages';
 import { Logo } from '../Logo';
 import { Avatar } from './UserBadge';
 
@@ -34,7 +35,7 @@ export function MobileNav() {
       {open && <div className="sheet-backdrop" onClick={() => setOpen(false)} aria-hidden="true" />}
       <div className={`more-sheet ${open ? 'open' : ''}`} role="dialog" aria-label="Más opciones" aria-hidden={!open}>
         {moreItems.map(({ to, label, icon: Icon }) => (
-          <NavLink key={to} to={to} className="sheet-link" tabIndex={open ? 0 : -1}>
+          <NavLink key={to} to={to} className="sheet-link" {...preloadHandlers(to)} tabIndex={open ? 0 : -1}>
             <Icon size={20} />
             {label}
           </NavLink>
@@ -46,7 +47,7 @@ export function MobileNav() {
       </div>
       <nav className="mobile-nav" aria-label="Principal">
         {barItems.map(({ to, label, icon: Icon }) => (
-          <NavLink key={to} to={to} end={to === '/'} className="mobile-link">
+          <NavLink key={to} to={to} end={to === '/'} className="mobile-link" {...preloadHandlers(to)}>
             <Icon size={21} strokeWidth={1.9} />
             <span>{label}</span>
           </NavLink>

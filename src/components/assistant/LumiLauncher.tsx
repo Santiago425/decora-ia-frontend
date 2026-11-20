@@ -1,9 +1,13 @@
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useChat } from '../../assistant/chatStore';
 import { config } from '../../config';
-import { ChatPanel } from './ChatPanel';
+import { lazyWithPreload } from '../../utils/lazyWithPreload';
+import { PageLoading } from '../PageLoading';
 import { LumiOrb } from './LumiOrb';
+
+const ChatPanel = lazyWithPreload(() => import('./ChatPanel').then((m) => ({ default: m.ChatPanel })));
+const warmChat = () => void ChatPanel.preload().catch(() => undefined);
 
 export function LumiLauncher() {
   const location = useLocation();
@@ -22,13 +26,18 @@ export function LumiLauncher() {
     <>
       {open && (
         <div className="lumi-drawer" role="dialog" aria-label={config.assistantName}>
-          <ChatPanel compact onClose={() => setOpen(false)} />
+          <Suspense fallback={<PageLoading />}>
+            <ChatPanel compact onClose={() => setOpen(false)} />
+          </Suspense>
         </div>
       )}
       {!open && (
         <button
           className={`lumi-launcher ${inEditor ? 'in-editor' : ''}`}
           onClick={() => setOpen(true)}
+          onMouseEnter={warmChat}
+          onFocus={warmChat}
+          onTouchStart={warmChat}
           aria-label={`Hablar con ${config.assistantName}`}
         >
           <LumiOrb size={30} active={chat.sending} />
