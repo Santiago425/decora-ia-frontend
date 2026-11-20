@@ -270,8 +270,19 @@
 }
 
 .panel-empty {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   margin: 0;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
   color: var(--text-3);
+}
+
+.panel-empty svg {
+  flex: none;
+  color: var(--primary);
 }
 
 /* Page header */

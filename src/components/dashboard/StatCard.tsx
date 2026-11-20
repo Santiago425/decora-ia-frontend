@@ -7,6 +7,7 @@ interface StatCardProps {
   value: number;
   format?: (value: number) => string;
   text?: string;
+  muted?: boolean;
   tone: 'sage' | 'terracotta' | 'wood' | 'ink';
   delay: number;
 }
@@ -17,6 +18,7 @@ export function StatCard({
   value,
   format = (v) => Math.round(v).toString(),
   text,
+  muted = false,
   tone,
   delay,
 }: StatCardProps) {
@@ -27,7 +29,7 @@ export function StatCard({
         <Icon size={20} />
       </span>
       <span className="stat-label">{label}</span>
-      <strong className="stat-value">{text ?? format(animated)}</strong>
+      <strong className={muted ? 'stat-value muted' : 'stat-value'}>{text ?? format(animated)}</strong>
     </article>
   );
 }

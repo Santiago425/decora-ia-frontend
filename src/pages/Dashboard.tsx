@@ -1,4 +1,4 @@
-import { Crown, FolderHeart, RefreshCw, Wallet, WandSparkles } from 'lucide-react';
+import { Crown, FolderHeart, History, Palette, RefreshCw, Wallet, WandSparkles } from 'lucide-react';
 import { useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { ActivityList } from '../components/dashboard/ActivityList';
@@ -7,14 +7,18 @@ import { QuickActions } from '../components/dashboard/QuickActions';
 import { StatCard } from '../components/dashboard/StatCard';
 import { StyleStrip } from '../components/dashboard/StyleStrip';
 import { StyleUsageChart } from '../components/dashboard/StyleUsageChart';
-import { EmptyState } from '../components/EmptyState';
+import { DashboardSkeleton } from '../components/dashboard/DashboardSkeleton';
+import { GettingStarted } from '../components/dashboard/GettingStarted';
 import { ImageProxy } from '../components/ImageProxy';
 import { config } from '../config';
 import { useAsync } from '../hooks/useAsync';
 import { useAuth } from '../hooks/useAuth';
 import { dashboardService } from '../services/dashboardService';
 import { formatCurrency, greeting } from '../utils/format';
-import { Button, ButtonLink, Panel, Skeleton } from '../components/ui';
+import { Button, Panel } from '../components/ui';
+
+/** Keeps the activity panel as tall as the chart beside it. */
+const VISIBLE_ACTIVITY = 4;
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -42,15 +46,11 @@ export default function Dashboard() {
         </div>
       )}
 
-      {loading && !data && (
-        <div className="stats-grid">
-          {[0, 1, 2, 3].map((i) => (
-            <Skeleton key={i} className="stat-card" />
-          ))}
-        </div>
-      )}
+      {loading && !data && <DashboardSkeleton />}
 
-      {data && (
+      {data && data.stats.projects === 0 && <GettingStarted />}
+
+      {data && data.stats.projects > 0 && (
         <>
           <section className="stats-grid" aria-label="Resumen">
             <StatCard icon={FolderHeart} label="Proyectos creados" value={data.stats.projects} tone="sage" delay={0} />
@@ -66,6 +66,7 @@ export default function Dashboard() {
               label="Estilo favorito"
               value={0}
               text={data.stats.favorite_style?.name ?? 'Por descubrir'}
+              muted={!data.stats.favorite_style}
               tone="wood"
               delay={160}
             />
@@ -84,14 +85,18 @@ export default function Dashboard() {
               {data.style_usage.length ? (
                 <StyleUsageChart data={data.style_usage} />
               ) : (
-                <p className="panel-empty">Cuando crees proyectos verás aquí tus estilos preferidos.</p>
+                <p className="panel-empty">
+                  <Palette size={18} aria-hidden="true" /> Cuando crees proyectos verás aquí tus estilos preferidos.
+                </p>
               )}
             </Panel>
             <Panel as="article" title="Actividad reciente">
               {data.recent_activity.length ? (
-                <ActivityList items={data.recent_activity} />
+                <ActivityList items={data.recent_activity.slice(0, VISIBLE_ACTIVITY)} />
               ) : (
-                <p className="panel-empty">Aún no hay movimientos.</p>
+                <p className="panel-empty">
+                  <History size={18} aria-hidden="true" /> Aún no hay movimientos.
+                </p>
               )}
             </Panel>
           </section>
@@ -101,30 +106,18 @@ export default function Dashboard() {
               <h2>Tus últimos proyectos</h2>
               {data.recent_projects.length > 0 && <Link to="/projects">Ver todos</Link>}
             </header>
-            {data.recent_projects.length ? (
-              <div className="project-grid">
-                {data.recent_projects.map((project, index) => (
-                  <Link
-                    key={project.id}
-                    to={`/editor/${project.id}`}
-                    className="project-link"
-                    aria-label={`Abrir ${project.name} en el editor 3D`}
-                  >
-                    <ProjectCard project={project} delay={index * 70} />
-                  </Link>
-                ))}
-              </div>
-            ) : (
-              <EmptyState
-                title="Tu primer proyecto te espera"
-                description={`Sube una foto o pídeselo a ${config.assistantName} y empieza a diseñar.`}
-                action={
-                  <ButtonLink to="/redesign">
-                    <WandSparkles size={18} /> Crear un rediseño
-                  </ButtonLink>
-                }
-              />
-            )}
+            <div className="project-grid">
+              {data.recent_projects.map((project, index) => (
+                <Link
+                  key={project.id}
+                  to={`/editor/${project.id}`}
+                  className="project-link"
+                  aria-label={`Abrir ${project.name} en el editor 3D`}
+                >
+                  <ProjectCard project={project} delay={index * 70} />
+                </Link>
+              ))}
+            </div>
           </section>
         </>
       )}
