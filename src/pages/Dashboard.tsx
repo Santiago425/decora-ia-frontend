@@ -9,7 +9,9 @@ import { StyleStrip } from '../components/dashboard/StyleStrip';
 import { DashboardSkeleton } from '../components/dashboard/DashboardSkeleton';
 import { GettingStarted } from '../components/dashboard/GettingStarted';
 import { ImageProxy } from '../components/ImageProxy';
-import { Reveal } from '../components/motion';
+import { PhotoCredits } from '../components/PhotoCredits';
+import { ParallaxLayers, Reveal } from '../components/motion';
+import { InspirationGallery } from '../components/dashboard/InspirationGallery';
 import { PatternBadge } from '../components/patterns/PatternBadge';
 import { config } from '../config';
 import { useAsync } from '../hooks/useAsync';
@@ -35,15 +37,17 @@ export default function Dashboard() {
 
   return (
     <div className="page dashboard">
-      <section className="hero-banner">
-        <ImageProxy src={config.dashboardBannerUrl} alt="" className="hero-image" />
-        <div className="hero-content">
+      <ParallaxLayers className="hero-banner">
+        <div className="hero-photo parallax-layer">
+          <ImageProxy src={config.dashboardBannerUrl} alt="" className="hero-image" />
+        </div>
+        <div className="hero-content parallax-layer">
           <span className="hero-kicker">{greeting()}</span>
           <h1>{firstName}, ¿qué espacio transformamos hoy?</h1>
           <PatternBadge ids={['proxy-image', 'proxy-pages', 'singleton-api', 'observer']} />
           <QuickActions />
         </div>
-      </section>
+      </ParallaxLayers>
 
       {error && (
         <div className="inline-error" role="alert">
@@ -132,6 +136,17 @@ export default function Dashboard() {
           </Reveal>
         </>
       )}
+
+      <Reveal as="section" className="inspiration">
+        <header className="section-header">
+          <div>
+            <h2>Inspiración</h2>
+            <p className="section-subtitle">Desliza y toca una foto para rediseñar tu espacio con ese estilo.</p>
+          </div>
+          <PhotoCredits className="credits-inline" />
+        </header>
+        <InspirationGallery />
+      </Reveal>
 
       <Reveal as="section">
         <header className="section-header">

@@ -5,15 +5,27 @@ import { usePagedQuery } from '../../hooks/usePagedQuery';
 import { adminService } from '../../services/adminService';
 import { catalogService } from '../../services/catalogService';
 import { notificationCenter } from '../../services/notificationCenter';
-import type { AdminAddon, AdminFurniture, AdminStyle, FurnitureFilters, FurnitureInput } from '../../types/admin';
+import type {
+  AdminAddon,
+  AdminFurniture,
+  AdminRoomType,
+  AdminStyle,
+  FurnitureFilters,
+  FurnitureInput,
+} from '../../types/admin';
 import type { FurnitureCategory } from '../../types/catalog';
 import { formatCurrency } from '../../utils/format';
 import { cssVar } from '../../styles/theme';
 import { Button, Pager, Panel, SkeletonList, Tabs } from '../ui';
 
-type Section = 'furniture' | 'styles' | 'addons';
+type Section = 'furniture' | 'styles' | 'rooms' | 'addons';
 
-const SECTIONS: Record<Section, string> = { furniture: 'Muebles', styles: 'Estilos', addons: 'Complementos' };
+const SECTIONS: Record<Section, string> = {
+  furniture: 'Muebles',
+  styles: 'Estilos',
+  rooms: 'Habitaciones',
+  addons: 'Complementos',
+};
 
 function notifyError(error: unknown) {
   notificationCenter.notify((error as Error).message, 'error');
@@ -290,6 +302,72 @@ function FurnitureTable() {
   );
 }
 
+function CoverInput({ value, label, onSave }: { value: string | null; label: string; onSave: (url: string) => void }) {
+  const [draft, setDraft] = useState(value ?? '');
+  const commit = () => draft.trim() !== (value ?? '') && onSave(draft.trim());
+  return (
+    <input
+      className="cover-input"
+      type="url"
+      inputMode="url"
+      placeholder="https://…"
+      value={draft}
+      aria-label={label}
+      onChange={(e) => setDraft(e.target.value)}
+      onBlur={commit}
+      onKeyDown={(e) => e.key === 'Enter' && commit()}
+    />
+  );
+}
+
+function RoomTypesTable() {
+  const [rooms, setRooms] = useState<AdminRoomType[] | null>(null);
+  useEffect(() => {
+    adminService.roomTypes().then(setRooms).catch(notifyError);
+  }, []);
+
+  async function save(room: AdminRoomType, patch: Parameters<typeof adminService.updateRoomType>[1]) {
+    try {
+      const updated = await adminService.updateRoomType(room.id, patch);
+      setRooms((list) => list?.map((r) => (r.id === updated.id ? updated : r)) ?? null);
+      notificationCenter.notify(`Guardaste ${updated.name}`, 'success');
+    } catch (e) {
+      notifyError(e);
+    }
+  }
+
+  return (
+    <div className="style-admin-grid">
+      {rooms?.map((room) => (
+        <article key={room.id} className={`style-admin-card ${room.is_active ? '' : 'inactive'}`}>
+          <div
+            className="style-admin-image"
+            style={{ backgroundImage: room.cover_image_url ? `url(${room.cover_image_url})` : undefined }}
+          />
+          <div className="style-admin-body">
+            <header>
+              <h3>{room.name}</h3>
+              <ActiveSwitch
+                checked={room.is_active}
+                onChange={(is_active) => save(room, { is_active })}
+                label={`Mostrar ${room.name}`}
+              />
+            </header>
+            <div className="cover-field">
+              <span>Foto de portada</span>
+              <CoverInput
+                value={room.cover_image_url}
+                label={`Foto de portada de ${room.name}`}
+                onSave={(cover_image_url) => save(room, { cover_image_url })}
+              />
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  );
+}
+
 function StylesTable() {
   const [styles, setStyles] = useState<AdminStyle[] | null>(null);
   useEffect(() => {
@@ -326,6 +404,14 @@ function StylesTable() {
               />
             </header>
             <p>{style.description}</p>
+            <div className="cover-field">
+              <span>Foto de portada</span>
+              <CoverInput
+                value={style.image_url}
+                label={`Foto de portada del estilo ${style.name}`}
+                onSave={(image_url) => save(style, { image_url })}
+              />
+            </div>
             <div className="style-admin-meta">
               <span>
                 {style.project_count} {style.project_count === 1 ? 'proyecto' : 'proyectos'}
@@ -441,6 +527,7 @@ export function CatalogAdmin() {
     >
       {section === 'furniture' && <FurnitureTable />}
       {section === 'styles' && <StylesTable />}
+      {section === 'rooms' && <RoomTypesTable />}
       {section === 'addons' && <AddonsTable />}
     </Panel>
   );

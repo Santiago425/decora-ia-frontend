@@ -10,6 +10,16 @@
   animation: rise 0.6s var(--ease-out) both;
 }
 
+.hero-photo {
+  --depth: 0.7;
+  position: absolute;
+  inset: -24px;
+}
+
+.hero-content.parallax-layer {
+  --depth: -0.15;
+}
+
 .hero-image {
   position: absolute !important;
   inset: 0;
@@ -26,15 +36,16 @@
   inset: 0;
   background: linear-gradient(
     90deg,
-    color-mix(in srgb, var(--scrim) 78%, transparent) 0%,
-    color-mix(in srgb, var(--scrim) 45%, transparent) 55%,
-    color-mix(in srgb, var(--scrim) 10%, transparent) 100%
+    color-mix(in srgb, var(--scrim) 82%, transparent) 0%,
+    color-mix(in srgb, var(--scrim) 50%, transparent) 55%,
+    color-mix(in srgb, var(--scrim) 12%, transparent) 100%
   );
 }
 
 .hero-content {
   position: relative;
   z-index: 1;
+  isolation: isolate;
   display: grid;
   gap: 10px;
   width: 100%;
@@ -704,4 +715,14 @@
   .getting-started {
     grid-template-columns: minmax(0, 1fr);
   }
+}
+
+.section-subtitle {
+  margin: 4px 0 0;
+  color: var(--text-2);
+}
+
+.hero-content h1 {
+  font-size: clamp(32px, 4vw, 52px);
+  font-weight: 500;
 }

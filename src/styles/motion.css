@@ -135,6 +135,8 @@
 .coverflow {
   display: grid;
   gap: 14px;
+  overflow-x: clip;
+  padding-top: 8px;
 }
 
 .coverflow-stage {
@@ -168,6 +170,7 @@
 }
 
 .coverflow-item img {
+  color: transparent;
   width: 100%;
   height: 100%;
   object-fit: cover;

@@ -25,9 +25,29 @@
   gap: 16px;
 }
 
+.redesign-steps-wrap {
+  display: grid;
+  gap: 12px;
+}
+
+.redesign-progress-bar {
+  height: 4px;
+  overflow: hidden;
+  border-radius: 4px;
+  background: var(--surface-3);
+}
+
+.redesign-progress-bar span {
+  display: block;
+  height: 100%;
+  background: var(--primary);
+  transform-origin: left;
+  transition: transform var(--duration-slow) var(--ease-out);
+}
+
 .redesign-steps {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
   margin: 0;
   padding: 0;
@@ -36,12 +56,13 @@
 
 .redesign-steps li {
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
   gap: 10px;
   padding: 14px;
-  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
   background: var(--surface);
-  box-shadow: var(--shadow-sm);
   transition: background var(--duration);
 }
 
@@ -993,4 +1014,62 @@
   .version-thumb {
     flex-basis: 112px;
   }
+}
+
+.room-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+  gap: 10px;
+}
+
+.room-option {
+  position: relative;
+  display: grid;
+  align-items: end;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  padding: 0;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  color: var(--text);
+  text-align: left;
+  transition:
+    border-color var(--duration) var(--ease-out),
+    transform var(--duration) var(--ease-out),
+    box-shadow var(--duration) var(--ease-out);
+}
+
+.room-option .image-proxy {
+  position: absolute;
+  inset: 0;
+}
+
+.room-option:has(.image-proxy)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--photo-veil);
+}
+
+.room-option span {
+  position: relative;
+  z-index: 1;
+  padding: 8px 10px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.room-option:has(.image-proxy) span {
+  color: var(--text-inverse);
+}
+
+.room-option:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.room-option.selected {
+  border-color: var(--primary);
+  box-shadow: var(--focus-ring);
 }

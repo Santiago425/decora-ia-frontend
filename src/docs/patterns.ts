@@ -946,6 +946,8 @@ export const ER_DIAGRAM = `erDiagram
   design_styles ||--o{ color_palettes : offers
   design_styles }o--o{ materials : style_materials
   furniture_categories ||--o{ furniture_items : groups
+  design_styles ||--o{ inspiration_photos : inspires
+  room_types ||--o{ inspiration_photos : shows
   users {
     uuid id PK
     string full_name
@@ -1022,11 +1024,21 @@ export const ER_DIAGRAM = `erDiagram
     string slug UK
     string surface
     decimal price_per_unit
+    string texture_url
   }
   room_types {
     int id PK
     string slug UK
     string name
+    string cover_image_url
+  }
+  inspiration_photos {
+    int id PK
+    int style_id FK
+    int room_type_id FK
+    string title
+    string image_url
+    string author_name
   }
   color_palettes {
     int id PK
