@@ -93,6 +93,8 @@ Las crea el script de semilla del backend; la contraseña sale de la variable `D
 npm install
 cp .env.example .env
 npm run dev        # http://localhost:5173
+npm run lint       # ESLint (typescript-eslint, react-hooks, jsx-a11y)
+npm run format     # Prettier
 npm test
 npm run build
 ```
