@@ -1,11 +1,24 @@
 import type { FurnitureItem, Material } from '../types/catalog';
 import type { SceneItemData, Size3, Vec2 } from '../types/project';
+import { config } from '../config';
 import { cssVar } from '../styles/theme';
 import { darken, lighten } from '../utils/color';
 import { newNodeId } from './sceneTree';
 
 export type PartRole =
-  'body' | 'seat' | 'back' | 'arm' | 'leg' | 'top' | 'shade' | 'pot' | 'foliage' | 'pillow' | 'decor' | 'glow';
+  | 'body'
+  | 'seat'
+  | 'back'
+  | 'arm'
+  | 'leg'
+  | 'top'
+  | 'shade'
+  | 'pot'
+  | 'foliage'
+  | 'pillow'
+  | 'decor'
+  | 'glow'
+  | 'glass';
 
 export interface Part {
   geometry: 'box' | 'cylinder' | 'sphere';
@@ -500,6 +513,58 @@ export class BoxFactory extends FurnitureFactory {
   }
 }
 
+const FRAME = 0.06;
+
+export class DoorFactory extends FurnitureFactory {
+  protected buildParts(w: number, d: number, h: number, color: string): Part[] {
+    const frame = darken(color, 0.18);
+    const leafHeight = h - FRAME;
+    const leafs = w > 1.2 ? 2 : 1;
+    const leafWidth = (w - FRAME * 2) / leafs;
+    const handleHeight = Math.min(1, h * 0.48);
+    const handle = cssVar('--scene-handle');
+    const parts: Part[] = [
+      box([FRAME, h, d], [-(w - FRAME) / 2, h / 2, 0], frame, 'body'),
+      box([FRAME, h, d], [(w - FRAME) / 2, h / 2, 0], frame, 'body'),
+      box([w, FRAME, d], [0, h - FRAME / 2, 0], frame, 'body'),
+    ];
+    for (let leaf = 0; leaf < leafs; leaf++) {
+      const x = -w / 2 + FRAME + leafWidth * (leaf + 0.5);
+      parts.push(box([leafWidth - 0.01, leafHeight, d * 0.45], [x, leafHeight / 2, d * 0.1], color, 'top'));
+      const side = leafs === 1 ? 1 : leaf === 0 ? 1 : -1;
+      parts.push({
+        ...sphere(0.03, [x + side * (leafWidth / 2 - 0.1), handleHeight, d * 0.4], handle, 'decor'),
+        metalness: 0.8,
+        roughness: 0.3,
+      });
+    }
+    return parts;
+  }
+}
+
+export class WindowFactory extends FurnitureFactory {
+  protected buildParts(w: number, d: number, h: number, color: string): Part[] {
+    const sill = config.editor.windowSill;
+    const middle = sill + h / 2;
+    const parts: Part[] = [
+      box([w, FRAME, d], [0, sill + FRAME / 2, 0], color, 'body'),
+      box([w, FRAME, d], [0, sill + h - FRAME / 2, 0], color, 'body'),
+      box([FRAME, h, d], [-(w - FRAME) / 2, middle, 0], color, 'body'),
+      box([FRAME, h, d], [(w - FRAME) / 2, middle, 0], color, 'body'),
+      box([w + 0.08, 0.04, d + 0.06], [0, sill - 0.02, 0.03], color, 'top'),
+      {
+        ...box([w - FRAME * 2, h - FRAME * 2, 0.02], [0, middle, 0], cssVar('--scene-glass'), 'glass'),
+        opacity: 0.55,
+        emissive: 0.6,
+        roughness: 0.05,
+        metalness: 0.1,
+      },
+    ];
+    if (w >= 1) parts.push(box([FRAME * 0.6, h - FRAME * 2, d * 0.6], [0, middle, 0], color, 'body'));
+    return parts;
+  }
+}
+
 const FACTORIES: Record<string, FurnitureFactory> = {
   sofa: new SofaFactory(),
   chair: new ChairFactory(),
@@ -521,6 +586,8 @@ const FACTORIES: Record<string, FurnitureFactory> = {
   counter: new CounterFactory(),
   wardrobe: new WardrobeFactory(),
   tv_stand: new TvStandFactory(),
+  door: new DoorFactory(),
+  window: new WindowFactory(),
 };
 
 const fallback = new BoxFactory();

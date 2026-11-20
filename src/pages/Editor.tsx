@@ -21,6 +21,7 @@ import { buildPricing } from '../editor/furnitureDecorators';
 import { overlappingIds } from '../editor/layoutGuides';
 import { WALK_CORNERS } from '../editor/walkView';
 import { themeFactoryFor } from '../editor/styleTheme';
+import { isWallOpening } from '../editor/wallOpenings';
 import { useAsync } from '../hooks/useAsync';
 import { useMediaQuery } from '../hooks/useMediaQuery';
 import { catalogService } from '../services/catalogService';
@@ -81,7 +82,12 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
   const finishes = catalog.materials.filter((m) => m.surface === 'furniture');
   const total = composite.price();
   const clashing = useMemo(
-    () => overlappingIds(state.scene.nodes, config.editor.overlapTolerance),
+    // Windows hang above the floor, so a sofa under a window is not a clash.
+    () =>
+      overlappingIds(
+        state.scene.nodes.filter((node) => !(isWallOpening(node) && node.shape === 'window')),
+        config.editor.overlapTolerance,
+      ),
     [state.scene.nodes],
   );
 

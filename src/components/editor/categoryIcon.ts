@@ -6,8 +6,10 @@ import {
   Box,
   ChefHat,
   DoorClosed,
+  DoorOpen,
   Droplets,
   Flame,
+  Grid2x2,
   Lamp,
   LampDesk,
   Library,
@@ -48,6 +50,8 @@ const ICONS: Record<string, LucideIcon> = {
   'lamp-desk': LampDesk,
   'door-closed': DoorClosed,
   tv: Tv,
+  door: DoorOpen,
+  window: Grid2x2,
 };
 
 export const categoryIcon = (name: string | undefined): LucideIcon => (name && ICONS[name]) || Box;
