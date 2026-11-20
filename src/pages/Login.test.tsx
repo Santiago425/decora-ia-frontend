@@ -6,11 +6,15 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AuthContext, type AuthContextValue } from '../context/authContext';
 import type { LoginPayload, User } from '../types/auth';
+import { notificationCenter } from '../services/notificationCenter';
 import Login from './Login';
 
 const publicMeta = vi.hoisted(() => vi.fn());
 
-vi.mock('../services/metaService', () => ({ metaService: { publicMeta } }));
+vi.mock('../services/metaService', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../services/metaService')>()),
+  metaService: { publicMeta },
+}));
 // The photo carousel and the 3D room are covered by their own checks; here only the form matters.
 vi.mock('../components/AuthLayout', () => ({
   AuthLayout: ({ title, children }: { title: string; children: ReactNode }) => (
@@ -80,5 +84,21 @@ describe('Login page', () => {
     await userEvent.click(await screen.findByRole('button', { name: /administrador de prueba/ }));
     expect(login).toHaveBeenCalledWith({ email: admin.email, password: admin.password, role: 'admin' });
     expect(await screen.findByText('Página de inicio')).toBeTruthy();
+  });
+
+  it('welcomes a demo account with its configured greeting', async () => {
+    const demo = {
+      role: 'user' as const,
+      name: 'Profesor',
+      email: ANA.email,
+      password: 'secreto2',
+      greeting: 'Bienvenido, querido profesor',
+    };
+    publicMeta.mockResolvedValue({ demo_accounts: [demo] });
+    const notify = vi.spyOn(notificationCenter, 'notify');
+    renderLogin(vi.fn().mockResolvedValue(ANA));
+    await userEvent.click(await screen.findByRole('button', { name: /usuario de prueba/ }));
+    expect(await screen.findByText('Página de inicio')).toBeTruthy();
+    expect(notify).toHaveBeenCalledWith('Bienvenido, querido profesor', 'success');
   });
 });

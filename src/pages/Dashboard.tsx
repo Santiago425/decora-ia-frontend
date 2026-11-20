@@ -17,7 +17,9 @@ import { PatternBadge } from '../components/patterns/PatternBadge';
 import { config } from '../config';
 import { useAsync } from '../hooks/useAsync';
 import { useAuth } from '../hooks/useAuth';
+import { usePublicMeta } from '../hooks/usePublicMeta';
 import { dashboardService } from '../services/dashboardService';
+import { demoGreeting } from '../services/metaService';
 import { projectService } from '../services/projectService';
 import { formatCurrency, greeting } from '../utils/format';
 import { Button, Panel, Skeleton } from '../components/ui';
@@ -35,8 +37,10 @@ export default function Dashboard() {
   const { user } = useAuth();
   const { data, error, loading, retry } = useAsync(useCallback(() => dashboardService.overview(), []));
   const { data: projects } = useAsync(useCallback(() => projectService.list(), []));
+  const { data: meta } = usePublicMeta();
   if (!user) return null;
   const firstName = user.full_name.split(' ')[0];
+  const welcome = demoGreeting(meta, user.email);
 
   return (
     <div className="page dashboard">
@@ -51,7 +55,9 @@ export default function Dashboard() {
         </div>
         <div className="hero-content parallax-layer">
           <span className="hero-kicker">{greeting()}</span>
-          <h1>{firstName}, ¿qué espacio transformamos hoy?</h1>
+          <h1>
+            {welcome ? `${welcome}. ¿Qué espacio transformamos hoy?` : `${firstName}, ¿qué espacio transformamos hoy?`}
+          </h1>
           <PatternBadge ids={['proxy-image', 'proxy-pages', 'singleton-api', 'observer']} />
           <QuickActions />
         </div>

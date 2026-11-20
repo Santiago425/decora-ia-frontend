@@ -47,3 +47,20 @@ describe('metaService', () => {
     expect(providerLabel(null, 'mock')).toBe('mock');
   });
 });
+
+describe('demoGreeting', () => {
+  const account = { role: 'user' as const, name: 'Profesor', email: 'demo@habita.app', password: 'x' };
+
+  it('returns the welcome line of the matching demo account', async () => {
+    const { demoGreeting } = await import('./metaService');
+    const meta = { demo_accounts: [{ ...account, greeting: 'Bienvenido' }] };
+    expect(demoGreeting(meta, 'Demo@Habita.app')).toBe('Bienvenido');
+  });
+
+  it('returns nothing for other people or without metadata', async () => {
+    const { demoGreeting } = await import('./metaService');
+    expect(demoGreeting({ demo_accounts: [{ ...account, greeting: 'Bienvenido' }] }, 'otra@habita.app')).toBe('');
+    expect(demoGreeting({ demo_accounts: [account] }, 'demo@habita.app')).toBe('');
+    expect(demoGreeting(null, 'demo@habita.app')).toBe('');
+  });
+});

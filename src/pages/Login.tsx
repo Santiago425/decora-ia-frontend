@@ -11,6 +11,7 @@ import type { UserRole } from '../types/auth';
 import type { DemoAccount } from '../types/meta';
 import { validateEmail, validatePassword } from '../utils/validation';
 import { Button } from '../components/ui';
+import { demoGreeting, metaService } from '../services/metaService';
 import { preloadHandlers } from '../routes/pages';
 
 export default function Login() {
@@ -30,7 +31,9 @@ export default function Login() {
     try {
       const user = await login(credentials);
       const from = (location.state as { from?: string } | null)?.from;
-      notificationCenter.notify(`Hola de nuevo, ${user.full_name.split(' ')[0]}`, 'success');
+      const meta = await metaService.publicMeta().catch(() => null);
+      const welcome = demoGreeting(meta, user.email) || `Hola de nuevo, ${user.full_name.split(' ')[0]}`;
+      notificationCenter.notify(welcome, 'success');
       navigate(from ?? '/', { replace: true });
     } catch (error) {
       setServerError((error as Error).message);
