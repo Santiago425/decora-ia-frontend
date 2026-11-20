@@ -35,5 +35,6 @@ export const config = Object.freeze({
   dashboardBackdropUrl: read('VITE_DASHBOARD_BACKDROP_URL'),
   emptyStateImageUrl: read('VITE_EMPTY_STATE_IMAGE_URL'),
   photoIntervalMs: Number(read('VITE_PHOTO_INTERVAL_MS')) || 6000,
+  recentRedesignsLimit: Number(read('VITE_RECENT_REDESIGNS_LIMIT')) || 6,
   photoCredits: { name: read('VITE_PHOTO_CREDITS_NAME'), url: read('VITE_PHOTO_CREDITS_URL') },
 });

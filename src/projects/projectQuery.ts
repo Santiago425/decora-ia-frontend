@@ -28,13 +28,17 @@ export interface ProjectQuery {
 
 export const DEFAULT_QUERY: ProjectQuery = { text: '', status: 'all', kind: 'all', sort: 'recent' };
 
+/** Keeps photo redesigns or 3D-only rooms, so each section lists only its own projects. */
+export function filterByKind(projects: ProjectSummary[], kind: KindFilter): ProjectSummary[] {
+  return kind === 'all' ? projects : projects.filter((p) => (kind === 'redesign') === p.redesign_count > 0);
+}
+
 const normalize = (value: string) => value.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
 export function applyQuery(projects: ProjectSummary[], query: ProjectQuery): ProjectSummary[] {
   const text = normalize(query.text.trim());
-  return projects
+  return filterByKind(projects, query.kind)
     .filter((p) => query.status === 'all' || p.status === query.status)
-    .filter((p) => query.kind === 'all' || (query.kind === 'redesign') === p.redesign_count > 0)
     .filter(
       (p) => !text || normalize([p.name, p.style_name, p.room_type_name].filter(Boolean).join(' ')).includes(text),
     )

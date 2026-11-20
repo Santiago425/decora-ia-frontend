@@ -3,8 +3,14 @@ import { Link } from 'react-router-dom';
 import { config } from '../../config';
 
 const ACTIONS = [
-  { to: '/redesign', title: 'Nuevo rediseño con foto', hint: 'Sube o toma una foto', icon: Camera, tone: 'terracotta' },
-  { to: '/editor', title: 'Abrir editor 3D', hint: 'Arma tu espacio', icon: Box, tone: 'sage' },
+  {
+    to: '/redesign',
+    title: 'Rediseñar con IA',
+    hint: 'Transforma una foto de tu espacio',
+    icon: Camera,
+    tone: 'terracotta',
+  },
+  { to: '/editor', title: 'Diseñar en 3D', hint: 'Arma tu espacio desde cero', icon: Box, tone: 'sage' },
   {
     to: '/assistant',
     title: `Hablar con ${config.assistantName}`,

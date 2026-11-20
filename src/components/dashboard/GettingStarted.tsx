@@ -1,23 +1,23 @@
-import { ArrowRight, Box, Camera, Sparkles } from 'lucide-react';
+import { ArrowRight, Box, Camera } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { config } from '../../config';
 import { EmptyIllustration } from '../EmptyState';
 import { ButtonLink } from '../ui';
 
-const STEPS = [
+// Two independent ways to start: a photo redesign or a room built from scratch in 3D.
+const PATHS = [
   {
     to: '/redesign',
     Icon: Camera,
-    title: 'Sube una foto',
-    text: 'De tu sala, cuarto o cocina. También sirve una de ejemplo.',
+    title: 'Rediseñar con IA',
+    text: 'Sube una foto de tu sala, cuarto o cocina, elige un estilo y compara el antes y el después.',
   },
   {
-    to: '/redesign',
-    Icon: Sparkles,
-    title: 'Elige un estilo',
-    text: 'Nórdico, industrial, boho… y compara el antes y el después.',
+    to: '/editor',
+    Icon: Box,
+    title: 'Diseñar en 3D',
+    text: 'Arma una habitación desde cero, mueve los muebles, cambia colores y mira el presupuesto.',
   },
-  { to: '/editor', Icon: Box, title: 'Ajusta en 3D', text: 'Mueve los muebles, cambia colores y mira el presupuesto.' },
 ];
 
 export function GettingStarted() {
@@ -27,27 +27,26 @@ export function GettingStarted() {
         <EmptyIllustration />
         <div>
           <span className="getting-started-kicker">Primeros pasos</span>
-          <h2 id="getting-started-title">Tu primer proyecto en 3 pasos</h2>
-          <p>Aún no tienes proyectos. Empieza con una foto o pídele ideas a {config.assistantName}.</p>
+          <h2 id="getting-started-title">Dos formas de empezar</h2>
+          <p>Aún no tienes proyectos. Elige cómo quieres diseñar o pídele ideas a {config.assistantName}.</p>
         </div>
         <ButtonLink to="/redesign">
           Empezar ahora <ArrowRight size={18} />
         </ButtonLink>
       </div>
-      <ol className="getting-started-steps">
-        {STEPS.map(({ to, Icon, title, text }, index) => (
+      <ul className="getting-started-steps">
+        {PATHS.map(({ to, Icon, title, text }) => (
           <li key={title}>
             <Link to={to} className="getting-started-step">
               <span className="step-number" aria-hidden="true">
-                {index + 1}
+                <Icon size={20} />
               </span>
-              <Icon size={20} className="step-icon" aria-hidden="true" />
               <strong>{title}</strong>
               <small>{text}</small>
             </Link>
           </li>
         ))}
-      </ol>
+      </ul>
     </section>
   );
 }

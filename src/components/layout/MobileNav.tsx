@@ -48,10 +48,10 @@ export function MobileNav() {
         </button>
       </div>
       <nav className="mobile-nav" aria-label="Principal">
-        {barItems.map(({ to, label, icon: Icon }) => (
+        {barItems.map(({ to, label, shortLabel, icon: Icon }) => (
           <NavLink key={to} to={to} end={to === '/'} className="mobile-link" {...preloadHandlers(to)}>
             <Icon size={21} strokeWidth={1.9} />
-            <span>{label}</span>
+            <span>{shortLabel ?? label}</span>
           </NavLink>
         ))}
         <button

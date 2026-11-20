@@ -1322,3 +1322,7 @@
 .inspiration-note strong {
   color: var(--text);
 }
+
+.recent-redesigns {
+  margin-top: 32px;
+}
