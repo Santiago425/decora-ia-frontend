@@ -6,26 +6,15 @@ import { EditorCanvas, type CameraView, type EditorCanvasHandle } from '../compo
 import { EditorToolbar, type SaveState } from '../components/editor/EditorToolbar';
 import { Inspector } from '../components/editor/Inspector';
 import { RoomPanel } from '../components/editor/RoomPanel';
+import { ShortcutsDialog } from '../components/editor/ShortcutsDialog';
 import { VersionsPanel } from '../components/editor/VersionsPanel';
 import { assistantBus } from '../assistant/assistantBus';
 import { config } from '../config';
-import {
-  AddNodesCommand,
-  GroupNodesCommand,
-  MoveNodeCommand,
-  RemoveNodeCommand,
-  RenameNodeCommand,
-  ReplaceSceneCommand,
-  RotateNodeCommand,
-  UngroupCommand,
-  UpdateItemCommand,
-  UpdateSceneCommand,
-} from '../editor/commands';
+import { ReplaceSceneCommand } from '../editor/commands';
 import { RoomComposite } from '../editor/composite';
 import { EditorStore, useEditorState } from '../editor/editorStore';
+import { EditorMediator, type EditorPanel } from '../editor/editorMediator';
 import { buildPricing } from '../editor/furnitureDecorators';
-import { furnitureFactoryFor } from '../editor/furnitureFactory';
-import { findFreeSpot, newNodeId, topLevelIdOf } from '../editor/sceneTree';
 import { themeFactoryFor } from '../editor/styleTheme';
 import { useAsync } from '../hooks/useAsync';
 import { catalogService } from '../services/catalogService';
@@ -34,8 +23,6 @@ import { projectService } from '../services/projectService';
 import type { DesignStyle, FurnitureAddon, FurnitureCategory, FurnitureItem, Material } from '../types/catalog';
 import type { LightingData, ProjectAction, ProjectDetail, RoomData, VersionSummary } from '../types/project';
 import { Button, ButtonLink, Skeleton } from '../components/ui';
-
-type Tab = 'catalog' | 'settings' | 'versions';
 
 interface Catalog {
   furniture: FurnitureItem[];
@@ -67,7 +54,7 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
   const [savedRevision, setSavedRevision] = useState(0);
   const [retryTick, setRetryTick] = useState(0);
   const [view, setView] = useState<CameraView>('perspective');
-  const [tab, setTab] = useState<Tab>('catalog');
+  const [tab, setTab] = useState<EditorPanel>('catalog');
   const [busy, setBusy] = useState(false);
   const [versions, setVersions] = useState<VersionSummary[] | null>(null);
   const canvas = useRef<EditorCanvasHandle>(null);
@@ -119,168 +106,31 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
     return () => window.removeEventListener('beforeunload', warn);
   }, [saveState]);
 
-  const addFurniture = useCallback(
-    (item: FurnitureItem) => {
-      const scene = store.getState().scene;
-      const node = furnitureFactoryFor(item.category.shape).createItem(
-        item,
-        findFreeSpot(scene, [item.width, item.depth]),
-      );
-      if (store.execute(new AddNodesCommand([node], `Agregar ${item.name}`))) store.select([node.id]);
-    },
-    [store],
-  );
-
-  const duplicate = useCallback(
-    (id: string) => {
-      const component = new RoomComposite(store.getState().scene, pricing).find(id);
-      if (!component) return;
-      const copy = component.clone();
-      if (store.execute(new AddNodesCommand([copy], 'Duplicar'))) store.select([copy.id]);
-    },
-    [store, pricing],
-  );
-
-  const remove = useCallback((id: string) => store.execute(new RemoveNodeCommand(id)), [store]);
-  const rotate = useCallback(
-    (id: string, degrees: number) => store.execute(new RotateNodeCommand(id, degrees)),
-    [store],
-  );
-  const move = useCallback(
-    (id: string, dx: number, dz: number) => store.execute(new MoveNodeCommand(id, dx, dz)),
-    [store],
-  );
-
-  const select = useCallback(
-    (id: string | null, additive: boolean) => {
-      if (!id) return additive ? undefined : store.select([]);
-      const top = topLevelIdOf(store.getState().scene.nodes, id) ?? id;
-      if (additive) store.toggleSelection(top);
-      else if (!store.getState().selection.includes(top) || store.getState().selection.length > 1) store.select([top]);
-      if (window.matchMedia('(max-width: 900px)').matches) setTab('settings');
-    },
-    [store],
-  );
-
-  const applyStyle = useCallback(
-    (slug: string) => {
-      const theme = themeFactoryFor(
-        catalog.styles.find((s) => s.slug === slug),
-        catalog.materials,
-      );
-      const room = store.getState().scene.room;
-      store.execute(
-        new UpdateSceneCommand(
-          {
-            style: slug,
-            lighting: theme.createLighting(),
-            room: {
-              ...room,
-              wall_material: theme.createWallFinish().slug,
-              floor_material: theme.createFloorFinish().slug,
-            },
-          },
-          'Cambiar estilo',
-        ),
-      );
-    },
-    [store, catalog],
+  const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  const [mediator] = useState(
+    () =>
+      new EditorMediator(store, {
+        catalog,
+        pricing,
+        moveStep: config.editor.moveStep,
+        rotateStep: config.editor.rotateStep,
+        showPanel: setTab,
+        notify: (message, kind) => notificationCenter.notify(message, kind),
+        isCompact: () => window.matchMedia('(max-width: 900px)').matches,
+        openShortcuts: () => setShortcutsOpen(true),
+      }),
   );
 
   useEffect(() => {
     function onKey(event: KeyboardEvent) {
       if (isTyping(event.target)) return;
-      const mod = event.ctrlKey || event.metaKey;
-      const key = event.key.toLowerCase();
-      const [selected] = store.getState().selection;
-      const step = config.editor.moveStep;
-      const arrows: Record<string, [number, number]> = {
-        arrowleft: [-step, 0],
-        arrowright: [step, 0],
-        arrowup: [0, -step],
-        arrowdown: [0, step],
-      };
-
-      if (mod && key === 'z') store[event.shiftKey ? 'redo' : 'undo']();
-      else if (mod && key === 'y') store.redo();
-      else if (mod && key === 'd' && selected) duplicate(selected);
-      else if ((key === 'delete' || key === 'backspace') && selected) store.getState().selection.forEach(remove);
-      else if (key === 'r' && !mod && selected)
-        rotate(selected, event.shiftKey ? -config.editor.rotateStep : config.editor.rotateStep);
-      else if (key in arrows && selected) move(selected, ...arrows[key]);
-      else if (key === 'escape') store.select([]);
-      else return;
-      event.preventDefault();
+      if (mediator.handleKey(event)) event.preventDefault();
     }
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [store, duplicate, remove, rotate, move]);
+  }, [mediator]);
 
-  useEffect(
-    () =>
-      assistantBus.subscribe((action) => {
-        const { params } = action;
-        const editor = store.getState();
-        const selected = editor.selection;
-        const needsSelection = ['rotate_selected', 'remove_selected', 'duplicate_selected'].includes(action.type);
-        if (needsSelection && selected.length === 0) {
-          notificationCenter.notify('Primero selecciona un mueble en la habitación', 'info');
-          return true;
-        }
-        if (editor.readOnly && action.type !== 'undo' && action.type !== 'redo') {
-          notificationCenter.notify('Este proyecto está terminado. Reábrelo para seguir editando', 'info');
-          return true;
-        }
-        switch (action.type) {
-          case 'add_furniture': {
-            const item = catalog.furniture.find((f) => f.id === Number(params.furniture_id));
-            if (item) addFurniture(item);
-            return true;
-          }
-          case 'change_style':
-            applyStyle(String(params.style));
-            return true;
-          case 'change_wall':
-          case 'change_floor': {
-            const key = action.type === 'change_wall' ? 'wall_material' : 'floor_material';
-            const label = action.type === 'change_wall' ? 'Cambiar paredes' : 'Cambiar piso';
-            store.execute(
-              new UpdateSceneCommand({ room: { ...editor.scene.room, [key]: String(params.material) } }, label),
-            );
-            return true;
-          }
-          case 'set_lighting': {
-            const { lighting } = editor.scene;
-            const intensity = Math.min(2, Math.max(0.3, lighting.intensity + Number(params.delta) * 0.4));
-            store.execute(
-              new UpdateSceneCommand(
-                { lighting: { ...lighting, intensity: Number(intensity.toFixed(2)) } },
-                'Cambiar luz',
-              ),
-            );
-            return true;
-          }
-          case 'undo':
-            store.undo();
-            return true;
-          case 'redo':
-            store.redo();
-            return true;
-          case 'rotate_selected':
-            selected.forEach((id) => rotate(id, Number(params.degrees) || config.editor.rotateStep));
-            return true;
-          case 'remove_selected':
-            selected.forEach(remove);
-            return true;
-          case 'duplicate_selected':
-            selected.forEach(duplicate);
-            return true;
-          default:
-            return false;
-        }
-      }),
-    [store, catalog, addFurniture, applyStyle, rotate, remove, duplicate],
-  );
+  useEffect(() => assistantBus.subscribe((action) => mediator.handleAssistant(action)), [mediator]);
 
   async function runProjectAction(action: ProjectAction) {
     setBusy(true);
@@ -364,7 +214,9 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
         onRename={rename}
         onAction={runProjectAction}
         onRetrySave={() => setRetryTick((tick) => tick + 1)}
+        onHelp={() => setShortcutsOpen(true)}
       />
+      <ShortcutsDialog open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
 
       <div className={`editor-body tab-${tab}`}>
         <aside className="editor-panel editor-left">
@@ -400,7 +252,7 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
                 roomType={project.room_type?.slug ?? null}
                 roomName={project.room_type?.name ?? null}
                 disabled={disabled}
-                onAdd={addFurniture}
+                onAdd={(item) => mediator.addFurniture(item)}
               />
             </div>
           )}
@@ -414,8 +266,8 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
             selection={state.selection}
             readOnly={disabled}
             view={view}
-            onSelect={select}
-            onMove={move}
+            onSelect={(id, additive) => mediator.select(id, additive)}
+            onMove={(id, dx, dz) => mediator.move(id, dx, dz)}
           />
           {disabled && (
             <div className="stage-banner">
@@ -435,23 +287,15 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
               palette={palette}
               disabled={disabled}
               rotateStep={config.editor.rotateStep}
-              onColor={(id, color) =>
-                store.execute(new UpdateItemCommand(id, { color, finish: null }, 'Cambiar color'))
-              }
-              onFinish={(id, finish, color) =>
-                store.execute(new UpdateItemCommand(id, { finish, color }, 'Cambiar acabado'))
-              }
-              onAddons={(id, addons) => store.execute(new UpdateItemCommand(id, { addons }, 'Cambiar complementos'))}
-              onRotate={rotate}
-              onDuplicate={duplicate}
-              onRemove={remove}
-              onRename={(id, name) => store.execute(new RenameNodeCommand(id, name))}
-              onGroup={(ids) => {
-                const id = newNodeId('g');
-                if (store.execute(new GroupNodesCommand(ids, { id, name: `Grupo ${composite.children.length}` })))
-                  store.select([id]);
-              }}
-              onUngroup={(id) => store.execute(new UngroupCommand(id))}
+              onColor={(id, color) => mediator.updateItem(id, { color, finish: null }, 'Cambiar color')}
+              onFinish={(id, finish, color) => mediator.updateItem(id, { finish, color }, 'Cambiar acabado')}
+              onAddons={(id, addons) => mediator.updateItem(id, { addons }, 'Cambiar complementos')}
+              onRotate={(id, degrees) => mediator.rotate(id, degrees)}
+              onDuplicate={(id) => mediator.duplicate(id)}
+              onRemove={(id) => mediator.remove(id)}
+              onRename={(id, name) => mediator.rename(id, name)}
+              onGroup={(ids) => mediator.group(ids, `Grupo ${composite.children.length}`)}
+              onUngroup={(id) => mediator.ungroup(id)}
             />
           ) : (
             <RoomPanel
@@ -459,11 +303,9 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
               styles={catalog.styles}
               materials={catalog.materials}
               disabled={disabled}
-              onStyle={applyStyle}
-              onRoom={(room: RoomData, label: string) => store.execute(new UpdateSceneCommand({ room }, label))}
-              onLighting={(lighting: LightingData) =>
-                store.execute(new UpdateSceneCommand({ lighting }, 'Cambiar luz'))
-              }
+              onStyle={(slug) => mediator.applyStyle(slug)}
+              onRoom={(room: RoomData, label: string) => mediator.setRoom(room, label)}
+              onLighting={(lighting: LightingData) => mediator.setLighting(lighting)}
             />
           )}
         </aside>

@@ -79,7 +79,7 @@ export class RotateNodeCommand implements Command {
   }
 }
 
-type ItemPatch = Partial<Pick<SceneItemData, 'color' | 'finish' | 'addons'>>;
+export type ItemPatch = Partial<Pick<SceneItemData, 'color' | 'finish' | 'addons'>>;
 
 export class UpdateItemCommand implements Command {
   #previous: ItemPatch = {};

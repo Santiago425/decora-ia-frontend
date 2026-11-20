@@ -1,4 +1,4 @@
-import { ArrowLeft, Box, Camera, CheckCircle2, CloudOff, Loader2, Redo2, Square, Undo2 } from 'lucide-react';
+import { ArrowLeft, Box, Camera, CheckCircle2, CloudOff, Keyboard, Loader2, Redo2, Square, Undo2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { ProjectAction, ProjectDetail } from '../../types/project';
@@ -38,6 +38,7 @@ interface EditorToolbarProps {
   onRename: (name: string) => void;
   onAction: (action: ProjectAction) => void;
   onRetrySave: () => void;
+  onHelp: () => void;
 }
 
 export function EditorToolbar(props: EditorToolbarProps) {
@@ -114,6 +115,14 @@ export function EditorToolbar(props: EditorToolbarProps) {
           </button>
           <button className="tool-button" onClick={props.onCapture} title="Descargar imagen">
             <Camera size={18} /> <span>Captura</span>
+          </button>
+          <button
+            className="tool-button tool-help"
+            onClick={props.onHelp}
+            title="Atajos de teclado (?)"
+            aria-label="Atajos de teclado"
+          >
+            <Keyboard size={18} />
           </button>
         </div>
         <div className="toolbar-total">
