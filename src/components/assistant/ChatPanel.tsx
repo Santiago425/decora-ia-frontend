@@ -211,7 +211,7 @@ export function ChatPanel({ compact = false, onClose }: { compact?: boolean; onC
       {!chat.sending && (
         <div className="chat-suggestions">
           {suggestions.map((text) => (
-            <button key={text} className="chip" onClick={() => send(text)}>
+            <button key={text} type="button" className="chip chip-sm" onClick={() => send(text)}>
               {text}
             </button>
           ))}

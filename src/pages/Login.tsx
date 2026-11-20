@@ -8,6 +8,7 @@ import { useAuth } from '../hooks/useAuth';
 import { notificationCenter } from '../services/notificationCenter';
 import type { UserRole } from '../types/auth';
 import { validateEmail, validatePassword } from '../utils/validation';
+import { Button } from '../components/ui';
 
 export default function Login() {
   const { login } = useAuth();
@@ -69,11 +70,11 @@ export default function Login() {
             {serverError}
           </p>
         )}
-        <button className="button button-primary button-block" disabled={loading}>
+        <Button block type="submit" disabled={loading}>
           {loading ? <span className="spinner" aria-hidden="true" /> : null}
           {loading ? 'Entrando…' : role === 'admin' ? 'Entrar como administrador' : 'Entrar'}
           {!loading && <ArrowRight size={18} />}
-        </button>
+        </Button>
       </form>
       <p className="auth-switch">
         ¿Aún no tienes cuenta? <Link to="/register">Créala gratis</Link>

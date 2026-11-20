@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
 import { Logo } from '../components/Logo';
+import { ButtonLink } from '../components/ui';
 
 export default function NotFound() {
   return (
@@ -8,9 +8,7 @@ export default function NotFound() {
         <Logo size={52} />
         <h1>Esta habitación no existe</h1>
         <p>La página que buscas no está aquí.</p>
-        <Link className="button button-primary" to="/">
-          Volver al inicio
-        </Link>
+        <ButtonLink to="/">Volver al inicio</ButtonLink>
       </div>
     </div>
   );

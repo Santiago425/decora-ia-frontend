@@ -1,6 +1,6 @@
 import { History, LayoutGrid, Lock, RefreshCw, SlidersHorizontal } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { CatalogPanel } from '../components/editor/CatalogPanel';
 import { EditorCanvas, type CameraView, type EditorCanvasHandle } from '../components/editor/EditorCanvas';
 import { EditorToolbar, type SaveState } from '../components/editor/EditorToolbar';
@@ -33,6 +33,7 @@ import { notificationCenter } from '../services/notificationCenter';
 import { projectService } from '../services/projectService';
 import type { DesignStyle, FurnitureAddon, FurnitureCategory, FurnitureItem, Material } from '../types/catalog';
 import type { LightingData, ProjectAction, ProjectDetail, RoomData, VersionSummary } from '../types/project';
+import { Button, ButtonLink, Skeleton } from '../components/ui';
 
 type Tab = 'catalog' | 'settings' | 'versions';
 
@@ -493,12 +494,12 @@ export default function Editor() {
         <div className="inline-error" role="alert">
           <span>{error}</span>
           <span className="inline-actions">
-            <Link to="/editor" className="button button-ghost">
+            <ButtonLink variant="ghost" to="/editor">
               Volver
-            </Link>
-            <button className="button button-ghost" onClick={retry}>
+            </ButtonLink>
+            <Button variant="ghost" onClick={retry}>
               <RefreshCw size={16} /> Reintentar
-            </button>
+            </Button>
           </span>
         </div>
       </div>
@@ -508,7 +509,7 @@ export default function Editor() {
   if (!data) {
     return (
       <div className="editor-page editor-loading" role="status" aria-label="Cargando el editor">
-        <div className="editor-skeleton" />
+        <Skeleton className="editor-skeleton" radius="var(--radius-xl)" />
       </div>
     );
   }

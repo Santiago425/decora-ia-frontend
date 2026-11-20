@@ -4,6 +4,7 @@ import { config } from '../../config';
 import type { FurnitureCategory, FurnitureItem } from '../../types/catalog';
 import { formatCurrency } from '../../utils/format';
 import { CategoryIcon } from './categoryIcon';
+import { Tabs } from '../ui';
 
 interface CatalogPanelProps {
   categories: FurnitureCategory[];
@@ -38,27 +39,18 @@ export function CatalogPanel({ categories, furniture, roomType, roomName, disabl
         <Search size={16} aria-hidden="true" />
         <input type="search" placeholder="Buscar muebles" value={query} onChange={(e) => setQuery(e.target.value)} />
       </label>
-      <div className="chip-row" role="tablist" aria-label="Categorías">
-        {roomType && (
-          <button role="tab" aria-selected={filter === SUGGESTED} className="chip" onClick={() => setFilter(SUGGESTED)}>
-            Para {roomName?.toLowerCase() ?? 'tu espacio'}
-          </button>
-        )}
-        <button role="tab" aria-selected={filter === ALL} className="chip" onClick={() => setFilter(ALL)}>
-          Todos
-        </button>
-        {categories.map((category) => (
-          <button
-            key={category.slug}
-            role="tab"
-            aria-selected={filter === category.slug}
-            className="chip"
-            onClick={() => setFilter(category.slug)}
-          >
-            {category.name}
-          </button>
-        ))}
-      </div>
+      <Tabs
+        className="chip-row"
+        label="Categorías"
+        variant="chips"
+        value={filter}
+        onChange={setFilter}
+        items={[
+          ...(roomType ? [{ value: SUGGESTED, label: `Para ${roomName?.toLowerCase() ?? 'tu espacio'}` }] : []),
+          { value: ALL, label: 'Todos' },
+          ...categories.map((category) => ({ value: category.slug, label: category.name })),
+        ]}
+      />
       <ul className="catalog-list">
         {visible.map((item) => (
           <li key={item.id}>

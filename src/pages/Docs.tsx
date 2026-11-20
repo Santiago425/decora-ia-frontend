@@ -13,6 +13,7 @@ import {
 import { useAsync } from '../hooks/useAsync';
 import { metaService } from '../services/metaService';
 import { notificationCenter } from '../services/notificationCenter';
+import { Chip, ChipGroup, PageHeader } from '../components/ui';
 
 const CATEGORIES: PatternCategory[] = ['Creacional', 'Estructural', 'Comportamiento', 'Arquitectura'];
 const SIDES: Side[] = ['Backend', 'Frontend'];
@@ -123,13 +124,12 @@ export default function Docs() {
 
   return (
     <div className="page docs-page">
-      <header className="page-header docs-hero">
-        <span className="docs-kicker">Proyecto final · Patrones de Diseño</span>
-        <h1>Documentación de {config.appName}</h1>
-        <p className="page-subtitle">
-          Cómo está construida la app: arquitectura, base de datos y los {distinct} patrones de diseño aplicados (
-          {PATTERNS.length} usos entre backend y frontend), cada uno con su diagrama UML.
-        </p>
+      <section className="docs-hero">
+        <PageHeader
+          eyebrow="Proyecto final · Patrones de Diseño"
+          title={`Documentación de ${config.appName}`}
+          subtitle={`Cómo está construida la app: arquitectura, base de datos y los ${distinct} patrones de diseño aplicados (${PATTERNS.length} usos entre backend y frontend), cada uno con su diagrama UML.`}
+        />
         <nav className="docs-index" aria-label="Secciones">
           {SECTIONS.map(({ id, label, icon: Icon }) => (
             <a key={id} href={`#${id}`}>
@@ -137,7 +137,7 @@ export default function Docs() {
             </a>
           ))}
         </nav>
-      </header>
+      </section>
 
       <section id="arquitectura" className="docs-section">
         <h2>Arquitectura</h2>
@@ -238,30 +238,20 @@ export default function Docs() {
               aria-label="Buscar patrón"
             />
           </label>
-          <div className="chips" role="group" aria-label="Tipo de patrón">
+          <ChipGroup label="Tipo de patrón" className="chips-scroll">
             {(['all', ...CATEGORIES] as const).map((c) => (
-              <button
-                key={c}
-                className={`chip ${category === c ? 'selected' : ''}`}
-                aria-pressed={category === c}
-                onClick={() => setCategory(c)}
-              >
+              <Chip key={c} className="chip-sm" selected={category === c} onClick={() => setCategory(c)}>
                 {c === 'all' ? 'Todos' : c}
-              </button>
+              </Chip>
             ))}
-          </div>
-          <div className="chips" role="group" aria-label="Lado">
+          </ChipGroup>
+          <ChipGroup label="Lado" className="chips-scroll">
             {(['all', ...SIDES] as const).map((s) => (
-              <button
-                key={s}
-                className={`chip ${side === s ? 'selected' : ''}`}
-                aria-pressed={side === s}
-                onClick={() => setSide(s)}
-              >
+              <Chip key={s} className="chip-sm" selected={side === s} onClick={() => setSide(s)}>
                 {s === 'all' ? 'Back y front' : s}
-              </button>
+              </Chip>
             ))}
-          </div>
+          </ChipGroup>
         </div>
         <p className="muted">
           {patterns.length} de {PATTERNS.length} · toca uno para ver el problema, la solución y su diagrama UML

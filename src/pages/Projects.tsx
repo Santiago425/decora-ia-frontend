@@ -18,6 +18,7 @@ import { notificationCenter } from '../services/notificationCenter';
 import { projectService } from '../services/projectService';
 import type { ProjectStatus, ProjectSummary } from '../types/dashboard';
 import { formatCurrency } from '../utils/format';
+import { Button, ButtonLink, Chip, ChipGroup, PageHeader, Skeleton } from '../components/ui';
 
 const STATUS_FILTERS: (ProjectStatus | 'all')[] = ['all', 'draft', 'in_design', 'finished'];
 const KIND_LABELS: Record<KindFilter, string> = {
@@ -104,24 +105,25 @@ export default function Projects() {
 
   return (
     <div className="page projects-page">
-      <header className="page-header projects-header">
-        <div>
-          <h1>Mis proyectos</h1>
-          <p className="page-subtitle">
-            {projects.length > 0
-              ? `${projects.length} ${projects.length === 1 ? 'proyecto' : 'proyectos'} · ${formatCurrency(total)} en presupuesto estimado`
-              : 'Aquí aparecen tus rediseños y tus habitaciones en 3D.'}
-          </p>
-        </div>
-        <div className="header-actions">
-          <Link to="/redesign" className="button button-ghost">
-            <WandSparkles size={18} /> Rediseñar foto
-          </Link>
-          <Link to="/editor" className="button button-primary">
-            <Plus size={18} /> Nuevo proyecto
-          </Link>
-        </div>
-      </header>
+      <PageHeader
+        className="projects-header"
+        title="Mis proyectos"
+        subtitle={
+          projects.length > 0
+            ? `${projects.length} ${projects.length === 1 ? 'proyecto' : 'proyectos'} · ${formatCurrency(total)} en presupuesto estimado`
+            : 'Aquí aparecen tus rediseños y tus habitaciones en 3D.'
+        }
+        actions={
+          <>
+            <ButtonLink to="/redesign" variant="ghost">
+              <WandSparkles size={18} /> Rediseñar foto
+            </ButtonLink>
+            <ButtonLink to="/editor">
+              <Plus size={18} /> Nuevo proyecto
+            </ButtonLink>
+          </>
+        }
+      />
 
       <section className="projects-toolbar" aria-label="Buscar y filtrar">
         <label className="search-box">
@@ -134,18 +136,13 @@ export default function Projects() {
             aria-label="Buscar proyectos"
           />
         </label>
-        <div className="chips" role="group" aria-label="Estado">
+        <ChipGroup label="Estado" className="chips-scroll">
           {STATUS_FILTERS.map((status) => (
-            <button
-              key={status}
-              className={`chip ${query.status === status ? 'selected' : ''}`}
-              aria-pressed={query.status === status}
-              onClick={() => update({ status })}
-            >
+            <Chip key={status} selected={query.status === status} onClick={() => update({ status })}>
               {status === 'all' ? 'Todos' : STATUS_LABELS[status]}
-            </button>
+            </Chip>
           ))}
-        </div>
+        </ChipGroup>
         <div className="toolbar-selects">
           <select
             value={query.kind}
@@ -171,16 +168,16 @@ export default function Projects() {
       {error && (
         <div className="inline-error" role="alert">
           <span>{error}</span>
-          <button className="button button-ghost" onClick={retry}>
+          <Button variant="ghost" onClick={retry}>
             <RefreshCw size={16} /> Reintentar
-          </button>
+          </Button>
         </div>
       )}
 
       {loading && !data && (
         <div className="project-grid">
           {[0, 1, 2, 3].map((i) => (
-            <div key={i} className="project-card skeleton project-skeleton" />
+            <Skeleton key={i} className="project-card project-skeleton" />
           ))}
         </div>
       )}
@@ -190,9 +187,9 @@ export default function Projects() {
           title="Todavía no tienes proyectos"
           description="Sube una foto para rediseñarla con IA o arma una habitación desde cero en el editor 3D."
           action={
-            <Link to="/editor" className="button button-primary">
+            <ButtonLink to="/editor">
               <Box size={18} /> Crear mi primer proyecto
-            </Link>
+            </ButtonLink>
           }
         />
       )}
@@ -202,9 +199,9 @@ export default function Projects() {
           title="Nada coincide con tu búsqueda"
           description="Prueba con otro nombre o quita algunos filtros."
           action={
-            <button className="button button-ghost" onClick={() => setQuery(DEFAULT_QUERY)}>
+            <Button variant="ghost" onClick={() => setQuery(DEFAULT_QUERY)}>
               Limpiar filtros
-            </button>
+            </Button>
           }
         />
       )}

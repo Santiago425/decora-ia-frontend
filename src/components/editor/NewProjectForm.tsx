@@ -1,7 +1,8 @@
 import { Box, Sparkles } from 'lucide-react';
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useId, useState, type FormEvent } from 'react';
 import type { DesignStyle, RoomType } from '../../types/catalog';
 import type { NewProject } from '../../types/project';
+import { Button, Chip } from '../ui';
 
 interface NewProjectFormProps {
   roomTypes: RoomType[];
@@ -12,6 +13,8 @@ interface NewProjectFormProps {
 
 export function NewProjectForm({ roomTypes, styles, busy, onCreate }: NewProjectFormProps) {
   const [name, setName] = useState('');
+  const roomLabel = useId();
+  const styleLabel = useId();
   const [roomType, setRoomType] = useState('');
   const [style, setStyle] = useState('');
   const [furnished, setFurnished] = useState(true);
@@ -55,31 +58,25 @@ export function NewProjectForm({ roomTypes, styles, busy, onCreate }: NewProject
       />
       {error && <small className="field-error">{error}</small>}
 
-      <span className="field-label">Tipo de habitación</span>
-      <div className="chips">
+      <span className="field-label" id={roomLabel}>
+        Tipo de habitación
+      </span>
+      <div className="chips" role="group" aria-labelledby={roomLabel}>
         {roomTypes.map((room) => (
-          <button
-            type="button"
-            key={room.slug}
-            className={`chip ${roomType === room.slug ? 'selected' : ''}`}
-            onClick={() => setRoomType(room.slug)}
-          >
+          <Chip key={room.slug} selected={roomType === room.slug} onClick={() => setRoomType(room.slug)}>
             {room.name}
-          </button>
+          </Chip>
         ))}
       </div>
 
-      <span className="field-label">Estilo</span>
-      <div className="chips">
+      <span className="field-label" id={styleLabel}>
+        Estilo
+      </span>
+      <div className="chips" role="group" aria-labelledby={styleLabel}>
         {styles.map((item) => (
-          <button
-            type="button"
-            key={item.slug}
-            className={`chip ${style === item.slug ? 'selected' : ''}`}
-            onClick={() => setStyle(item.slug)}
-          >
+          <Chip key={item.slug} selected={style === item.slug} onClick={() => setStyle(item.slug)}>
             {item.name}
-          </button>
+          </Chip>
         ))}
       </div>
 
@@ -89,9 +86,9 @@ export function NewProjectForm({ roomTypes, styles, busy, onCreate }: NewProject
         Empezar con muebles sugeridos para este espacio
       </label>
 
-      <button className="button button-primary" disabled={busy || !roomType || !style}>
+      <Button type="submit" disabled={busy || !roomType || !style}>
         {busy ? <span className="spinner" /> : <Sparkles size={18} />} Crear y abrir el editor
-      </button>
+      </Button>
     </form>
   );
 }

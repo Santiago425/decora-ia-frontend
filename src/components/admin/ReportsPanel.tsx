@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { adminService } from '../../services/adminService';
 import { notificationCenter } from '../../services/notificationCenter';
 import type { ReportKind } from '../../types/admin';
+import { Button, Panel } from '../ui';
 
 const REPORTS: { kind: ReportKind; title: string; description: string }[] = [
   {
@@ -36,13 +37,11 @@ export function ReportsPanel() {
   }
 
   return (
-    <section className="panel admin-panel">
-      <header className="admin-panel-head">
-        <div>
-          <h2>Reportes</h2>
-          <p>Descárgalos en CSV y ábrelos con Excel o Google Sheets.</p>
-        </div>
-      </header>
+    <Panel
+      className="admin-panel"
+      title="Reportes"
+      description="Descárgalos en CSV y ábrelos con Excel o Google Sheets."
+    >
       <div className="report-grid">
         {REPORTS.map((report) => (
           <article key={report.kind} className="report-card">
@@ -53,16 +52,12 @@ export function ReportsPanel() {
               <h3>{report.title}</h3>
               <p>{report.description}</p>
             </div>
-            <button
-              className="button button-ghost"
-              onClick={() => download(report.kind)}
-              disabled={busy === report.kind}
-            >
+            <Button variant="ghost" onClick={() => download(report.kind)} disabled={busy === report.kind}>
               <Download size={17} /> {busy === report.kind ? 'Preparando…' : 'Descargar'}
-            </button>
+            </Button>
           </article>
         ))}
       </div>
-    </section>
+    </Panel>
   );
 }

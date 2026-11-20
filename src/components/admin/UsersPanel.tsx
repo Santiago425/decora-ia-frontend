@@ -5,6 +5,7 @@ import { adminService } from '../../services/adminService';
 import { notificationCenter } from '../../services/notificationCenter';
 import type { AdminUser, AdminUserPage, Role } from '../../types/admin';
 import { formatRelativeTime } from '../../utils/format';
+import { Panel } from '../ui';
 
 const initials = (name: string) =>
   name
@@ -52,12 +53,11 @@ export function UsersPanel() {
   const pages = data ? Math.max(1, Math.ceil(data.total / data.page_size)) : 1;
 
   return (
-    <section className="panel admin-panel">
-      <header className="admin-panel-head">
-        <div>
-          <h2>Usuarios</h2>
-          <p>{data ? `${data.total} ${data.total === 1 ? 'cuenta' : 'cuentas'}` : 'Cargando…'}</p>
-        </div>
+    <Panel
+      className="admin-panel"
+      title="Usuarios"
+      description={data ? `${data.total} ${data.total === 1 ? 'cuenta' : 'cuentas'}` : 'Cargando…'}
+      actions={
         <label className="search-box">
           <Search size={18} />
           <input
@@ -71,8 +71,8 @@ export function UsersPanel() {
             aria-label="Buscar usuarios"
           />
         </label>
-      </header>
-
+      }
+    >
       <div className="table-wrap">
         <table className="admin-table">
           <thead>
@@ -161,6 +161,6 @@ export function UsersPanel() {
           </button>
         </nav>
       )}
-    </section>
+    </Panel>
   );
 }
