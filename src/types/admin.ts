@@ -30,6 +30,7 @@ export interface DailyPoint {
 export interface ProviderInfo {
   text: string;
   image: string;
+  image_fallback?: string;
   storage: string;
 }
 

@@ -11,8 +11,9 @@ import {
   type Side,
 } from '../docs/patterns';
 import { useAsync } from '../hooks/useAsync';
-import { metaService } from '../services/metaService';
+import { metaService, providerLabel } from '../services/metaService';
 import { notificationCenter } from '../services/notificationCenter';
+import type { AppInfo, ProviderCapability } from '../types/meta';
 import { Chip, ChipGroup, PageHeader } from '../components/ui';
 
 const CATEGORIES: PatternCategory[] = ['Creacional', 'Estructural', 'Comportamiento', 'Arquitectura'];
@@ -49,15 +50,25 @@ const STACK = [
       'pytest',
     ],
   },
-  { area: 'Datos e IA', items: ['PostgreSQL en Neon', 'Google Gemini', 'Hugging Face (imágenes)', 'Modo demo sin IA'] },
+  { area: 'Datos e IA', items: ['PostgreSQL en Neon'] },
   { area: 'Despliegue', items: ['Vercel (frontend)', 'Render (backend)', 'Variables en .env, nada fijo en el código'] },
 ];
 
-const PROVIDER_LABELS: Record<string, string> = {
-  gemini: 'Google Gemini',
-  huggingface: 'Hugging Face',
-  mock: 'Modo demo',
+const CAPABILITY_LABELS: Record<ProviderCapability, string> = {
+  text: 'texto',
+  image: 'imágenes',
+  storage: 'fotos',
 };
+
+function stackWithProviders(info: AppInfo | null) {
+  if (!info) return STACK;
+  const providers = info.available_providers
+    .filter((provider) => !provider.capabilities.includes('storage'))
+    .map((provider) => `${provider.label} (${provider.capabilities.map((c) => CAPABILITY_LABELS[c]).join(' e ')})`);
+  return STACK.map((group) =>
+    group.area === 'Datos e IA' ? { ...group, items: [...group.items, ...providers] } : group,
+  );
+}
 
 function copy(text: string) {
   navigator.clipboard
@@ -151,11 +162,19 @@ export default function Docs() {
           <dl className="docs-facts">
             <div>
               <dt>IA de texto (Lumi y sugerencias)</dt>
-              <dd>{PROVIDER_LABELS[info.providers.text] ?? info.providers.text}</dd>
+              <dd>{providerLabel(info, info.providers.text)}</dd>
             </div>
             <div>
               <dt>IA de imágenes (rediseño)</dt>
-              <dd>{PROVIDER_LABELS[info.providers.image] ?? info.providers.image}</dd>
+              <dd>
+                {providerLabel(info, info.providers.image)}
+                {info.providers.image_fallback && info.providers.image_fallback !== 'none' && (
+                  <small className="docs-fallback">
+                    {' '}
+                    · respaldo {providerLabel(info, info.providers.image_fallback)}
+                  </small>
+                )}
+              </dd>
             </div>
             <div>
               <dt>API</dt>
@@ -266,7 +285,7 @@ export default function Docs() {
       <section id="tecnologias" className="docs-section">
         <h2>Tecnologías</h2>
         <div className="stack-grid">
-          {STACK.map((group) => (
+          {stackWithProviders(info).map((group) => (
             <article key={group.area} className="stack-card">
               <h3>{group.area}</h3>
               <ul>

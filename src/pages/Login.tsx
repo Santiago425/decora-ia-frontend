@@ -1,4 +1,5 @@
 import { ArrowRight, Lock, Mail } from 'lucide-react';
+import { DemoAccess } from '../components/DemoAccess';
 import { useState, type FormEvent } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthLayout } from '../components/AuthLayout';
@@ -7,6 +8,7 @@ import { RoleSwitch } from '../components/RoleSwitch';
 import { useAuth } from '../hooks/useAuth';
 import { notificationCenter } from '../services/notificationCenter';
 import type { UserRole } from '../types/auth';
+import type { DemoAccount } from '../types/meta';
 import { validateEmail, validatePassword } from '../utils/validation';
 import { Button } from '../components/ui';
 
@@ -21,23 +23,34 @@ export default function Login() {
   const [serverError, setServerError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(event: FormEvent) {
-    event.preventDefault();
-    const nextErrors = { email: validateEmail(email), password: validatePassword(password) };
-    setErrors(nextErrors);
-    if (nextErrors.email || nextErrors.password) return;
+  async function signIn(credentials: { email: string; password: string; role: UserRole }) {
     setLoading(true);
     setServerError('');
     try {
-      const user = await login({ email: email.trim(), password, role });
+      const user = await login(credentials);
       const from = (location.state as { from?: string } | null)?.from;
       notificationCenter.notify(`Hola de nuevo, ${user.full_name.split(' ')[0]}`, 'success');
       navigate(from ?? '/', { replace: true });
     } catch (error) {
       setServerError((error as Error).message);
-    } finally {
       setLoading(false);
     }
+  }
+
+  function handleSubmit(event: FormEvent) {
+    event.preventDefault();
+    const nextErrors = { email: validateEmail(email), password: validatePassword(password) };
+    setErrors(nextErrors);
+    if (nextErrors.email || nextErrors.password) return;
+    void signIn({ email: email.trim(), password, role });
+  }
+
+  function handleDemo(account: DemoAccount) {
+    setRole(account.role);
+    setEmail(account.email);
+    setPassword(account.password);
+    setErrors({});
+    void signIn({ email: account.email, password: account.password, role: account.role });
   }
 
   return (
@@ -76,6 +89,7 @@ export default function Login() {
           {!loading && <ArrowRight size={18} />}
         </Button>
       </form>
+      <DemoAccess disabled={loading} onSelect={handleDemo} />
       <p className="auth-switch">
         ¿Aún no tienes cuenta? <Link to="/register">Créala gratis</Link>
       </p>
