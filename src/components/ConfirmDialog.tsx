@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { Button, Modal } from './ui';
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -21,32 +21,29 @@ export function ConfirmDialog({
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
-  const dialog = useRef<HTMLDialogElement>(null);
-
-  useEffect(() => {
-    const element = dialog.current;
-    if (!element) return;
-    if (open && !element.open) element.showModal();
-    if (!open && element.open) element.close();
-  }, [open]);
-
   return (
-    <dialog ref={dialog} className="confirm-dialog" onCancel={onCancel} onClose={onCancel}>
-      <h2>{title}</h2>
+    <Modal
+      open={open}
+      title={title}
+      onClose={() => !busy && onCancel()}
+      footer={
+        <>
+          <Button variant="ghost" onClick={onCancel} disabled={busy}>
+            Cancelar
+          </Button>
+          <Button
+            variant={danger ? 'danger' : 'primary'}
+            onClick={onConfirm}
+            loading={busy}
+            loadingLabel="Un momento…"
+            autoFocus
+          >
+            {confirmLabel}
+          </Button>
+        </>
+      }
+    >
       <p>{message}</p>
-      <div className="confirm-actions">
-        <button className="button button-ghost" onClick={onCancel} disabled={busy}>
-          Cancelar
-        </button>
-        <button
-          className={`button ${danger ? 'button-danger' : 'button-primary'}`}
-          onClick={onConfirm}
-          disabled={busy}
-          autoFocus
-        >
-          {busy ? 'Un momento…' : confirmLabel}
-        </button>
-      </div>
-    </dialog>
+    </Modal>
   );
 }

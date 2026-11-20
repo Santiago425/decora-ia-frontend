@@ -104,10 +104,6 @@
   padding: 32px clamp(16px, 3vw, 40px) 48px;
 }
 
-.page-header h1 {
-  font-size: clamp(28px, 3vw, 36px);
-}
-
 .mobile-topbar,
 .mobile-nav,
 .more-sheet,
@@ -201,12 +197,6 @@
 
 .image-proxy.ready img {
   opacity: 1;
-}
-
-@keyframes shimmer {
-  to {
-    background-position: -300% 0;
-  }
 }
 
 @keyframes toast-in {

@@ -1,6 +1,7 @@
 import { Camera, ImagePlus, RefreshCcw } from 'lucide-react';
 import { useEffect, useRef, useState, type DragEvent } from 'react';
 import { isAcceptedImage } from '../../utils/image';
+import { Button } from '../ui';
 
 interface PhotoPickerProps {
   file: File | null;
@@ -63,9 +64,9 @@ export function PhotoPicker({ file, onChange, onInvalid }: PhotoPickerProps) {
     return (
       <div className="photo-preview">
         <img src={preview} alt="Foto de tu espacio" />
-        <button type="button" className="button button-glass" onClick={() => uploadInput.current?.click()}>
+        <Button variant="glass" className="photo-change" type="button" onClick={() => uploadInput.current?.click()}>
           <RefreshCcw size={16} /> Cambiar foto
-        </button>
+        </Button>
         {inputs}
       </div>
     );
@@ -87,16 +88,18 @@ export function PhotoPicker({ file, onChange, onInvalid }: PhotoPickerProps) {
       <strong>Arrastra aquí la foto de tu espacio</strong>
       <small>JPG, PNG o WEBP</small>
       <div className="dropzone-actions">
-        <button type="button" className="button button-primary" onClick={() => uploadInput.current?.click()}>
+        <Button type="button" onClick={() => uploadInput.current?.click()}>
           <ImagePlus size={18} /> Subir foto
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
+          className="camera-button"
           type="button"
-          className="button button-ghost camera-button"
+
           onClick={() => cameraInput.current?.click()}
         >
           <Camera size={18} /> Tomar foto
-        </button>
+        </Button>
       </div>
       {inputs}
     </div>

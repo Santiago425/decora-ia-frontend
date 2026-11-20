@@ -4,6 +4,7 @@ import { FurnitureGroup, FurnitureLeaf, type SceneComponent } from '../../editor
 import type { FurnitureAddon, FurnitureCategory, Material } from '../../types/catalog';
 import { formatCurrency } from '../../utils/format';
 import { CategoryIcon } from './categoryIcon';
+import { Button } from '../ui';
 
 interface InspectorProps {
   selection: SceneComponent[];
@@ -206,13 +207,9 @@ function GroupInspector({ group, props }: { group: FurnitureGroup; props: Inspec
         <strong>{formatCurrency(group.price())}</strong>
       </div>
       <Actions id={group.id} disabled={props.disabled} props={props} />
-      <button
-        className="button button-ghost button-block"
-        disabled={props.disabled}
-        onClick={() => props.onUngroup(group.id)}
-      >
+      <Button variant="ghost" block disabled={props.disabled} onClick={() => props.onUngroup(group.id)}>
         <Ungroup size={17} /> Desagrupar
-      </button>
+      </Button>
       <ul className="group-items">
         {group.leaves().map((leaf) => (
           <li key={leaf.id}>
@@ -242,13 +239,9 @@ export function Inspector(props: InspectorProps) {
           </div>
         </header>
         <p className="panel-hint">Agrúpalos para moverlos, rotarlos y duplicarlos como una sola pieza.</p>
-        <button
-          className="button button-primary button-block"
-          disabled={props.disabled}
-          onClick={() => props.onGroup(selection.map((s) => s.id))}
-        >
+        <Button block disabled={props.disabled} onClick={() => props.onGroup(selection.map((s) => s.id))}>
           <Group size={17} /> Agrupar
-        </button>
+        </Button>
       </div>
     );
   }

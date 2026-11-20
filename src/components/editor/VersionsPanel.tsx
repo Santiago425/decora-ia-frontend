@@ -2,6 +2,7 @@ import { History, RotateCcw, Save } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
 import type { VersionSummary } from '../../types/project';
 import { formatCurrency, formatRelativeTime } from '../../utils/format';
+import { Button } from '../ui';
 
 interface VersionsPanelProps {
   versions: VersionSummary[] | null;
@@ -31,9 +32,9 @@ export function VersionsPanel({ versions, disabled, busy, onSave, onRestore }: V
           onChange={(e) => setLabel(e.target.value)}
           aria-label="Nombre de la versión"
         />
-        <button className="button button-primary" disabled={busy || !label.trim()}>
+        <Button type="submit" disabled={busy || !label.trim()}>
           <Save size={16} /> Guardar
-        </button>
+        </Button>
       </form>
       <p className="panel-hint">
         Guarda una versión antes de probar cambios grandes. Puedes volver a ella cuando quieras.

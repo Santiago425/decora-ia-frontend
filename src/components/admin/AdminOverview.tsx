@@ -5,6 +5,7 @@ import { adminService } from '../../services/adminService';
 import { STATUS_LABELS } from '../../projects/projectStatus';
 import { StatCard } from '../dashboard/StatCard';
 import { ActivityChart } from './ActivityChart';
+import { Button, Panel, Skeleton } from '../ui';
 
 const PROVIDER_LABELS: Record<string, string> = {
   gemini: 'Google Gemini',
@@ -39,16 +40,16 @@ export function AdminOverview() {
     return (
       <div className="inline-error" role="alert">
         <span>{error}</span>
-        <button className="button button-ghost" onClick={retry}>
+        <Button variant="ghost" onClick={retry}>
           <RefreshCw size={16} /> Reintentar
-        </button>
+        </Button>
       </div>
     );
   if (loading || !data)
     return (
       <div className="stats-grid">
         {[0, 1, 2, 3].map((i) => (
-          <div key={i} className="stat-card skeleton" />
+          <Skeleton key={i} className="stat-card" />
         ))}
       </div>
     );
@@ -69,35 +70,23 @@ export function AdminOverview() {
       </section>
 
       <section className="admin-grid">
-        <article className="panel admin-wide">
-          <header className="panel-header">
-            <h2>Actividad de los últimos {data.days} días</h2>
-          </header>
+        <Panel as="article" title={<>Actividad de los últimos {data.days} días</>} className="admin-wide">
           <ActivityChart data={data.daily} />
-        </article>
+        </Panel>
 
-        <article className="panel">
-          <header className="panel-header">
-            <h2>Proyectos por estado</h2>
-          </header>
+        <Panel as="article" title="Proyectos por estado">
           <Breakdown items={statusItems} total={data.totals.projects} />
-        </article>
+        </Panel>
 
-        <article className="panel">
-          <header className="panel-header">
-            <h2>Estilos más elegidos</h2>
-          </header>
+        <Panel as="article" title="Estilos más elegidos">
           {data.top_styles.length ? (
             <Breakdown items={data.top_styles.map((s) => ({ label: s.name, value: s.count }))} total={styleTotal} />
           ) : (
             <p className="panel-empty">Aún no hay proyectos con estilo.</p>
           )}
-        </article>
+        </Panel>
 
-        <article className="panel">
-          <header className="panel-header">
-            <h2>Usuarios</h2>
-          </header>
+        <Panel as="article" title="Usuarios">
           <dl className="admin-facts">
             <div>
               <dt>Activos</dt>
@@ -112,12 +101,9 @@ export function AdminOverview() {
               <dd>{data.users_by_role.admin ?? 0}</dd>
             </div>
           </dl>
-        </article>
+        </Panel>
 
-        <article className="panel">
-          <header className="panel-header">
-            <h2>Servicios conectados</h2>
-          </header>
+        <Panel as="article" title="Servicios conectados">
           <dl className="admin-facts">
             <div>
               <dt>
@@ -142,7 +128,7 @@ export function AdminOverview() {
               <dd className="provider">{PROVIDER_LABELS[data.providers.storage] ?? data.providers.storage}</dd>
             </div>
           </dl>
-        </article>
+        </Panel>
       </section>
     </div>
   );

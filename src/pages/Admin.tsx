@@ -4,6 +4,7 @@ import { AdminOverview } from '../components/admin/AdminOverview';
 import { CatalogAdmin } from '../components/admin/CatalogAdmin';
 import { ReportsPanel } from '../components/admin/ReportsPanel';
 import { UsersPanel } from '../components/admin/UsersPanel';
+import { PageHeader, Tabs } from '../components/ui';
 
 const TABS = {
   overview: { label: 'Resumen', icon: BarChart3 },
@@ -20,28 +21,22 @@ export default function Admin() {
 
   return (
     <div className="page admin-page">
-      <header className="page-header admin-header">
-        <div>
-          <h1>Administración</h1>
-          <p className="page-subtitle">Lo que pasa en toda la plataforma, las cuentas y el catálogo.</p>
-        </div>
-      </header>
+      <PageHeader
+        className="admin-header"
+        title="Administración"
+        subtitle="Lo que pasa en toda la plataforma, las cuentas y el catálogo."
+      />
 
-      <div className="admin-tabs" role="tablist" aria-label="Secciones de administración">
-        {(Object.keys(TABS) as Tab[]).map((key) => {
+      <Tabs
+        className="admin-tabs"
+        label="Secciones de administración"
+        value={tab}
+        onChange={(key) => setParams(key === 'overview' ? {} : { tab: key })}
+        items={(Object.keys(TABS) as Tab[]).map((key) => {
           const { label, icon: Icon } = TABS[key];
-          return (
-            <button
-              key={key}
-              role="tab"
-              aria-selected={tab === key}
-              onClick={() => setParams(key === 'overview' ? {} : { tab: key })}
-            >
-              <Icon size={17} /> {label}
-            </button>
-          );
+          return { value: key, label, icon: <Icon size={17} aria-hidden="true" /> };
         })}
-      </div>
+      />
 
       {tab === 'overview' && <AdminOverview />}
       {tab === 'users' && <UsersPanel />}

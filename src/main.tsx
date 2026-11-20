@@ -2,6 +2,7 @@ import '@fontsource-variable/fraunces';
 import '@fontsource-variable/plus-jakarta-sans';
 import './styles/tokens.css';
 import './styles/global.css';
+import './styles/ui.css';
 import './styles/auth.css';
 import './styles/layout.css';
 import './styles/dashboard.css';

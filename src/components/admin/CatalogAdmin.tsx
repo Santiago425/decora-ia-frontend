@@ -8,6 +8,7 @@ import type { AdminAddon, AdminFurniture, AdminStyle, FurnitureInput } from '../
 import type { FurnitureCategory } from '../../types/catalog';
 import { formatCurrency } from '../../utils/format';
 import { cssVar } from '../../styles/theme';
+import { Button, Panel, Tabs } from '../ui';
 
 type Section = 'furniture' | 'styles' | 'addons';
 
@@ -152,9 +153,9 @@ function NewFurnitureForm({
         Descripción
         <input maxLength={500} value={form.description} onChange={(e) => set('description', e.target.value)} />
       </label>
-      <button className="button button-primary full" disabled={saving}>
+      <Button className="full" type="submit" disabled={saving}>
         {saving ? 'Guardando…' : 'Agregar al catálogo'}
-      </button>
+      </Button>
     </form>
   );
 }
@@ -201,9 +202,9 @@ function FurnitureTable() {
           ))}
         </select>
         <span className="muted">{visible.length} muebles</span>
-        <button className="button button-primary" onClick={() => setCreating(true)} disabled={!categories}>
+        <Button onClick={() => setCreating(true)} disabled={!categories}>
           <Plus size={18} /> Nuevo mueble
-        </button>
+        </Button>
       </div>
       {creating && categories && (
         <NewFurnitureForm
@@ -397,29 +398,23 @@ function AddonsTable() {
 export function CatalogAdmin() {
   const [section, setSection] = useState<Section>('furniture');
   return (
-    <section className="panel admin-panel">
-      <header className="admin-panel-head">
-        <div>
-          <h2>Catálogo</h2>
-          <p>Los cambios se ven al instante en el editor 3D, en el rediseño y en Lumi.</p>
-        </div>
-        <div className="chips" role="tablist">
-          {(Object.keys(SECTIONS) as Section[]).map((key) => (
-            <button
-              key={key}
-              role="tab"
-              aria-selected={section === key}
-              className={`chip ${section === key ? 'selected' : ''}`}
-              onClick={() => setSection(key)}
-            >
-              {SECTIONS[key]}
-            </button>
-          ))}
-        </div>
-      </header>
+    <Panel
+      className="admin-panel"
+      title="Catálogo"
+      description="Los cambios se ven al instante en el editor 3D, en el rediseño y en Lumi."
+      actions={
+        <Tabs
+          label="Secciones del catálogo"
+          variant="chips"
+          value={section}
+          onChange={setSection}
+          items={(Object.keys(SECTIONS) as Section[]).map((key) => ({ value: key, label: SECTIONS[key] }))}
+        />
+      }
+    >
       {section === 'furniture' && <FurnitureTable />}
       {section === 'styles' && <StylesTable />}
       {section === 'addons' && <AddonsTable />}
-    </section>
+    </Panel>
   );
 }

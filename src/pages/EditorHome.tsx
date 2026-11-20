@@ -9,6 +9,7 @@ import { catalogService } from '../services/catalogService';
 import { notificationCenter } from '../services/notificationCenter';
 import { projectService } from '../services/projectService';
 import type { NewProject } from '../types/project';
+import { Button, PageHeader, Skeleton } from '../components/ui';
 
 export default function EditorHome() {
   const navigate = useNavigate();
@@ -32,19 +33,17 @@ export default function EditorHome() {
 
   return (
     <div className="page editor-home">
-      <header className="page-header">
-        <h1>Editor 3D</h1>
-        <p className="page-subtitle">
-          Diseña tu espacio en tres dimensiones, prueba muebles y conoce el presupuesto al instante.
-        </p>
-      </header>
+      <PageHeader
+        title="Editor 3D"
+        subtitle="Diseña tu espacio en tres dimensiones, prueba muebles y conoce el presupuesto al instante."
+      />
 
       {error && (
         <div className="inline-error" role="alert">
           <span>{error}</span>
-          <button className="button button-ghost" onClick={retry}>
+          <Button variant="ghost" onClick={retry}>
             <RefreshCw size={16} /> Reintentar
-          </button>
+          </Button>
         </div>
       )}
 
@@ -59,7 +58,7 @@ export default function EditorHome() {
           {loading && !data && (
             <div className="project-grid">
               {[0, 1].map((i) => (
-                <div key={i} className="project-card skeleton" />
+                <Skeleton key={i} className="project-card" />
               ))}
             </div>
           )}

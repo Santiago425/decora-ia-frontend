@@ -14,6 +14,7 @@ import { useAsync } from '../hooks/useAsync';
 import { useAuth } from '../hooks/useAuth';
 import { dashboardService } from '../services/dashboardService';
 import { formatCurrency, greeting } from '../utils/format';
+import { Button, ButtonLink, Panel, Skeleton } from '../components/ui';
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -35,16 +36,16 @@ export default function Dashboard() {
       {error && (
         <div className="inline-error" role="alert">
           <span>{error}</span>
-          <button className="button button-ghost" onClick={retry}>
+          <Button variant="ghost" onClick={retry}>
             <RefreshCw size={16} /> Reintentar
-          </button>
+          </Button>
         </div>
       )}
 
       {loading && !data && (
         <div className="stats-grid">
           {[0, 1, 2, 3].map((i) => (
-            <div key={i} className="stat-card skeleton" />
+            <Skeleton key={i} className="stat-card" />
           ))}
         </div>
       )}
@@ -79,26 +80,20 @@ export default function Dashboard() {
           </section>
 
           <section className="dashboard-row">
-            <article className="panel">
-              <header className="panel-header">
-                <h2>Estilos más usados</h2>
-              </header>
+            <Panel as="article" title="Estilos más usados">
               {data.style_usage.length ? (
                 <StyleUsageChart data={data.style_usage} />
               ) : (
                 <p className="panel-empty">Cuando crees proyectos verás aquí tus estilos preferidos.</p>
               )}
-            </article>
-            <article className="panel">
-              <header className="panel-header">
-                <h2>Actividad reciente</h2>
-              </header>
+            </Panel>
+            <Panel as="article" title="Actividad reciente">
               {data.recent_activity.length ? (
                 <ActivityList items={data.recent_activity} />
               ) : (
                 <p className="panel-empty">Aún no hay movimientos.</p>
               )}
-            </article>
+            </Panel>
           </section>
 
           <section>
@@ -124,9 +119,9 @@ export default function Dashboard() {
                 title="Tu primer proyecto te espera"
                 description={`Sube una foto o pídeselo a ${config.assistantName} y empieza a diseñar.`}
                 action={
-                  <Link to="/redesign" className="button button-primary">
+                  <ButtonLink to="/redesign">
                     <WandSparkles size={18} /> Crear un rediseño
-                  </Link>
+                  </ButtonLink>
                 }
               />
             )}

@@ -5,11 +5,6 @@
   align-items: start;
 }
 
-.page-subtitle {
-  margin: 6px 0 0;
-  color: var(--text-2);
-}
-
 .new-project {
   display: grid;
   gap: 12px;
@@ -100,9 +95,6 @@
 
 .editor-skeleton {
   grid-row: 1 / -1;
-  border-radius: var(--radius-xl);
-  background: linear-gradient(100deg, var(--surface-3) 30%, var(--bg) 50%, var(--surface-3) 70%) 0 0 / 200% 100%;
-  animation: shimmer 1.4s linear infinite;
 }
 
 .editor-toolbar {
@@ -412,19 +404,6 @@
   overflow-x: auto;
   padding-bottom: 4px;
   scrollbar-width: thin;
-}
-
-.chip-row .chip {
-  flex: none;
-  min-height: 34px;
-  padding: 0 12px;
-  font-size: 13px;
-}
-
-.chip[aria-selected='true'] {
-  border-color: var(--text);
-  background: var(--primary);
-  color: var(--on-primary);
 }
 
 .catalog-list,

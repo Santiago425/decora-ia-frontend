@@ -7,6 +7,7 @@ import { config } from '../config';
 import { useAuth } from '../hooks/useAuth';
 import { notificationCenter } from '../services/notificationCenter';
 import { validateEmail, validateFullName, validatePassword } from '../utils/validation';
+import { Button } from '../components/ui';
 
 type Errors = Partial<Record<'fullName' | 'email' | 'password' | 'confirm', string | null>>;
 
@@ -98,11 +99,11 @@ export default function Register() {
             {serverError}
           </p>
         )}
-        <button className="button button-primary button-block" disabled={loading}>
+        <Button block type="submit" disabled={loading}>
           {loading && <span className="spinner" aria-hidden="true" />}
           {loading ? 'Creando cuenta…' : 'Crear cuenta'}
           {!loading && <ArrowRight size={18} />}
-        </button>
+        </Button>
       </form>
       <p className="auth-switch">
         ¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link>
