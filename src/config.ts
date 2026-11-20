@@ -1,3 +1,5 @@
+import { parseFloorSizes } from './utils/measure';
+
 const env = import.meta.env;
 
 function read(name: string, fallback = ''): string {
@@ -29,6 +31,11 @@ export const config = Object.freeze({
     duplicateOffset: Number(read('VITE_EDITOR_DUPLICATE_OFFSET')) || 0.3,
     overlapTolerance: Number(read('VITE_EDITOR_OVERLAP_TOLERANCE')) || 0.02,
     eyeHeight: Number(read('VITE_EDITOR_EYE_HEIGHT')) || 1.6,
+    roomSizePresets: parseFloorSizes(list('VITE_ROOM_SIZE_PRESETS')),
+    resizeFactors: [
+      Number(read('VITE_EDITOR_RESIZE_MIN_FACTOR')) || 0.5,
+      Number(read('VITE_EDITOR_RESIZE_MAX_FACTOR')) || 2,
+    ] as [number, number],
   },
   currency: read('VITE_CURRENCY'),
   locale: read('VITE_LOCALE'),

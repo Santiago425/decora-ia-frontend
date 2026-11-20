@@ -87,4 +87,7 @@ export interface NewProject {
   room_type: string;
   style: string;
   furnished: boolean;
+  width?: number;
+  length?: number;
+  height?: number;
 }

@@ -3,7 +3,11 @@ import { useEffect, useState } from 'react';
 import type { RoomComposite } from '../../editor/composite';
 import type { DesignStyle, Material } from '../../types/catalog';
 import type { LightingData, RoomData } from '../../types/project';
+import { config } from '../../config';
 import { formatCurrency } from '../../utils/format';
+import { ROOM_LIMITS } from '../../utils/measure';
+import { MeasureInput } from './MeasureInput';
+import { SizePresets } from './SizePresets';
 
 interface RoomPanelProps {
   composite: RoomComposite;
@@ -15,51 +19,8 @@ interface RoomPanelProps {
   onLighting: (lighting: LightingData) => void;
 }
 
-const LIMITS = { width: [1.5, 20], length: [1.5, 20], height: [2, 5] } as const;
-type Dimension = keyof typeof LIMITS;
+type Dimension = keyof typeof ROOM_LIMITS;
 const LABELS: Record<Dimension, string> = { width: 'Ancho', length: 'Largo', height: 'Alto' };
-
-function DimensionInput({
-  field,
-  room,
-  disabled,
-  onRoom,
-}: {
-  field: Dimension;
-  room: RoomData;
-  disabled: boolean;
-  onRoom: RoomPanelProps['onRoom'];
-}) {
-  const [value, setValue] = useState(String(room[field]));
-  useEffect(() => setValue(String(room[field])), [room, field]);
-  const [min, max] = LIMITS[field];
-
-  function commit() {
-    const number = Math.min(max, Math.max(min, Number(value.replace(',', '.'))));
-    if (Number.isNaN(number)) return setValue(String(room[field]));
-    setValue(String(number));
-    if (number !== room[field]) onRoom({ ...room, [field]: number }, 'Cambiar medidas');
-  }
-
-  return (
-    <label className="dimension">
-      <span>{LABELS[field]}</span>
-      <input
-        type="number"
-        inputMode="decimal"
-        step={0.1}
-        min={min}
-        max={max}
-        value={value}
-        disabled={disabled}
-        onChange={(e) => setValue(e.target.value)}
-        onBlur={commit}
-        onKeyDown={(e) => e.key === 'Enter' && (e.target as HTMLInputElement).blur()}
-      />
-      <em>m</em>
-    </label>
-  );
-}
 
 function MaterialPicker({
   title,
@@ -197,9 +158,22 @@ export function RoomPanel({ composite, styles, materials, disabled, onStyle, onR
 
       <section className="inspector-section">
         <h4>Medidas</h4>
+        <SizePresets
+          presets={config.editor.roomSizePresets}
+          current={[room.width, room.length]}
+          disabled={disabled}
+          onPick={([width, length]) => onRoom({ ...room, width, length }, 'Cambiar medidas')}
+        />
         <div className="dimension-row">
-          {(Object.keys(LIMITS) as Dimension[]).map((field) => (
-            <DimensionInput key={field} field={field} room={room} disabled={disabled} onRoom={onRoom} />
+          {(Object.keys(ROOM_LIMITS) as Dimension[]).map((field) => (
+            <MeasureInput
+              key={field}
+              label={LABELS[field]}
+              value={room[field]}
+              range={ROOM_LIMITS[field]}
+              disabled={disabled}
+              onCommit={(value) => value !== null && onRoom({ ...room, [field]: value }, 'Cambiar medidas')}
+            />
           ))}
         </div>
       </section>

@@ -337,6 +337,7 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
               <Inspector
                 selection={selection}
                 categories={catalog.categories}
+                furniture={catalog.furniture}
                 addons={catalog.addons}
                 finishes={finishes}
                 palette={palette}
@@ -350,6 +351,7 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
                 onSnapToWall={(id) => mediator.snapToWall(id)}
                 onRemove={(id) => mediator.remove(id)}
                 onRename={(id, name) => mediator.rename(id, name)}
+                onResize={(id, size) => mediator.resize(id, size)}
                 onGroup={(ids) => mediator.group(ids, `Grupo ${composite.children.length}`)}
                 onUngroup={(id) => mediator.ungroup(id)}
               />
