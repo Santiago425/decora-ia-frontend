@@ -31,7 +31,7 @@ export const SOLID: SolidPrinciple[] = [
     name: 'Sustitución de Liskov',
     idea: 'Cualquier implementación puede reemplazar a otra sin romper a quien la usa.',
     example:
-      'GeminiImageEditor, CloudflareImageEditor, HuggingFaceImageEditor y MockImageEditor son intercambiables: si el proveedor falla, el respaldo simulado entra en su lugar y el rediseño sigue.',
+      'GeminiImageEditor, CloudflareImageEditor, HuggingFaceImageEditor y MockImageEditor son intercambiables: el .env elige cuál se usa y el rediseño funciona igual con cualquiera. El respaldo simulado solo entra si se activa con AI_IMAGE_FALLBACK; si no, el error del proveedor se muestra tal cual.',
     files: ['app/patterns/ai/ai_provider.py', 'app/patterns/ai/ai_decorators.py'],
     patterns: ['adapter-ai', 'decorator-ai'],
   },
