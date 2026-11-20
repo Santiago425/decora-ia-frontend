@@ -748,7 +748,8 @@ export const PATTERNS: PatternDoc[] = [
     category: 'Comportamiento',
     side: 'Frontend',
     summary: 'Deshacer y rehacer en el editor 3D.',
-    problem: 'Cada cambio del editor (agregar, mover, rotar, cambiar medidas, pintar, agrupar) debe poder revertirse en orden.',
+    problem:
+      'Cada cambio del editor (agregar, mover, rotar, cambiar medidas, pintar, agrupar) debe poder revertirse en orden.',
     solution:
       'Cada acción es un objeto con execute() y undo(). CommandHistory guarda las pilas de deshacer y rehacer con un límite configurable.',
     files: ['src/editor/commands.ts'],
