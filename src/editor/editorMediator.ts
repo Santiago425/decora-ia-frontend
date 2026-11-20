@@ -168,7 +168,10 @@ export class EditorMediator {
       new UpdateSceneCommand(
         {
           style: slug,
-          lighting: theme.createLighting(),
+          lighting: {
+            ...theme.createLighting(),
+            time_of_day: this.store.getState().scene.lighting.time_of_day ?? null,
+          },
           room: {
             ...room,
             wall_material: theme.createWallFinish().slug,

@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { RoomComposite } from '../../editor/composite';
 import { buildPricing } from '../../editor/furnitureDecorators';
-import type { DesignStyle } from '../../types/catalog';
+import type { DaylightPreset, DesignStyle } from '../../types/catalog';
 import type { SceneData } from '../../types/project';
 import { RoomPanel } from './RoomPanel';
 
@@ -27,6 +27,22 @@ const scene: SceneData = {
   nodes: [],
 };
 
+const preset = (slug: string, name: string): DaylightPreset => ({
+  id: 1,
+  slug,
+  name,
+  description: '',
+  sun_color: '#ffe0b5',
+  sun_intensity: 1,
+  sun_elevation: 30,
+  sun_azimuth: 90,
+  ambient_color: '#dce8f5',
+  ambient_intensity: 1,
+  sky_color: '#cfe4f8',
+  window_intensity: 5,
+  lamp_intensity: 0,
+});
+
 function setup() {
   const onLighting = vi.fn();
   render(
@@ -38,6 +54,7 @@ function setup() {
         style('industrial', 'Industrial', '#ffd9a8'),
       ]}
       materials={[]}
+      daylight={[preset('morning', 'Mañana'), preset('night', 'Noche')]}
       disabled={false}
       onStyle={vi.fn()}
       onRoom={vi.fn()}
@@ -67,5 +84,16 @@ describe('RoomPanel light tones', () => {
     const onLighting = setup();
     fireEvent.change(screen.getByLabelText('Elegir otro tono de luz'), { target: { value: '#cfe0ff' } });
     expect(onLighting).toHaveBeenCalledWith({ color: '#cfe0ff', intensity: 1 });
+  });
+});
+
+describe('RoomPanel time of day', () => {
+  it('starts with the studio light and switches to a time from the catalog', () => {
+    const onLighting = setup();
+    expect(screen.getByRole('button', { name: 'Estudio' }).getAttribute('aria-pressed')).toBe('true');
+    fireEvent.click(screen.getByRole('button', { name: 'Noche' }));
+    expect(onLighting).toHaveBeenCalledWith({ color: '#fff6e8', intensity: 1, time_of_day: 'night' });
+    fireEvent.click(screen.getByRole('button', { name: 'Estudio' }));
+    expect(onLighting).toHaveBeenCalledTimes(1);
   });
 });

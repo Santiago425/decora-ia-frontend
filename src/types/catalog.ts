@@ -31,6 +31,23 @@ export interface DesignStyle {
   materials: Material[];
 }
 
+/** A time of day for the 3D editor: sun position and color, sky, and how bright windows and lamps are. */
+export interface DaylightPreset {
+  id: number;
+  slug: string;
+  name: string;
+  description: string;
+  sun_color: string;
+  sun_intensity: number;
+  sun_elevation: number;
+  sun_azimuth: number;
+  ambient_color: string;
+  ambient_intensity: number;
+  sky_color: string;
+  window_intensity: number;
+  lamp_intensity: number;
+}
+
 export interface RoomType {
   id: number;
   slug: string;

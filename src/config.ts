@@ -32,6 +32,7 @@ export const config = Object.freeze({
     overlapTolerance: Number(read('VITE_EDITOR_OVERLAP_TOLERANCE')) || 0.02,
     eyeHeight: Number(read('VITE_EDITOR_EYE_HEIGHT')) || 1.6,
     windowSill: Number(read('VITE_EDITOR_WINDOW_SILL')) || 0.9,
+    maxSceneLights: Number(read('VITE_EDITOR_MAX_SCENE_LIGHTS')) || 8,
     roomSizePresets: parseFloorSizes(list('VITE_ROOM_SIZE_PRESETS')),
     resizeFactors: [
       Number(read('VITE_EDITOR_RESIZE_MIN_FACTOR')) || 0.5,

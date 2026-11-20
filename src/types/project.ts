@@ -14,6 +14,8 @@ export interface RoomData {
 export interface LightingData {
   color: string;
   intensity: number;
+  /** Slug of a daylight preset; empty keeps the plain studio light. */
+  time_of_day?: string | null;
 }
 
 export interface SceneItemData {
