@@ -35,6 +35,20 @@
   --glass-border: rgb(255 255 255 / 0.5);
   --glass-blur: blur(16px) saturate(140%);
   --grad-hero: linear-gradient(135deg, var(--ink-900) 0%, var(--ink-800) 100%);
+  --grad-primary: linear-gradient(135deg, var(--sage-400) 0%, var(--sage-600) 45%, var(--sage-700) 100%);
+  --auth-veil:
+    linear-gradient(100deg, rgb(29 27 24 / 0.55) 0%, rgb(29 27 24 / 0.22) 45%, rgb(29 27 24 / 0.05) 70%),
+    linear-gradient(180deg, transparent 55%, rgb(29 27 24 / 0.45) 100%);
+  --auth-stage: linear-gradient(160deg, rgb(247 244 239 / 0.7) 0%, rgb(241 236 228 / 0.58) 100%);
+  --auth-card: linear-gradient(160deg, rgb(255 255 255 / 0.9) 0%, rgb(255 255 255 / 0.72) 100%);
+  --auth-card-edge: linear-gradient(
+    120deg,
+    rgb(47 93 80 / 0.55),
+    rgb(255 255 255 / 0.2),
+    rgb(176 137 104 / 0.55),
+    rgb(255 255 255 / 0.2),
+    rgb(47 93 80 / 0.55)
+  );
   --orb-highlight: rgb(255 255 255 / 0.92);
   --orb-highlight-soft: rgb(255 255 255 / 0.35);
   --orb-shade: rgb(29 27 24 / 0.3);
