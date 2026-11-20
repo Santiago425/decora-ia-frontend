@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { ProjectSummary } from '../types/dashboard';
-import { applyQuery, DEFAULT_QUERY } from './projectQuery';
+import { applyQuery, DEFAULT_QUERY, filterByKind } from './projectQuery';
 
 const project = (overrides: Partial<ProjectSummary>): ProjectSummary => ({
   id: overrides.name ?? 'p',
@@ -49,5 +49,13 @@ describe('applyQuery', () => {
     expect(applyQuery(projects, { ...DEFAULT_QUERY, status: 'finished' }).map((p) => p.name)).toEqual(['Cocina']);
     expect(applyQuery(projects, { ...DEFAULT_QUERY, kind: 'scene' })).toHaveLength(2);
     expect(applyQuery(projects, { ...DEFAULT_QUERY, text: 'nordico' }).map((p) => p.name)).toEqual(['Sala luminosa']);
+  });
+});
+
+describe('filterByKind', () => {
+  it('keeps each section to its own projects', () => {
+    expect(filterByKind(projects, 'redesign').map((p) => p.name)).toEqual(['Cocina']);
+    expect(filterByKind(projects, 'scene').map((p) => p.name)).toEqual(['Sala luminosa', 'Baño']);
+    expect(filterByKind(projects, 'all')).toHaveLength(3);
   });
 });

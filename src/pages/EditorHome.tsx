@@ -11,6 +11,7 @@ import { projectService } from '../services/projectService';
 import type { NewProject } from '../types/project';
 import { Button, PageHeader, Skeleton } from '../components/ui';
 import { preloadHandlers } from '../routes/pages';
+import { filterByKind } from '../projects/projectQuery';
 import { projectLabel, projectPath } from '../projects/projectRoute';
 
 export default function EditorHome() {
@@ -19,7 +20,8 @@ export default function EditorHome() {
   const { data, error, loading, retry } = useAsync(
     useCallback(() => Promise.all([projectService.list(), catalogService.roomTypes(), catalogService.styles()]), []),
   );
-  const [projects, roomTypes, styles] = data ?? [[], [], []];
+  const [allProjects, roomTypes, styles] = data ?? [[], [], []];
+  const projects = filterByKind(allProjects, 'scene');
 
   async function create(input: NewProject) {
     setBusy(true);
@@ -36,8 +38,8 @@ export default function EditorHome() {
   return (
     <div className="page editor-home">
       <PageHeader
-        title="Editor 3D"
-        subtitle="Diseña tu espacio en tres dimensiones, prueba muebles y conoce el presupuesto al instante."
+        title="Diseñar en 3D"
+        subtitle="Arma tu espacio desde cero en tres dimensiones, prueba muebles y conoce el presupuesto al instante."
         patterns={['builder-room', 'prototype']}
       />
 
@@ -55,7 +57,7 @@ export default function EditorHome() {
 
         <section className="editor-home-projects">
           <div className="section-header">
-            <h2>Abre un proyecto</h2>
+            <h2>Tus habitaciones en 3D</h2>
             <span className="muted">{projects.length} en total</span>
           </div>
           {loading && !data && (
@@ -67,8 +69,8 @@ export default function EditorHome() {
           )}
           {data && !projects.length && (
             <EmptyState
-              title="Aún no tienes proyectos"
-              description="Crea el primero con el formulario y empieza a diseñar."
+              title="Aún no tienes habitaciones en 3D"
+              description="Crea la primera con el formulario y empieza a diseñar."
             />
           )}
           <div className="project-grid">

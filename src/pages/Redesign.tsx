@@ -19,6 +19,7 @@ import { BeforeAfter } from '../components/redesign/BeforeAfter';
 import { EditPanel } from '../components/redesign/EditPanel';
 import { InspirationPanel } from '../components/redesign/InspirationPanel';
 import { PhotoPicker } from '../components/redesign/PhotoPicker';
+import { RecentRedesigns } from '../components/redesign/RecentRedesigns';
 import { RedesignOptions, type RedesignChoices } from '../components/redesign/RedesignOptions';
 import { RedesignProgress } from '../components/redesign/RedesignProgress';
 import { RedesignSummary } from '../components/redesign/RedesignSummary';
@@ -206,7 +207,7 @@ export default function Redesign() {
   return (
     <div className="page redesign-page">
       <PageHeader
-        title={result ? result.project_name : 'Rediseño con foto'}
+        title={result ? result.project_name : 'Rediseñar con IA'}
         patterns={[
           'facade',
           'builder-redesign',
@@ -430,6 +431,8 @@ export default function Redesign() {
           </div>
         </form>
       )}
+
+      {!busy && !loadingHistory && !result && <RecentRedesigns />}
     </div>
   );
 }
