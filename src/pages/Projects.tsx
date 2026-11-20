@@ -1,18 +1,25 @@
-import { Box, Copy, Pencil, Plus, RefreshCw, Search, Trash2, WandSparkles } from 'lucide-react';
+import { Box, Copy, Pencil, Plus, RefreshCw, Search, SlidersHorizontal, Trash2, WandSparkles, X } from 'lucide-react';
 import { preloadHandlers } from '../routes/pages';
 import { projectLabel, projectPath } from '../projects/projectRoute';
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { ProjectCard } from '../components/dashboard/ProjectCard';
 import { STATUS_LABELS } from '../projects/projectStatus';
 import { EmptyState } from '../components/EmptyState';
 import { useAsync } from '../hooks/useAsync';
 import {
+  activeFilters,
+  ANY,
   applyQuery,
   DEFAULT_QUERY,
+  facetOptions,
+  PERIODS,
+  queryFromParams,
+  queryToParams,
   SORT_STRATEGIES,
   type KindFilter,
+  type PeriodKey,
   type ProjectQuery,
   type SortKey,
 } from '../projects/projectQuery';
@@ -24,7 +31,7 @@ import { Button, ButtonLink, Chip, ChipGroup, PageHeader, Skeleton } from '../co
 
 const STATUS_FILTERS: (ProjectStatus | 'all')[] = ['all', 'draft', 'in_design', 'finished'];
 const KIND_LABELS: Record<KindFilter, string> = {
-  all: 'Todos',
+  all: 'Todos los tipos',
   redesign: 'Con rediseño de foto',
   scene: 'Solo editor 3D',
 };
@@ -52,7 +59,8 @@ function RenameForm({ project, onDone }: { project: ProjectSummary; onDone: (nam
 export default function Projects() {
   const { data, error, loading, retry } = useAsync(useCallback(() => projectService.list(), []));
   const [projects, setProjects] = useState<ProjectSummary[]>([]);
-  const [query, setQuery] = useState<ProjectQuery>(DEFAULT_QUERY);
+  const [params, setParams] = useSearchParams();
+  const query = useMemo(() => queryFromParams(params), [params]);
   const [renaming, setRenaming] = useState<string | null>(null);
   const [toDelete, setToDelete] = useState<ProjectSummary | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
@@ -63,7 +71,10 @@ export default function Projects() {
 
   const visible = useMemo(() => applyQuery(projects, query), [projects, query]);
   const total = useMemo(() => projects.reduce((sum, p) => sum + Number(p.estimated_budget), 0), [projects]);
-  const update = (patch: Partial<ProjectQuery>) => setQuery((current) => ({ ...current, ...patch }));
+  const facets = useMemo(() => facetOptions(projects), [projects]);
+  const filtersOn = activeFilters(query);
+  const setQuery = (next: ProjectQuery) => setParams(queryToParams(next), { replace: true });
+  const update = (patch: Partial<ProjectQuery>) => setQuery({ ...query, ...patch });
 
   async function duplicate(project: ProjectSummary) {
     setBusy(project.id);
@@ -158,6 +169,37 @@ export default function Projects() {
               </option>
             ))}
           </select>
+          {facets.styles.length > 0 && (
+            <select value={query.style} onChange={(e) => update({ style: e.target.value })} aria-label="Estilo">
+              <option value={ANY}>Todos los estilos</option>
+              {facets.styles.map((style) => (
+                <option key={style} value={style}>
+                  {style}
+                </option>
+              ))}
+            </select>
+          )}
+          {facets.rooms.length > 0 && (
+            <select value={query.room} onChange={(e) => update({ room: e.target.value })} aria-label="Habitación">
+              <option value={ANY}>Todas las habitaciones</option>
+              {facets.rooms.map((room) => (
+                <option key={room} value={room}>
+                  {room}
+                </option>
+              ))}
+            </select>
+          )}
+          <select
+            value={query.period}
+            onChange={(e) => update({ period: e.target.value as PeriodKey })}
+            aria-label="Fecha de modificación"
+          >
+            {Object.entries(PERIODS).map(([value, period]) => (
+              <option key={value} value={value}>
+                {period.label}
+              </option>
+            ))}
+          </select>
           <select value={query.sort} onChange={(e) => update({ sort: e.target.value as SortKey })} aria-label="Ordenar">
             {Object.entries(SORT_STRATEGIES).map(([value, strategy]) => (
               <option key={value} value={value}>
@@ -166,6 +208,18 @@ export default function Projects() {
             ))}
           </select>
         </div>
+        {projects.length > 0 && (filtersOn > 0 || query.text.trim()) && (
+          <div className="toolbar-summary" aria-live="polite">
+            <span>
+              <SlidersHorizontal size={16} aria-hidden="true" />
+              {visible.length} de {projects.length} {projects.length === 1 ? 'proyecto' : 'proyectos'}
+              {filtersOn > 0 && ` · ${filtersOn} ${filtersOn === 1 ? 'filtro activo' : 'filtros activos'}`}
+            </span>
+            <Button variant="ghost" onClick={() => setQuery(DEFAULT_QUERY)}>
+              <X size={16} /> Limpiar filtros
+            </Button>
+          </div>
+        )}
       </section>
 
       {error && (

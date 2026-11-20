@@ -21,10 +21,11 @@ interface RevealProps {
   className?: string;
   delay?: number;
   as?: 'div' | 'section' | 'li';
+  id?: string;
 }
 
 /** Fades its content in with a slight rise and depth the first time it scrolls into view. */
-export function Reveal({ children, className = '', delay = 0, as: Tag = 'div' }: RevealProps) {
+export function Reveal({ children, className = '', delay = 0, as: Tag = 'div', id }: RevealProps) {
   const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -41,7 +42,7 @@ export function Reveal({ children, className = '', delay = 0, as: Tag = 'div' }:
 
   const style = { '--reveal-delay': `${delay}ms` } as CSSProperties;
   return (
-    <Tag ref={ref as never} className={`reveal ${className}`} style={style}>
+    <Tag ref={ref as never} id={id} className={`reveal ${className}`} style={style}>
       {children}
     </Tag>
   );

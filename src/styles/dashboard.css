@@ -69,9 +69,9 @@
 
 .quick-actions {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
-  max-width: 880px;
+  max-width: 1120px;
 }
 
 .quick-action {
@@ -123,6 +123,7 @@
   background: var(--surface-inverse);
 }
 
+.tone-wood .quick-icon,
 .tone-wood .stat-icon {
   background: var(--surface-3);
   color: var(--text);
@@ -513,11 +514,20 @@
   font-weight: 600;
 }
 
+@media (max-width: 1180px) {
+  .quick-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: 640px;
+  }
+}
+
 @media (max-width: 1100px) {
   .stats-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+}
 
+@media (max-width: 560px) {
   .quick-actions {
     grid-template-columns: 1fr;
     max-width: 420px;
@@ -776,6 +786,117 @@
 
 @media (prefers-reduced-motion: reduce) {
   .page-backdrop img {
+    animation: none;
+  }
+}
+
+/* Project progress */
+.inspiration {
+  scroll-margin-top: 88px;
+}
+
+.progress-share {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-2);
+  font-size: 14px;
+}
+
+.progress-share svg {
+  color: var(--primary);
+}
+
+.progress-share strong {
+  color: var(--text);
+  font-size: 20px;
+}
+
+.progress-track {
+  display: flex;
+  gap: 4px;
+  height: 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--surface-3);
+}
+
+.progress-segment {
+  flex-basis: 0;
+  min-width: 8px;
+  border-radius: 999px;
+  transform-origin: left;
+  animation: grow-x 0.9s var(--ease-out) 0.2s both;
+}
+
+.status-draft {
+  background: var(--wood);
+}
+
+.status-in_design {
+  background: var(--primary-on-dark);
+}
+
+.status-finished {
+  background: var(--primary);
+}
+
+.progress-legend {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.progress-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  color: var(--text);
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.progress-item:hover {
+  background: var(--primary-soft);
+}
+
+.progress-dot {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.progress-label {
+  flex: 1;
+  font-size: 14px;
+}
+
+.progress-arrow {
+  color: var(--text-3);
+}
+
+@keyframes grow-x {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@media (max-width: 520px) {
+  .progress-legend {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progress-segment {
     animation: none;
   }
 }

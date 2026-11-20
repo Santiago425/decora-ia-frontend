@@ -1,6 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import type { ProjectSummary } from '../types/dashboard';
-import { applyQuery, DEFAULT_QUERY, filterByKind } from './projectQuery';
+import {
+  activeFilters,
+  applyQuery,
+  DEFAULT_QUERY,
+  facetOptions,
+  filterByKind,
+  queryFromParams,
+  queryToParams,
+  type ProjectQuery,
+} from './projectQuery';
 
 const project = (overrides: Partial<ProjectSummary>): ProjectSummary => ({
   id: overrides.name ?? 'p',
@@ -57,5 +66,57 @@ describe('filterByKind', () => {
     expect(filterByKind(projects, 'redesign').map((p) => p.name)).toEqual(['Cocina']);
     expect(filterByKind(projects, 'scene').map((p) => p.name)).toEqual(['Sala luminosa', 'Baño']);
     expect(filterByKind(projects, 'all')).toHaveLength(3);
+  });
+});
+
+describe('style, room and date filters', () => {
+  const now = Date.parse('2026-10-10T00:00:00Z');
+  const catalog = [
+    project({ name: 'Sala', style_name: 'Nórdico', room_type_name: 'Sala', updated_at: '2026-10-09T00:00:00Z' }),
+    project({ name: 'Cocina', style_name: 'Industrial', room_type_name: 'Cocina', updated_at: '2026-09-20T00:00:00Z' }),
+    project({ name: 'Estudio', style_name: 'Nórdico', room_type_name: 'Oficina', updated_at: '2026-05-01T00:00:00Z' }),
+  ];
+  const names = (query: Partial<ProjectQuery>) =>
+    applyQuery(catalog, { ...DEFAULT_QUERY, ...query }, now).map((p) => p.name);
+
+  it('keeps only the chosen style, room and period', () => {
+    expect(names({ style: 'Nórdico' })).toEqual(['Sala', 'Estudio']);
+    expect(names({ room: 'Cocina' })).toEqual(['Cocina']);
+    expect(names({ period: 'week' })).toEqual(['Sala']);
+    expect(names({ period: 'month' })).toEqual(['Sala', 'Cocina']);
+    expect(names({ style: 'Nórdico', period: 'quarter' })).toEqual(['Sala']);
+  });
+
+  it('offers only the styles and rooms in use', () => {
+    expect(facetOptions([...catalog, project({ name: 'Vacío' })])).toEqual({
+      styles: ['Industrial', 'Nórdico'],
+      rooms: ['Cocina', 'Oficina', 'Sala'],
+    });
+  });
+
+  it('counts the active filters', () => {
+    expect(activeFilters(DEFAULT_QUERY)).toBe(0);
+    expect(activeFilters({ ...DEFAULT_QUERY, text: 'sala', sort: 'name' })).toBe(0);
+    expect(activeFilters({ ...DEFAULT_QUERY, style: 'Nórdico', period: 'week' })).toBe(2);
+  });
+});
+
+describe('query in the address bar', () => {
+  it('round-trips the non-default values', () => {
+    const query: ProjectQuery = {
+      ...DEFAULT_QUERY,
+      text: 'sala',
+      status: 'finished',
+      style: 'Nórdico',
+      period: 'month',
+    };
+    const params = queryToParams(query);
+    expect(params.toString()).toBe('q=sala&status=finished&style=N%C3%B3rdico&period=month');
+    expect(queryFromParams(params)).toEqual(query);
+    expect(queryToParams(DEFAULT_QUERY).toString()).toBe('');
+  });
+
+  it('ignores unknown values', () => {
+    expect(queryFromParams(new URLSearchParams('status=lost&period=decade&sort=random&kind=x'))).toEqual(DEFAULT_QUERY);
   });
 });
