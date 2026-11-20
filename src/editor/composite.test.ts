@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { FurnitureAddon, Material } from '../types/catalog';
 import type { SceneData, SceneItemData } from '../types/project';
-import { FurnitureGroup, RoomComposite } from './composite';
+import { type FurnitureGroup, RoomComposite } from './composite';
 import { buildPricing, decorateFurniture } from './furnitureDecorators';
 import { themeFactoryFor } from './styleTheme';
 

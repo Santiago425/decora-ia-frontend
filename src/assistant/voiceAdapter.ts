@@ -24,14 +24,20 @@ const VOICE_ERRORS: Record<string, string> = {
   network: 'El reconocimiento de voz necesita conexión a internet.',
 };
 
+declare global {
+  interface Window {
+    SpeechRecognition?: RecognitionConstructor;
+    webkitSpeechRecognition?: RecognitionConstructor;
+  }
+}
+
 // Adapter: hides the different browser speech APIs behind one small interface for listening and speaking.
 export class VoiceAdapter {
   readonly #Recognition: RecognitionConstructor | undefined;
   #recognition: BrowserRecognition | null = null;
 
   constructor(private readonly lang: string) {
-    const scope = window as unknown as { SpeechRecognition?: RecognitionConstructor; webkitSpeechRecognition?: RecognitionConstructor };
-    this.#Recognition = scope.SpeechRecognition ?? scope.webkitSpeechRecognition;
+    this.#Recognition = window.SpeechRecognition ?? window.webkitSpeechRecognition;
   }
 
   get canListen(): boolean {

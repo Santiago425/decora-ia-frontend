@@ -2,7 +2,7 @@ import { Bot, FolderHeart, Image, RefreshCw, Users, WandSparkles } from 'lucide-
 import { useCallback } from 'react';
 import { useAsync } from '../../hooks/useAsync';
 import { adminService } from '../../services/adminService';
-import { STATUS_LABELS } from '../dashboard/ProjectCard';
+import { STATUS_LABELS } from '../../projects/projectStatus';
 import { StatCard } from '../dashboard/StatCard';
 import { ActivityChart } from './ActivityChart';
 

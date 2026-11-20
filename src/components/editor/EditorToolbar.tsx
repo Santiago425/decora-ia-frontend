@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { ProjectAction, ProjectDetail } from '../../types/project';
 import { formatCurrency } from '../../utils/format';
-import { STATUS_LABELS } from '../dashboard/ProjectCard';
+import { STATUS_LABELS } from '../../projects/projectStatus';
 import type { CameraView } from './EditorCanvas';
 
 export type SaveState = 'saved' | 'pending' | 'saving' | 'error';

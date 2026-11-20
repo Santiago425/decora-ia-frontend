@@ -7,7 +7,8 @@ export function BeforeAfter({ before, after }: { before: string; after: string }
   const dragging = useRef(false);
 
   function moveTo(event: PointerEvent) {
-    const box = frame.current!.getBoundingClientRect();
+    if (!frame.current) return;
+    const box = frame.current.getBoundingClientRect();
     setPosition(Math.min(100, Math.max(0, ((event.clientX - box.left) / box.width) * 100)));
   }
 

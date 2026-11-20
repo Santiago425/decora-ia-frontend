@@ -1,6 +1,7 @@
+import type MermaidApi from 'mermaid';
 import { useEffect, useId, useRef, useState } from 'react';
 
-type Mermaid = typeof import('mermaid').default;
+type Mermaid = typeof MermaidApi;
 let loader: Promise<Mermaid> | null = null;
 
 function loadMermaid(): Promise<Mermaid> {

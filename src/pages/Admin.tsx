@@ -27,7 +27,7 @@ export default function Admin() {
         </div>
       </header>
 
-      <nav className="admin-tabs" role="tablist" aria-label="Secciones de administración">
+      <div className="admin-tabs" role="tablist" aria-label="Secciones de administración">
         {(Object.keys(TABS) as Tab[]).map((key) => {
           const { label, icon: Icon } = TABS[key];
           return (
@@ -36,7 +36,7 @@ export default function Admin() {
             </button>
           );
         })}
-      </nav>
+      </div>
 
       {tab === 'overview' && <AdminOverview />}
       {tab === 'users' && <UsersPanel />}

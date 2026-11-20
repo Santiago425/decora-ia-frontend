@@ -1,15 +1,10 @@
 import { Box } from 'lucide-react';
 import { useState } from 'react';
-import type { ProjectStatus, ProjectSummary } from '../../types/dashboard';
+import { STATUS_LABELS } from '../../projects/projectStatus';
+import type { ProjectSummary } from '../../types/dashboard';
 import { formatCurrency } from '../../utils/format';
 import { resolveMediaUrl } from '../../utils/media';
 import { ImageProxy } from '../ImageProxy';
-
-export const STATUS_LABELS: Record<ProjectStatus, string> = {
-  draft: 'Borrador',
-  in_design: 'En diseño',
-  finished: 'Terminado',
-};
 
 export function ProjectCard({ project, delay }: { project: ProjectSummary; delay: number }) {
   const [split, setSplit] = useState(50);

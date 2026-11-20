@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import { config } from '../../config';
 import type { FurnitureCategory, FurnitureItem } from '../../types/catalog';
 import { formatCurrency } from '../../utils/format';
-import { categoryIcon } from './categoryIcon';
+import { CategoryIcon } from './categoryIcon';
 
 interface CatalogPanelProps {
   categories: FurnitureCategory[];
@@ -60,13 +60,11 @@ export function CatalogPanel({ categories, furniture, roomType, roomName, disabl
         ))}
       </div>
       <ul className="catalog-list">
-        {visible.map((item) => {
-          const Icon = categoryIcon(item.category.icon);
-          return (
+        {visible.map((item) => (
             <li key={item.id}>
               <button className="catalog-item" onClick={() => onAdd(item)} disabled={disabled} title={`Agregar ${item.name}`}>
                 <span className="catalog-swatch" style={{ background: item.default_color }}>
-                  <Icon size={20} aria-hidden="true" />
+                  <CategoryIcon name={item.category.icon} size={20} aria-hidden="true" />
                 </span>
                 <span className="catalog-text">
                   <strong>{item.name}</strong>
@@ -77,8 +75,7 @@ export function CatalogPanel({ categories, furniture, roomType, roomName, disabl
                 <Plus size={18} className="catalog-add" aria-hidden="true" />
               </button>
             </li>
-          );
-        })}
+        ))}
         {!visible.length && <li className="panel-empty">No hay muebles con ese filtro.</li>}
       </ul>
     </div>

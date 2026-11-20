@@ -11,7 +11,9 @@ import {
   Sprout,
   Table,
   type LucideIcon,
+  type LucideProps,
 } from 'lucide-react';
+import { createElement } from 'react';
 
 const ICONS: Record<string, LucideIcon> = {
   sofa: Sofa,
@@ -27,3 +29,7 @@ const ICONS: Record<string, LucideIcon> = {
 };
 
 export const categoryIcon = (name: string | undefined): LucideIcon => (name && ICONS[name]) || Box;
+
+export function CategoryIcon({ name, ...props }: { name: string | undefined } & LucideProps) {
+  return createElement(categoryIcon(name), props);
+}

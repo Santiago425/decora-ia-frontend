@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { FurnitureGroup, FurnitureLeaf, type SceneComponent } from '../../editor/composite';
 import type { FurnitureAddon, FurnitureCategory, Material } from '../../types/catalog';
 import { formatCurrency } from '../../utils/format';
-import { categoryIcon } from './categoryIcon';
+import { CategoryIcon } from './categoryIcon';
 
 interface InspectorProps {
   selection: SceneComponent[];
@@ -46,7 +46,6 @@ function Actions({ id, disabled, props }: { id: string; disabled: boolean; props
 function ItemInspector({ leaf, props }: { leaf: FurnitureLeaf; props: InspectorProps }) {
   const { data } = leaf;
   const category = props.categories.find((c) => c.slug === data.category);
-  const Icon = categoryIcon(category?.icon);
   const addons = props.addons.filter((addon) => addon.categories.includes(data.category));
   const colors = [...new Set([...props.palette, data.color])];
   const labels = leaf.furniture().labels();
@@ -55,7 +54,7 @@ function ItemInspector({ leaf, props }: { leaf: FurnitureLeaf; props: InspectorP
     <div className="inspector">
       <header className="inspector-head">
         <span className="catalog-swatch" style={{ background: data.color }}>
-          <Icon size={20} aria-hidden="true" />
+          <CategoryIcon name={category?.icon} size={20} aria-hidden="true" />
         </span>
         <div>
           <h3>{data.name}</h3>
@@ -86,6 +85,7 @@ function ItemInspector({ leaf, props }: { leaf: FurnitureLeaf; props: InspectorP
             />
           ))}
           <label className="swatch swatch-picker" title="Elegir otro color">
+            <span className="sr-only">Elegir otro color</span>
             <input
               type="color"
               value={data.color}

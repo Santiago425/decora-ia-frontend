@@ -2,7 +2,8 @@ import { Box, Copy, Pencil, Plus, RefreshCw, Search, Trash2, WandSparkles } from
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { ConfirmDialog } from '../components/ConfirmDialog';
-import { ProjectCard, STATUS_LABELS } from '../components/dashboard/ProjectCard';
+import { ProjectCard } from '../components/dashboard/ProjectCard';
+import { STATUS_LABELS } from '../projects/projectStatus';
 import { EmptyState } from '../components/EmptyState';
 import { useAsync } from '../hooks/useAsync';
 import { applyQuery, DEFAULT_QUERY, SORT_STRATEGIES, type KindFilter, type ProjectQuery, type SortKey } from '../projects/projectQuery';
