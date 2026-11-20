@@ -1,6 +1,8 @@
 import { ChevronDown, Copy, Database, Layers, Puzzle, Scale, Search, ShieldCheck, User, Wrench } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { MermaidDiagram } from '../components/docs/MermaidDiagram';
+import { PatternDemo } from '../components/patterns/PatternDialog';
 import { config } from '../config';
 import {
   ARCHITECTURE_DIAGRAM,
@@ -130,6 +132,7 @@ function PatternCard({ pattern, open, showFiles, onToggle }: PatternCardProps) {
             )}
           </div>
           <MermaidDiagram code={pattern.diagram} label={`Diagrama UML de ${pattern.name}`} />
+          <PatternDemo id={pattern.id} />
         </div>
       )}
     </article>
@@ -160,6 +163,12 @@ export default function Docs() {
     setOpenIds((current) => new Set(current).add(id));
     setFocusId(id);
   };
+
+  const { hash } = useLocation();
+  useEffect(() => {
+    const id = hash.startsWith('#patron-') ? hash.slice('#patron-'.length) : null;
+    if (id && PATTERNS.some((p) => p.id === id)) showPattern(id);
+  }, [hash]);
 
   useEffect(() => {
     if (!focusId) return;

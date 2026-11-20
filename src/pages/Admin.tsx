@@ -25,6 +25,7 @@ export default function Admin() {
         className="admin-header"
         title="Administración"
         subtitle="Lo que pasa en toda la plataforma, las cuentas y el catálogo."
+        patterns={['proxy-admin', 'template-method', 'bridge-reports']}
       />
 
       <Tabs

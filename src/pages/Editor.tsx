@@ -7,6 +7,7 @@ import { EditorToolbar, type SaveState } from '../components/editor/EditorToolba
 import { Inspector } from '../components/editor/Inspector';
 import { RoomPanel } from '../components/editor/RoomPanel';
 import { SheetHandle, type SheetState } from '../components/editor/SheetHandle';
+import { PatternBadge } from '../components/patterns/PatternBadge';
 import { ShortcutsDialog } from '../components/editor/ShortcutsDialog';
 import { VersionsPanel } from '../components/editor/VersionsPanel';
 import { assistantBus } from '../assistant/assistantBus';
@@ -234,6 +235,10 @@ function Workspace({ initial, catalog }: { initial: ProjectDetail; catalog: Cata
 
       <div className={`editor-body tab-${tab}`}>
         <section className="editor-stage" aria-label="Vista 3D de la habitación">
+          <PatternBadge
+            className="stage-patterns"
+            ids={['command', 'mediator-editor', 'composite', 'abstract-factory', 'factory-method', 'decorator-addons']}
+          />
           <EditorCanvas
             ref={canvas}
             scene={state.scene}

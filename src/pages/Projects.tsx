@@ -109,6 +109,7 @@ export default function Projects() {
       <PageHeader
         className="projects-header"
         title="Mis proyectos"
+        patterns={['strategy-sort', 'prototype', 'state-project']}
         subtitle={
           projects.length > 0
             ? `${projects.length} ${projects.length === 1 ? 'proyecto' : 'proyectos'} · ${formatCurrency(total)} en presupuesto estimado`

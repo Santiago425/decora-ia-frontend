@@ -97,6 +97,7 @@ export default function Redesign() {
     <div className="page redesign-page">
       <PageHeader
         title="Rediseño con foto"
+        patterns={['facade', 'builder-redesign', 'chain-images', 'strategy-budget']}
         actions={
           <Link to="/assistant" className="lumi-hint">
             <Sparkles size={16} /> O cuéntaselo a {config.assistantName}
