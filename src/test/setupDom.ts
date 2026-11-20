@@ -18,4 +18,21 @@ if (typeof window !== 'undefined') {
       this.removeAttribute('open');
     };
   }
+
+  // jsdom has no layout, so scrolling is a no-op there.
+  window.HTMLElement.prototype.scrollIntoView ??= function scrollIntoView() {};
+  window.HTMLElement.prototype.scrollTo ??= function scrollTo() {};
+
+  // Media queries never match in jsdom, which renders the desktop layout.
+  window.matchMedia ??= (query: string) =>
+    ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      addListener: () => {},
+      removeListener: () => {},
+      dispatchEvent: () => false,
+    }) as MediaQueryList;
 }
