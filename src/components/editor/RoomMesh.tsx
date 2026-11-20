@@ -2,14 +2,15 @@ import { useMemo } from 'react';
 import { DoubleSide, FrontSide } from 'three';
 import type { Material } from '../../types/catalog';
 import type { RoomData } from '../../types/project';
-import { NEUTRAL_COLORS, surfaceFinish } from '../../editor/styleTheme';
+import { neutralColors, surfaceFinish } from '../../editor/styleTheme';
 import { darken } from '../../utils/color';
 
 const WALL_THICKNESS = 0.08;
 
 export function RoomMesh({ room, materials }: { room: RoomData; materials: Map<string, Material> }) {
-  const wall = surfaceFinish(room.wall_material, materials, NEUTRAL_COLORS.wall);
-  const floor = surfaceFinish(room.floor_material, materials, NEUTRAL_COLORS.floor);
+  const neutral = neutralColors();
+  const wall = surfaceFinish(room.wall_material, materials, neutral.wall);
+  const floor = surfaceFinish(room.floor_material, materials, neutral.floor);
   const { width, length, height } = room;
 
   const walls = useMemo(

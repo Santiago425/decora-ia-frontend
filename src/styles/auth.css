@@ -6,7 +6,7 @@
   place-items: center;
   padding: 24px 16px;
   overflow: hidden;
-  background: linear-gradient(135deg, var(--sand-300), var(--sage) 60%, var(--wood));
+  background: linear-gradient(135deg, var(--surface-4), var(--primary) 60%, var(--accent));
 }
 
 .auth-background {
@@ -22,7 +22,11 @@
 .auth-veil {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(35, 48, 42, 0.18), rgba(35, 48, 42, 0.45));
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--text) 18%, transparent),
+    color-mix(in srgb, var(--text) 45%, transparent)
+  );
   backdrop-filter: blur(2px);
 }
 
@@ -30,9 +34,9 @@
   position: relative;
   width: min(420px, 100%);
   padding: 36px 32px 28px;
-  background: rgba(251, 248, 243, 0.94);
+  background: color-mix(in srgb, var(--surface-2) 94%, transparent);
   backdrop-filter: blur(18px) saturate(1.2);
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  border: 1px solid color-mix(in srgb, var(--surface) 60%, transparent);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-lg);
   animation: rise 0.7s var(--ease-out) 0.1s both;
@@ -52,7 +56,7 @@
   font-weight: 700;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--wood-dark);
+  color: var(--primary-strong);
 }
 
 .auth-header h1 {
@@ -61,7 +65,7 @@
 
 .auth-header p {
   margin: 0;
-  color: var(--ink-soft);
+  color: var(--text-2);
 }
 
 .auth-form {
@@ -72,7 +76,7 @@
 .auth-switch {
   margin: 20px 0 0;
   text-align: center;
-  color: var(--ink-soft);
+  color: var(--text-2);
 }
 
 .role-switch {
@@ -81,7 +85,7 @@
   grid-template-columns: 1fr 1fr;
   padding: 4px;
   border-radius: var(--radius-md);
-  background: var(--sand-200);
+  background: var(--surface-3);
 }
 
 .role-switch-thumb {
@@ -91,7 +95,7 @@
   left: 4px;
   width: calc(50% - 4px);
   border-radius: 11px;
-  background: var(--white);
+  background: var(--surface);
   box-shadow: var(--shadow-sm);
   transition: transform 0.35s var(--ease-out);
 }
@@ -109,13 +113,13 @@
   min-height: 40px;
   border: 0;
   background: none;
-  color: var(--muted);
+  color: var(--text-3);
   font-weight: 650;
   transition: color 0.2s;
 }
 
 .role-switch button.active {
-  color: var(--ink);
+  color: var(--text);
 }
 
 .field {
@@ -127,7 +131,7 @@
 .field label {
   font-size: 13px;
   font-weight: 650;
-  color: var(--ink-soft);
+  color: var(--text-2);
 }
 
 .field-control {
@@ -139,7 +143,7 @@
 .field-icon {
   position: absolute;
   left: 14px;
-  color: var(--muted);
+  color: var(--text-3);
   pointer-events: none;
 }
 
@@ -147,10 +151,10 @@
   width: 100%;
   min-height: 48px;
   padding: 0 44px 0 42px;
-  border: 1px solid var(--sand-300);
+  border: 1px solid var(--border-strong);
   border-radius: var(--radius-md);
-  background: var(--white);
-  color: var(--ink);
+  background: var(--surface);
+  color: var(--text);
   font: inherit;
   transition:
     border-color 0.2s,
@@ -158,13 +162,13 @@
 }
 
 .field input::placeholder {
-  color: #a7aaa5;
+  color: var(--text-3);
 }
 
 .field input:focus {
   outline: none;
-  border-color: var(--sage);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--sage) 22%, transparent);
+  border-color: var(--primary);
+  box-shadow: var(--focus-ring);
 }
 
 .field.has-error input {
@@ -181,7 +185,7 @@
   border: 0;
   border-radius: 10px;
   background: none;
-  color: var(--muted);
+  color: var(--text-3);
 }
 
 .field-error {
@@ -200,7 +204,7 @@
   margin: 0;
   padding: 10px 14px;
   border-radius: var(--radius-sm);
-  background: var(--danger-bg);
+  background: var(--danger-soft);
   color: var(--danger);
   font-size: 14px;
   font-weight: 550;
@@ -216,8 +220,8 @@
   padding: 6px 12px;
   border: 0;
   border-radius: 999px;
-  background: rgba(35, 48, 42, 0.45);
-  color: var(--sand-50);
+  background: color-mix(in srgb, var(--text) 45%, transparent);
+  color: var(--surface-2);
   font-size: 12px;
   backdrop-filter: blur(8px);
 }
@@ -228,11 +232,11 @@
   border: 0;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
-  color: var(--ink);
+  color: var(--text);
 }
 
 .credits-dialog::backdrop {
-  background: rgba(35, 48, 42, 0.4);
+  background: color-mix(in srgb, var(--text) 40%, transparent);
   backdrop-filter: blur(3px);
 }
 
@@ -249,7 +253,7 @@
 
 .credits-dialog p {
   margin: 0;
-  color: var(--ink-soft);
+  color: var(--text-2);
 }
 
 @keyframes settle {

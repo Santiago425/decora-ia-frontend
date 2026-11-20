@@ -1,5 +1,6 @@
 import type MermaidApi from 'mermaid';
 import { useEffect, useId, useRef, useState } from 'react';
+import { cssVar, cssVars } from '../../styles/theme';
 
 type Mermaid = typeof MermaidApi;
 let loader: Promise<Mermaid> | null = null;
@@ -10,16 +11,18 @@ function loadMermaid(): Promise<Mermaid> {
       startOnLoad: false,
       securityLevel: 'strict',
       theme: 'base',
-      fontFamily: 'Plus Jakarta Sans Variable, system-ui, sans-serif',
+      fontFamily: cssVar('--font-body'),
       themeVariables: {
-        background: '#ffffff',
-        primaryColor: '#f6f1e9',
-        primaryBorderColor: '#a47551',
-        primaryTextColor: '#23302a',
-        secondaryColor: '#dfe5d6',
-        tertiaryColor: '#fbf8f3',
-        lineColor: '#7f857f',
-        textColor: '#23302a',
+        ...cssVars({
+          background: '--surface',
+          primaryColor: '--bg',
+          primaryBorderColor: '--chart-3',
+          primaryTextColor: '--text',
+          secondaryColor: '--primary-soft',
+          tertiaryColor: '--surface-2',
+          lineColor: '--text-3',
+          textColor: '--text',
+        }),
         fontSize: '14px',
       },
     });

@@ -9,6 +9,7 @@ import { flattenItems, nodeBounds, type Bounds } from '../../editor/sceneTree';
 import type { SceneData, SceneNodeData } from '../../types/project';
 import { FurnitureMesh } from './FurnitureMesh';
 import { RoomMesh } from './RoomMesh';
+import { cssVar } from '../../styles/theme';
 
 export type CameraView = 'perspective' | 'top';
 
@@ -36,8 +37,6 @@ interface Drag {
 const FLOOR = new Plane(new Vector3(0, 1, 0), 0);
 const FOV = 45;
 const snap = (value: number) => Math.round(value / config.editor.snap) * config.editor.snap;
-const cssColor = (name: string) =>
-  getComputedStyle(document.documentElement).getPropertyValue(name).trim() || '#f6f1e9';
 
 const HALF_FOV = Math.tan(((FOV / 2) * Math.PI) / 180);
 
@@ -127,7 +126,7 @@ function SelectionMarker({ node, offset }: { node: SceneNodeData; offset: [numbe
   const bounds = nodeBounds(node);
   const width = bounds.maxX - bounds.minX + 0.12;
   const depth = bounds.maxZ - bounds.minZ + 0.12;
-  const color = cssColor('--terracotta');
+  const color = cssVar('--accent');
   return (
     <group position={[(bounds.minX + bounds.maxX) / 2 + offset[0], 0.012, (bounds.minZ + bounds.maxZ) / 2 + offset[1]]}>
       <mesh rotation={[-Math.PI / 2, 0, 0]}>
@@ -159,7 +158,7 @@ export const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(fu
   const dragRef = useRef<Drag | null>(null);
   const { room, lighting } = scene;
   const size = Math.max(room.width, room.length);
-  const background = useMemo(() => cssColor('--sand-100'), []);
+  const background = useMemo(() => cssVar('--bg'), []);
 
   useImperativeHandle(ref, () => ({ capture: () => canvas.current?.toDataURL('image/png') ?? null }), []);
 
@@ -205,7 +204,7 @@ export const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(fu
       onPointerMissed={(event) => onSelect(null, event.shiftKey)}
     >
       <color attach="background" args={[background]} />
-      <hemisphereLight args={['#ffffff', '#d8c8ae', 0.8 * lighting.intensity]} />
+      <hemisphereLight args={[cssVar('--scene-sky'), cssVar('--scene-ground'), 0.8 * lighting.intensity]} />
       <ambientLight intensity={0.25 * lighting.intensity} color={lighting.color} />
       <directionalLight
         position={[room.width * 0.25, room.height * 3.2, room.length * 0.35]}

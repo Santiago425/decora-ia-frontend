@@ -1,6 +1,7 @@
 import type { FurnitureItem, Material } from '../types/catalog';
 import type { SceneItemData, Size3, Vec2 } from '../types/project';
-import { darken, lighten, mixColors } from '../utils/color';
+import { cssVar } from '../styles/theme';
+import { darken, lighten } from '../utils/color';
 import { newNodeId } from './sceneTree';
 
 export type PartRole =
@@ -19,7 +20,6 @@ export interface Part {
 }
 
 const FINISHABLE: ReadonlySet<PartRole> = new Set(['body', 'seat', 'back', 'arm', 'top']);
-const POT_COLOR = '#cdb89b';
 const LEG_COLOR_SHIFT = 0.35;
 
 const box = (size: Part['size'], position: Part['position'], color: string, role: PartRole): Part => ({
@@ -222,7 +222,7 @@ export class ShelfFactory extends FurnitureFactory {
       box([w - side * 2, 0.025, d], [0, 0.0125 + i * gap, 0], color, 'top'),
     );
     const books = Array.from({ length: levels }, (_, i) => {
-      const bookColor = i % 2 ? '#7d8f69' : '#c4704f';
+      const bookColor = (i % 2 ? cssVar('--chart-1') : cssVar('--chart-2')) || darken(color, 0.3 + (i % 2) * 0.2);
       return box(
         [w * 0.35, gap * 0.55, d * 0.7],
         [((i % 3) - 1) * w * 0.2, 0.025 + i * gap + gap * 0.28, 0],
@@ -269,15 +269,17 @@ export class PlantFactory extends FurnitureFactory {
     const radius = Math.min(w, d) / 2;
     const potHeight = h * 0.28;
     return [
-      cylinder(radius * 0.6, potHeight, radius * 0.45, [0, potHeight / 2, 0], POT_COLOR, 'pot'),
+      cylinder(
+        radius * 0.6,
+        potHeight,
+        radius * 0.45,
+        [0, potHeight / 2, 0],
+        cssVar('--scene-pot') || lighten(color, 0.6),
+        'pot',
+      ),
       cylinder(0.02, h * 0.4, 0.02, [0, potHeight + h * 0.2, 0], darken(color, 0.4), 'foliage'),
       sphere(radius * 0.9, [0, h - radius * 0.9, 0], color, 'foliage'),
-      sphere(
-        radius * 0.6,
-        [radius * 0.45, h - radius * 1.5, radius * 0.2],
-        mixColors(color, '#ffffff', 0.12),
-        'foliage',
-      ),
+      sphere(radius * 0.6, [radius * 0.45, h - radius * 1.5, radius * 0.2], lighten(color, 0.12), 'foliage'),
       sphere(radius * 0.55, [-radius * 0.4, h - radius * 1.45, -radius * 0.25], darken(color, 0.1), 'foliage'),
     ];
   }

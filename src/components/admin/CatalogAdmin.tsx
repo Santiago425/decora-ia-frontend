@@ -7,6 +7,7 @@ import { notificationCenter } from '../../services/notificationCenter';
 import type { AdminAddon, AdminFurniture, AdminStyle, FurnitureInput } from '../../types/admin';
 import type { FurnitureCategory } from '../../types/catalog';
 import { formatCurrency } from '../../utils/format';
+import { cssVar } from '../../styles/theme';
 
 type Section = 'furniture' | 'styles' | 'addons';
 
@@ -55,7 +56,7 @@ function ActiveSwitch({
   );
 }
 
-const EMPTY_FURNITURE: FurnitureInput = {
+const emptyFurniture = (): FurnitureInput => ({
   category: '',
   name: '',
   description: '',
@@ -63,8 +64,8 @@ const EMPTY_FURNITURE: FurnitureInput = {
   width: 1,
   depth: 0.6,
   height: 0.8,
-  default_color: '#a47551',
-};
+  default_color: cssVar('--chart-3'),
+});
 
 function NewFurnitureForm({
   categories,
@@ -75,7 +76,7 @@ function NewFurnitureForm({
   onCreated: (item: AdminFurniture) => void;
   onClose: () => void;
 }) {
-  const [form, setForm] = useState<FurnitureInput>({ ...EMPTY_FURNITURE, category: categories[0]?.slug ?? '' });
+  const [form, setForm] = useState<FurnitureInput>({ ...emptyFurniture(), category: categories[0]?.slug ?? '' });
   const [saving, setSaving] = useState(false);
   const set = <K extends keyof FurnitureInput>(key: K, value: FurnitureInput[K]) =>
     setForm((f) => ({ ...f, [key]: value }));

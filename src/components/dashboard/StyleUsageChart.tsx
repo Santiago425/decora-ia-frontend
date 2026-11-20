@@ -1,7 +1,7 @@
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import type { StyleUsage } from '../../types/dashboard';
 
-const COLORS = ['#8a9a7b', '#c4704f', '#a47551', '#23302a', '#dccdb6', '#5d6d52', '#a8573a'];
+const COLORS = ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-5)'];
 
 export function StyleUsageChart({ data }: { data: StyleUsage[] }) {
   const total = data.reduce((sum, item) => sum + item.count, 0);

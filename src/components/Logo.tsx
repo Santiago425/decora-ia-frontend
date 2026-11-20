@@ -3,9 +3,9 @@ import { config } from '../config';
 export function LogoMark({ size = 36 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" aria-hidden="true">
-      <rect width="48" height="48" rx="14" fill="var(--ink)" />
-      <path d="M12 24.5 24 14l12 10.5V35a1 1 0 0 1-1 1h-7v-8h-8v8h-7a1 1 0 0 1-1-1z" fill="var(--sand-100)" />
-      <circle cx="33" cy="15" r="4" fill="var(--terracotta)" />
+      <rect width="48" height="48" rx="14" fill="var(--surface-inverse)" />
+      <path d="M12 24.5 24 14l12 10.5V35a1 1 0 0 1-1 1h-7v-8h-8v8h-7a1 1 0 0 1-1-1z" fill="var(--bg)" />
+      <circle cx="33" cy="15" r="4" fill="var(--accent)" />
     </svg>
   );
 }
