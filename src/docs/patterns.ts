@@ -616,6 +616,37 @@ export const PATTERNS: PatternDoc[] = [
   EditorStore --> CommandHistory`,
   },
   {
+    id: 'mediator-editor',
+    name: 'Mediator',
+    category: 'Comportamiento',
+    side: 'Frontend',
+    summary: 'El lienzo 3D, los paneles, el teclado y Lumi coordinan el editor sin conocerse.',
+    problem:
+      'Seleccionar un mueble debe abrir el panel de ajustes en el celular, un atajo debe crear un comando y una orden de Lumi debe avisar si falta una selección. Si cada parte llamara a las demás, todo quedaría enredado en la página.',
+    solution:
+      'EditorMediator recibe lo que pasa (clic en el lienzo, tecla, acción de Lumi, cambio en un panel) y decide qué comando ejecutar y qué panel mostrar. Los colegas solo hablan con el mediador, y se prueba sin React.',
+    files: ['src/editor/editorMediator.ts', 'src/pages/Editor.tsx'],
+    diagram: `classDiagram
+  class EditorMediator {
+    +select(id, additive)
+    +addFurniture(item)
+    +handleKey(key) boolean
+    +handleAssistant(action) boolean
+  }
+  class EditorCanvas
+  class CatalogPanel
+  class Inspector
+  class KeyboardShortcuts
+  class AssistantBus
+  class EditorStore
+  EditorCanvas --> EditorMediator : select / move
+  CatalogPanel --> EditorMediator : addFurniture
+  Inspector --> EditorMediator : rotate / updateItem
+  KeyboardShortcuts --> EditorMediator : handleKey
+  AssistantBus --> EditorMediator : handleAssistant
+  EditorMediator --> EditorStore : execute(Command)`,
+  },
+  {
     id: 'memento',
     name: 'Memento',
     category: 'Comportamiento',

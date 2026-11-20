@@ -1013,3 +1013,67 @@
     font-size: 18px;
   }
 }
+
+.shortcuts-dialog {
+  width: min(460px, calc(100% - 32px));
+}
+
+.shortcuts-intro {
+  margin: 4px 0 14px;
+  color: var(--text-3);
+  font-size: 13.5px;
+}
+
+.shortcut-list {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+}
+
+.shortcut-list div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.shortcut-list div:last-child {
+  border-bottom: 0;
+}
+
+.shortcut-list dt {
+  display: flex;
+  flex: none;
+  gap: 4px;
+}
+
+.shortcut-list dd {
+  margin: 0;
+  color: var(--text-2);
+  font-size: 14px;
+  text-align: right;
+}
+
+kbd {
+  display: inline-grid;
+  place-items: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 7px;
+  border: 1px solid var(--border-strong);
+  border-bottom-width: 2px;
+  border-radius: 7px;
+  background: var(--surface-2);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+@media (hover: none) {
+  .tool-help {
+    display: none;
+  }
+}
