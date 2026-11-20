@@ -270,6 +270,42 @@ export const PATTERNS: PatternDoc[] = [
   GeminiImageEditor --> GeminiClient : adapta`,
   },
   {
+    id: 'adapter-inspiration',
+    name: 'Adapter',
+    category: 'Estructural',
+    side: 'Backend',
+    summary: 'Estilo desde una foto de inspiración: Gemini lee la foto y su descripción guía al editor de imágenes.',
+    problem:
+      'El editor de imágenes (FLUX Kontext) solo entiende texto, y cada modelo de visión responde en su propio formato. El sistema necesita el estilo de la foto como una instrucción clara.',
+    solution:
+      'StyleDescriber es la interfaz común. GeminiStyleDescriber adapta la respuesta JSON de Gemini y MockStyleDescriber lee los colores sin conexión. La facade convierte la descripción en la instrucción del ImageEditor y guarda una versión nueva.',
+    files: [
+      'app/patterns/ai/gemini_adapter.py',
+      'app/patterns/ai/ai_provider.py',
+      'app/patterns/facades/redesign_facade.py',
+    ],
+    diagram: `classDiagram
+  class StyleDescriber {
+    <<abstract>>
+    +describe(image) StyleDescription
+  }
+  class StyleDescription {
+    +name
+    +summary
+    +prompt
+    +colors
+    +image_prompt(keep_structure, keep_items) str
+  }
+  class GeminiStyleDescriber
+  class MockStyleDescriber
+  StyleDescriber <|-- GeminiStyleDescriber
+  StyleDescriber <|-- MockStyleDescriber
+  GeminiStyleDescriber --> GeminiClient : adapta
+  StyleDescriber ..> StyleDescription
+  RedesignFacade --> StyleDescriber : apply_inspiration
+  RedesignFacade --> ImageEditor : edit(prompt)`,
+  },
+  {
     id: 'adapter-storage',
     name: 'Adapter',
     category: 'Estructural',

@@ -4,6 +4,7 @@ import {
   Brush,
   Download,
   FolderHeart,
+  Images,
   RefreshCw,
   Shuffle,
   SlidersHorizontal,
@@ -16,6 +17,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { ImageProxy } from '../components/ImageProxy';
 import { BeforeAfter } from '../components/redesign/BeforeAfter';
 import { EditPanel } from '../components/redesign/EditPanel';
+import { InspirationPanel } from '../components/redesign/InspirationPanel';
 import { PhotoPicker } from '../components/redesign/PhotoPicker';
 import { RedesignOptions, type RedesignChoices } from '../components/redesign/RedesignOptions';
 import { RedesignProgress } from '../components/redesign/RedesignProgress';
@@ -80,6 +82,7 @@ export default function Redesign() {
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [tuning, setTuning] = useState<RedesignChoices | null>(null);
   const [editing, setEditing] = useState(false);
+  const [inspiring, setInspiring] = useState(false);
   const tuningRef = useRef<HTMLFormElement>(null);
   const isTuning = tuning !== null;
   const loadedProject = versions[0]?.project_id;
@@ -137,6 +140,7 @@ export default function Redesign() {
       setResult(redesign);
       setTuning(null);
       setEditing(false);
+      setInspiring(false);
       setVersions((items) =>
         items.some((item) => item.id === redesign.id)
           ? items.map((item) => (item.id === redesign.id ? redesign : item))
@@ -184,6 +188,7 @@ export default function Redesign() {
     setVersions([]);
     setTuning(null);
     setEditing(false);
+    setInspiring(false);
     setPhoto(null);
     setError('');
     setParams({}, { replace: true });
@@ -191,6 +196,7 @@ export default function Redesign() {
 
   const before = resolveMediaUrl(result?.original_image_url);
   const after = resolveMediaUrl(result?.result_image_url);
+  const inspirationUrl = resolveMediaUrl(result?.inspiration_image_url);
   const alert = (error || catalog.error) && (
     <p className="form-alert" role="alert">
       {error || catalog.error}
@@ -201,7 +207,14 @@ export default function Redesign() {
     <div className="page redesign-page">
       <PageHeader
         title={result ? result.project_name : 'Rediseño con foto'}
-        patterns={['facade', 'builder-redesign', 'chain-images', 'strategy-budget', 'strategy-edits']}
+        patterns={[
+          'facade',
+          'builder-redesign',
+          'chain-images',
+          'strategy-budget',
+          'strategy-edits',
+          'adapter-inspiration',
+        ]}
         actions={
           <Link to="/assistant" className="lumi-hint">
             <Sparkles size={16} /> O cuéntaselo a {config.assistantName}
@@ -226,6 +239,7 @@ export default function Redesign() {
               <Button
                 onClick={() => {
                   setEditing(false);
+                  setInspiring(false);
                   setTuning(tuning ? null : choicesFrom(result, styles));
                 }}
                 aria-expanded={!!tuning}
@@ -236,11 +250,23 @@ export default function Redesign() {
                 variant="ghost"
                 onClick={() => {
                   setTuning(null);
+                  setInspiring(false);
                   setEditing(!editing);
                 }}
                 aria-expanded={editing}
               >
                 <Brush size={18} /> Editar una parte
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setTuning(null);
+                  setEditing(false);
+                  setInspiring(!inspiring);
+                }}
+                aria-expanded={inspiring}
+              >
+                <Images size={18} /> Usar inspiración
               </Button>
               <Button variant="ghost" onClick={() => run(() => redesignService.variation(result.id))}>
                 <Shuffle size={18} /> Otra versión igual
@@ -297,7 +323,19 @@ export default function Redesign() {
                 onClose={() => setEditing(false)}
               />
             )}
-            {!tuning && !editing && alert}
+            {inspiring && (
+              <InspirationPanel
+                alert={alert}
+                onInvalid={setError}
+                onApply={(picture) =>
+                  run(async () =>
+                    redesignService.applyInspiration(result.id, await shrinkImage(picture, config.maxPhotoSide)),
+                  )
+                }
+                onClose={() => setInspiring(false)}
+              />
+            )}
+            {!tuning && !editing && !inspiring && alert}
           </div>
           <aside className="result-side">
             <div className="result-meta">
@@ -315,6 +353,15 @@ export default function Redesign() {
             >
               <Box size={16} /> Seguir en el editor 3D
             </Link>
+            {inspirationUrl && (
+              <figure className="inspiration-note">
+                <img src={inspirationUrl} alt="Foto de inspiración usada" />
+                <figcaption>
+                  <strong>Inspirado en tu foto</strong>
+                  {result.inspiration_name}
+                </figcaption>
+              </figure>
+            )}
             <SuggestionsPanel suggestions={result.suggestions} total={result.estimated_total} />
           </aside>
         </section>
