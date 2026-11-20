@@ -35,6 +35,9 @@
   --glass-border: rgb(255 255 255 / 0.5);
   --glass-blur: blur(16px) saturate(140%);
   --grad-hero: linear-gradient(135deg, var(--ink-900) 0%, var(--ink-800) 100%);
+  --orb-highlight: rgb(255 255 255 / 0.92);
+  --orb-highlight-soft: rgb(255 255 255 / 0.35);
+  --orb-shade: rgb(29 27 24 / 0.3);
   --photo-veil: linear-gradient(180deg, rgb(29 27 24 / 0.05) 0%, rgb(29 27 24 / 0.55) 100%);
 
   /* Text (--text, --text-2 and --text-3 pass WCAG AA 4.5:1 on --bg, --surface and --surface-2) */
