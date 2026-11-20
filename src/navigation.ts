@@ -27,7 +27,7 @@ export const NAV_ITEMS: NavItem[] = [
   { to: '/assistant', label: config.assistantName, icon: Sparkles, inMobileBar: true },
   { to: '/editor', label: 'Diseñar en 3D', shortLabel: 'En 3D', icon: Box, inMobileBar: true },
   { to: '/projects', label: 'Mis proyectos', icon: FolderHeart },
-  { to: '/docs', label: 'Documentación', icon: BookOpen },
+  { to: '/docs', label: 'Documentación', icon: BookOpen, role: 'admin' },
   { to: '/admin', label: 'Administración', icon: ShieldCheck, role: 'admin' },
 ];
 

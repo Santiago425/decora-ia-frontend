@@ -25,7 +25,7 @@ export function Sidebar() {
         ))}
       </nav>
       <SidebarSpotlight />
-      <PatternModeToggle />
+      {user.role === 'admin' && <PatternModeToggle />}
       <div className="sidebar-user">
         <Avatar user={user} />
         <div className="sidebar-user-text">
