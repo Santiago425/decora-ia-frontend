@@ -7,12 +7,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AuthContext, type AuthContextValue } from '../context/authContext';
 import type { LoginPayload, User } from '../types/auth';
 import { notificationCenter } from '../services/notificationCenter';
+import type * as MetaServiceModule from '../services/metaService';
 import Login from './Login';
 
 const publicMeta = vi.hoisted(() => vi.fn());
 
 vi.mock('../services/metaService', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../services/metaService')>()),
+  ...(await importOriginal<typeof MetaServiceModule>()),
   metaService: { publicMeta },
 }));
 // The photo carousel and the 3D room are covered by their own checks; here only the form matters.
