@@ -61,6 +61,14 @@
     rgb(29 27 24 / 0.2) 40%,
     rgb(29 27 24 / 0.72) 100%
   );
+  --page-veil: linear-gradient(
+    180deg,
+    rgb(247 244 239 / 0.5) 0%,
+    rgb(247 244 239 / 0.68) 45%,
+    rgb(247 244 239 / 0.86) 100%
+  );
+  --plan-line: rgb(47 93 80 / 0.09);
+  --plan-line-fine: rgb(47 93 80 / 0.04);
   --ambient-glow:
     radial-gradient(60% 50% at 100% 0%, rgb(157 188 177 / 0.28) 0%, transparent 70%),
     radial-gradient(50% 45% at 0% 100%, rgb(176 137 104 / 0.14) 0%, transparent 70%);

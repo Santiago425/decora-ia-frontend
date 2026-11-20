@@ -5,10 +5,12 @@ import { LumiLauncher } from '../assistant/LumiLauncher';
 import { MobileNav, MobileTopBar } from './MobileNav';
 import { PageLoading } from '../PageLoading';
 import { Sidebar } from './Sidebar';
+import { AppBackdrop } from './AppBackdrop';
 
 export function AppLayout() {
   return (
     <div className="app-shell">
+      <AppBackdrop />
       <Sidebar />
       <MobileTopBar />
       <main className="app-main">

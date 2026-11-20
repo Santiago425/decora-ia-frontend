@@ -742,64 +742,6 @@
   isolation: isolate;
 }
 
-.page-backdrop {
-  position: fixed;
-  inset: 0 0 0 var(--sidebar-width);
-  z-index: -1;
-  overflow: hidden;
-  background: var(--surface-2);
-  pointer-events: none;
-}
-
-.page-backdrop img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform-origin: 60% 40%;
-  animation:
-    backdrop-in 1.2s var(--ease-out) both,
-    ken-burns 48s ease-in-out 1.2s infinite alternate;
-}
-
-.page-backdrop::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--backdrop-glow), var(--backdrop-veil);
-}
-
-@keyframes backdrop-in {
-  from {
-    opacity: 0;
-    transform: scale(1.04);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@media (max-width: 760px) {
-  .page-backdrop {
-    inset: 0;
-  }
-}
-
-@keyframes ken-burns {
-  from {
-    transform: scale(1) translate3d(0, 0, 0);
-  }
-  to {
-    transform: scale(1.08) translate3d(-1.5%, -1%, 0);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .page-backdrop img {
-    animation: none;
-  }
-}
-
 /* Project progress */
 .inspiration {
   scroll-margin-top: 88px;
