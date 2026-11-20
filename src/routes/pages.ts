@@ -28,7 +28,8 @@ const byPath: Record<string, keyof typeof pages> = {
 
 /** Starts downloading a page as soon as the person shows intent (hover, focus or touch on its link). */
 export function preloadRoute(path: string): void {
-  const key = path.startsWith('/editor/') ? 'editor' : byPath[path];
+  const pathname = path.split('?')[0];
+  const key = pathname.startsWith('/editor/') ? 'editor' : byPath[pathname];
   if (key) void pages[key].preload().catch(() => undefined);
 }
 

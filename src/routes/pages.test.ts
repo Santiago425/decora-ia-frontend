@@ -8,6 +8,12 @@ describe('preloadRoute', () => {
     expect(spy).toHaveBeenCalledOnce();
   });
 
+  it('ignores the query string of a link', () => {
+    const spy = vi.spyOn(pages.redesign, 'preload').mockReturnValue(new Promise(() => undefined));
+    preloadRoute('/redesign?project=42');
+    expect(spy).toHaveBeenCalledOnce();
+  });
+
   it('ignores paths without a page', () => {
     const spies = Object.values(pages).map((page) => vi.spyOn(page, 'preload'));
     preloadRoute('/unknown');

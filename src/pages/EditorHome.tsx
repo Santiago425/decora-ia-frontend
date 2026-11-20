@@ -11,6 +11,7 @@ import { projectService } from '../services/projectService';
 import type { NewProject } from '../types/project';
 import { Button, PageHeader, Skeleton } from '../components/ui';
 import { preloadHandlers } from '../routes/pages';
+import { projectLabel, projectPath } from '../projects/projectRoute';
 
 export default function EditorHome() {
   const navigate = useNavigate();
@@ -74,10 +75,10 @@ export default function EditorHome() {
             {projects.map((project, index) => (
               <Link
                 key={project.id}
-                to={`/editor/${project.id}`}
-                {...preloadHandlers(`/editor/${project.id}`)}
+                to={projectPath(project)}
+                {...preloadHandlers(projectPath(project))}
                 className="project-link"
-                aria-label={`Abrir ${project.name} en el editor`}
+                aria-label={projectLabel(project)}
               >
                 <ProjectCard project={project} delay={index * 60} />
               </Link>

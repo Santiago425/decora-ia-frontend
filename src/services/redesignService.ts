@@ -1,5 +1,5 @@
 import { config } from '../config';
-import type { Redesign, RedesignInput } from '../types/redesign';
+import type { Redesign, RedesignInput, VariationOptions } from '../types/redesign';
 import { apiClient } from './apiClient';
 
 const aiOptions = { timeoutMs: config.aiTimeoutMs };
@@ -15,6 +15,8 @@ export const redesignService = {
     if (input.budget !== null) form.append('budget', String(input.budget));
     return apiClient.post<Redesign>('/redesigns', form, aiOptions);
   },
-  variation: (id: string) => apiClient.post<Redesign>(`/redesigns/${id}/variations`, undefined, aiOptions),
+  history: (projectId: string) => apiClient.get<Redesign[]>(`/redesigns?project_id=${encodeURIComponent(projectId)}`),
+  variation: (id: string, options?: VariationOptions) =>
+    apiClient.post<Redesign>(`/redesigns/${id}/variations`, options, aiOptions),
   retry: (id: string) => apiClient.post<Redesign>(`/redesigns/${id}/retry`, undefined, aiOptions),
 };
