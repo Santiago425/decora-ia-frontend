@@ -1121,15 +1121,57 @@ img.furniture-render {
   gap: 6px;
 }
 
+.addon-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.addon-summary {
+  color: var(--primary-strong);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.addon-group {
+  display: grid;
+  gap: 6px;
+}
+
+.addon-group h5 {
+  margin: 4px 0 0;
+  color: var(--text-3);
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
 .addon {
+  position: relative;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 10px;
-  padding: 10px;
+  padding: 8px 10px 8px 8px;
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 14px;
+  background: var(--surface);
   cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background 0.15s,
+    transform 0.15s;
+}
+
+.addon:hover {
+  border-color: var(--border-strong);
+}
+
+.addon:active {
+  transform: scale(0.99);
 }
 
 .addon:has(input:checked) {
@@ -1137,14 +1179,41 @@ img.furniture-render {
   background: color-mix(in srgb, var(--primary-soft) 50%, var(--surface));
 }
 
-.addon input {
-  width: 18px;
-  height: 18px;
-  accent-color: var(--primary);
+.addon:has(input:focus-visible) {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }
 
-.addon span {
+.addon:has(input:disabled) {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.addon input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.addon-icon {
   display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: var(--surface-3);
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--scrim) 10%, transparent);
+}
+
+.addon-icon[data-service] {
+  background: var(--primary-soft);
+  color: var(--primary-strong);
+}
+
+.addon-text {
+  display: grid;
+  min-width: 0;
 }
 
 .addon strong {
@@ -1154,6 +1223,7 @@ img.furniture-render {
 .addon small {
   color: var(--text-3);
   font-size: 12px;
+  line-height: 1.3;
 }
 
 .addon em {
@@ -1162,6 +1232,26 @@ img.furniture-render {
   font-weight: 700;
   color: var(--primary-strong);
   white-space: nowrap;
+}
+
+.addon-check {
+  position: absolute;
+  top: 4px;
+  left: 34px;
+  padding: 2px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--on-primary);
+  opacity: 0;
+  transform: scale(0.6);
+  transition:
+    opacity 0.15s,
+    transform 0.15s;
+}
+
+.addon:has(input:checked) .addon-check {
+  opacity: 1;
+  transform: scale(1);
 }
 
 .group-items li {
