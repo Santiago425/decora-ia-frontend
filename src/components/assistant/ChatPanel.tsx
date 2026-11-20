@@ -1,14 +1,16 @@
 import { Mic, Send, Square, Trash2, Volume2, VolumeX } from 'lucide-react';
 import { Fragment, useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
+import { describeAction } from '../../assistant/actionLabels';
 import { chatStore, useChat } from '../../assistant/chatStore';
 import { pageContextFor } from '../../assistant/pageContext';
 import { VoiceAdapter } from '../../assistant/voiceAdapter';
 import { config } from '../../config';
 import { useAuth } from '../../hooks/useAuth';
 import { notificationCenter } from '../../services/notificationCenter';
-import type { AssistantAction, ChatMessage } from '../../types/assistant';
+import type { ChatMessage } from '../../types/assistant';
 import { LumiOrb } from './LumiOrb';
+import { VoiceWave } from './VoiceWave';
 
 const SUGGESTIONS: Record<string, string[]> = {
   editor: [
@@ -18,28 +20,14 @@ const SUGGESTIONS: Record<string, string[]> = {
     'Más luz, por favor',
     'Deshaz el último cambio',
   ],
+  redesign: ['Recomiéndame un estilo para mi foto', 'Hazlo más cálido y acogedor', 'Llévame al editor 3D'],
+  projects: ['Abre mi último proyecto', 'Crea un estudio industrial', '¿Cuánto llevo de presupuesto?'],
   default: [
     'Crea una sala nórdica',
     '¿Qué estilo me recomiendas para un dormitorio?',
     'Quiero rediseñar una foto de mi cocina',
     '¿Cuánto llevo de presupuesto?',
   ],
-};
-
-const ACTION_LABELS: Record<AssistantAction['type'], string> = {
-  navigate: 'Te llevé a otra sección',
-  open_project: 'Abrió el proyecto',
-  start_redesign: 'Preparó el rediseño',
-  add_furniture: 'Agregó un mueble',
-  change_style: 'Cambió el estilo',
-  change_wall: 'Cambió las paredes',
-  change_floor: 'Cambió el piso',
-  set_lighting: 'Ajustó la luz',
-  undo: 'Deshizo un cambio',
-  redo: 'Rehizo un cambio',
-  rotate_selected: 'Giró el mueble',
-  remove_selected: 'Quitó el mueble',
-  duplicate_selected: 'Duplicó el mueble',
 };
 
 function richText(text: string): ReactNode {
@@ -63,12 +51,7 @@ function Bubble({ message }: { message: ChatMessage }) {
         {message.actions.length > 0 && (
           <div className="bubble-actions">
             {message.actions.map((action, index) => (
-              <span key={index}>
-                ✓{' '}
-                {action.type === 'add_furniture' && action.params.name
-                  ? `Agregó ${action.params.name}`
-                  : ACTION_LABELS[action.type]}
-              </span>
+              <span key={index}>✓ {describeAction(action)}</span>
             ))}
           </div>
         )}
@@ -147,7 +130,10 @@ export function ChatPanel({ compact = false, onClose }: { compact?: boolean; onC
         <LumiOrb size={compact ? 34 : 42} active={chat.sending || listening} />
         <div>
           <h2>{config.assistantName}</h2>
-          <small>{listening ? 'Te escucho…' : chat.sending ? 'Pensando…' : 'Tu asistente de diseño'}</small>
+          <small className="chat-status">
+            {listening && <VoiceWave />}
+            {listening ? 'Te escucho…' : chat.sending ? 'Pensando…' : 'Tu asistente de diseño'}
+          </small>
         </div>
         <div className="chat-head-actions">
           {voice.canSpeak && (

@@ -13,17 +13,17 @@ export function AssistantActions() {
         switch (action.type) {
           case 'navigate':
             navigate(PAGE_PATHS[String(params.to)] ?? '/');
-            return true;
+            return 'done';
           case 'open_project':
             navigate(`/editor/${params.project_id}`);
-            return true;
+            return 'done';
           case 'start_redesign': {
             const query = new URLSearchParams(Object.entries(params).map(([key, value]) => [key, String(value)]));
             navigate(`/redesign?${query}`);
-            return true;
+            return 'done';
           }
           default:
-            return false;
+            return 'ignored';
         }
       }),
     [navigate],

@@ -14,14 +14,14 @@ describe('assistant page context', () => {
 
 describe('assistant bus', () => {
   it('delivers actions to every subscriber and reports if one handled it', () => {
-    const editor = vi.fn(() => false);
-    const router = vi.fn(() => true);
+    const editor = vi.fn(() => 'ignored' as const);
+    const router = vi.fn(() => 'done' as const);
     const offEditor = assistantBus.subscribe(editor);
     const offRouter = assistantBus.subscribe(router);
-    expect(assistantBus.publish({ type: 'navigate', params: { to: 'docs' } })).toBe(true);
+    expect(assistantBus.publish({ type: 'navigate', params: { to: 'docs' } })).toBe('done');
     expect(editor).toHaveBeenCalledOnce();
     offEditor();
     offRouter();
-    expect(assistantBus.publish({ type: 'undo', params: {} })).toBe(false);
+    expect(assistantBus.publish({ type: 'undo', params: {} })).toBe('ignored');
   });
 });
