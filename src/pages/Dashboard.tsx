@@ -9,6 +9,7 @@ import { StyleStrip } from '../components/dashboard/StyleStrip';
 import { DashboardSkeleton } from '../components/dashboard/DashboardSkeleton';
 import { GettingStarted } from '../components/dashboard/GettingStarted';
 import { ImageProxy } from '../components/ImageProxy';
+import { Reveal } from '../components/motion';
 import { PatternBadge } from '../components/patterns/PatternBadge';
 import { config } from '../config';
 import { useAsync } from '../hooks/useAsync';
@@ -87,7 +88,7 @@ export default function Dashboard() {
             />
           </section>
 
-          <section className="dashboard-row">
+          <Reveal as="section" className="dashboard-row">
             <Panel as="article" title="Estilos más usados">
               {data.style_usage.length ? (
                 <Suspense fallback={<Skeleton height={180} radius="var(--radius-lg)" />}>
@@ -108,9 +109,9 @@ export default function Dashboard() {
                 </p>
               )}
             </Panel>
-          </section>
+          </Reveal>
 
-          <section>
+          <Reveal as="section">
             <header className="section-header">
               <h2>Tus últimos proyectos</h2>
               {data.recent_projects.length > 0 && <Link to="/projects">Ver todos</Link>}
@@ -128,16 +129,16 @@ export default function Dashboard() {
                 </Link>
               ))}
             </div>
-          </section>
+          </Reveal>
         </>
       )}
 
-      <section>
+      <Reveal as="section">
         <header className="section-header">
           <h2>Explora estilos</h2>
         </header>
         <StyleStrip />
-      </section>
+      </Reveal>
     </div>
   );
 }
