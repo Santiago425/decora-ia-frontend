@@ -23,6 +23,6 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     server: { port: Number(env.VITE_DEV_PORT) || undefined },
     build: { chunkSizeWarningLimit: 1000, rollupOptions: { output: { manualChunks: vendorChunk } } },
-    test: { environment: 'node' },
+    test: { environment: 'node', setupFiles: ['src/test/setupDom.ts'] },
   };
 });
