@@ -37,6 +37,11 @@ export default function Dashboard() {
 
   return (
     <div className="page dashboard">
+      {config.dashboardBackdropUrl && (
+        <div className="page-backdrop" aria-hidden="true">
+          <img src={config.dashboardBackdropUrl} alt="" decoding="async" referrerPolicy="no-referrer" />
+        </div>
+      )}
       <ParallaxLayers className="hero-banner">
         <div className="hero-photo parallax-layer">
           <ImageProxy src={config.dashboardBannerUrl} alt="" className="hero-image" />
