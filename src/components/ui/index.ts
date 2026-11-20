@@ -5,5 +5,6 @@ export { Card, Panel } from './Card';
 export { Chip, ChipGroup } from './Chip';
 export { Modal } from './Modal';
 export { PageHeader } from './PageHeader';
+export { Pager } from './Pager';
 export { Skeleton, SkeletonList } from './Skeleton';
 export { Tabs, type TabItem } from './Tabs';
