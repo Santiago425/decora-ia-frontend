@@ -1245,3 +1245,66 @@
   height: 96px;
   border-radius: var(--radius-md);
 }
+
+.inspiration-drop {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 28px 16px;
+  border: 2px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.inspiration-drop svg {
+  color: var(--primary);
+}
+
+.inspiration-drop small {
+  color: var(--text-2);
+}
+
+.inspiration-preview {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+}
+
+.inspiration-preview img {
+  display: block;
+  width: 100%;
+  max-height: 320px;
+  object-fit: cover;
+}
+
+.inspiration-note {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.inspiration-note img {
+  flex: none;
+  width: 64px;
+  height: 64px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.inspiration-note figcaption {
+  display: grid;
+  gap: 2px;
+  color: var(--text-2);
+  font-size: 14px;
+}
+
+.inspiration-note strong {
+  color: var(--text);
+}

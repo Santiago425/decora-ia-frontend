@@ -34,6 +34,8 @@ export interface Redesign {
   keep_structure: boolean;
   keep_items: string | null;
   edit_tool: { slug: string; name: string } | null;
+  inspiration_image_url?: string | null;
+  inspiration_name?: string | null;
   suggestions: DesignSuggestions;
   estimated_total: string;
   error_message: string | null;

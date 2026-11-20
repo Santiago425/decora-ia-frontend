@@ -57,5 +57,7 @@ describe('targeted edit helpers', () => {
       'Pintar paredes',
     );
     expect(versionDetail({ ...base, status: 'error' })).toBe('Falló');
+    expect(versionDetail({ ...base, inspiration_image_url: '/files/1', inspiration_name: 'Japandi' })).toBe('Japandi');
+    expect(versionDetail({ ...base, inspiration_image_url: '/files/1', inspiration_name: null })).toBe('Inspiración');
   });
 });

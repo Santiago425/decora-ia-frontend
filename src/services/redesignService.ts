@@ -22,5 +22,10 @@ export const redesignService = {
   editTools: () => apiClient.get<EditTool[]>('/redesigns/edit-tools'),
   applyEdit: (id: string, tool: string, values: Record<string, string>) =>
     apiClient.post<Redesign>(`/redesigns/${id}/edits`, { tool, values }, aiOptions),
+  applyInspiration(id: string, photo: Blob) {
+    const form = new FormData();
+    form.append('image', photo, 'inspiration.jpg');
+    return apiClient.post<Redesign>(`/redesigns/${id}/inspiration`, form, aiOptions);
+  },
   retry: (id: string) => apiClient.post<Redesign>(`/redesigns/${id}/retry`, undefined, aiOptions),
 };

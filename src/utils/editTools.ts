@@ -23,5 +23,6 @@ export function initialValues(tool: EditTool | undefined, suggestedColor?: strin
 
 export function versionDetail(version: Redesign) {
   if (version.status === 'error') return 'Falló';
+  if (version.inspiration_image_url) return version.inspiration_name || 'Inspiración';
   return version.edit_tool?.name ?? version.style?.name ?? '';
 }
