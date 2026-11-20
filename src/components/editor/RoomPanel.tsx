@@ -94,7 +94,17 @@ function MaterialPicker({
               }
               title={`${material.name} · ${formatCurrency(material.price_per_unit)} por m²`}
             >
-              <span className="material-swatch" style={{ background: material.color_hex }} />
+              <span className="material-swatch" style={{ background: material.color_hex }}>
+                {material.texture_url && (
+                  <img
+                    src={material.texture_url}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                    onError={(event) => (event.currentTarget.hidden = true)}
+                  />
+                )}
+              </span>
               <span>{material.name}</span>
             </button>
           ))}

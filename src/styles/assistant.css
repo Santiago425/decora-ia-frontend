@@ -1,24 +1,85 @@
 .lumi-avatar {
+  position: relative;
   display: inline-grid;
   flex: none;
   place-items: center;
   border-radius: 50%;
-  box-shadow: 0 0 0 1px var(--surface-3);
-  transition: box-shadow 0.3s var(--ease-out);
+  isolation: isolate;
 }
 
-.lumi-avatar svg {
-  width: 100%;
-  height: 100%;
+.lumi-glass {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 26%, var(--orb-highlight) 0 9%, transparent 24%),
+    radial-gradient(circle at 68% 78%, var(--primary-on-dark) 0, transparent 50%),
+    radial-gradient(circle at 50% 50%, var(--chart-2) 0, var(--primary) 58%, var(--primary-dark) 100%);
+  box-shadow:
+    inset -3px -5px 10px var(--orb-shade),
+    inset 2px 3px 6px var(--orb-highlight-soft),
+    0 6px 14px -6px rgb(var(--shadow-color) / 0.45);
+  animation: lumi-float 5s ease-in-out infinite;
 }
 
-.lumi-avatar.active {
-  animation: lumi-pulse 1.4s var(--ease-out) infinite;
+.lumi-avatar.deep .lumi-glass {
+  opacity: 0.9;
 }
 
-.lumi-avatar.active path {
-  transform-origin: 20px 18px;
-  animation: lumi-spin 2.4s linear infinite;
+.lumi-orb-3d {
+  position: absolute;
+  inset: -12%;
+  z-index: 1;
+}
+
+.lumi-avatar.active .lumi-glass {
+  animation: lumi-beat 0.9s var(--ease-out) infinite;
+}
+
+.lumi-avatar.listening::before,
+.lumi-avatar.listening::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border: 2px solid var(--primary);
+  border-radius: 50%;
+  animation: lumi-wave 1.6s var(--ease-out) infinite;
+}
+
+.lumi-avatar.listening::after {
+  animation-delay: 0.8s;
+}
+
+@keyframes lumi-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-2px) rotate(8deg);
+  }
+}
+
+@keyframes lumi-beat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes lumi-wave {
+  from {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.7);
+  }
 }
 
 @keyframes lumi-pulse {
@@ -398,8 +459,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .lumi-avatar.active,
-  .lumi-avatar.active path,
+  .lumi-glass,
+  .lumi-avatar.active .lumi-glass,
+  .lumi-avatar.listening::before,
+  .lumi-avatar.listening::after,
   .mic-button.listening,
   .bubble-row,
   .lumi-drawer {
